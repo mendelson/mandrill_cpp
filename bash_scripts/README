@@ -1,0 +1,3 @@
+chmod a+x compileAll.sh   #Gives everyone execute permissions
+ OR
+chmod 700 compileAll.sh   #Gives read,write,execute permissions to the Ow
