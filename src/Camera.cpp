@@ -39,22 +39,55 @@ void Camera::getSnapShot()
         }
 
         cv::imshow("Snap Shot", snapShot);
-        std::cout << videoCapture.get(CV_CAP_PROP_FPS) << std::endl;
+        // std::cout << videoCapture.get(CV_CAP_PROP_FRAME_COUNT) << std::endl;
 
         if(cv::waitKey(1) >= 0) break;
     }   
 }
 
+// void Camera::showVideoStream()
+// {
+// 	cv::VideoCapture vcap;
+//     cv::Mat frame;
+
+//     const std::string videoStreamAddress = _protocol + "://" +
+//     									   _loginUser + ":" +
+//     									   _loginPassword + "@" +
+//     									   _ip + "/" +
+//     									   _videoStreamPath;
+
+//     std::cout << videoStreamAddress << std::endl;
+    
+//     //open the video stream and make sure it's opened
+//     if(!vcap.open(videoStreamAddress))
+//     {
+//         std::cout << "Error opening video stream or file" << std::endl;
+//         return;
+//     }
+
+//     for(;;)
+//     {
+//         if(!vcap.read(frame)) {
+//             std::cout << "No frame" << std::endl;
+//             cv::waitKey();
+//         }
+
+//         cv::imshow("Snap Shot", frame);
+
+//         if(cv::waitKey(1) >= 0) break;
+//     }   
+// }
+
 void Camera::showVideoStream()
 {
-	cv::VideoCapture vcap;
+    cv::VideoCapture vcap;
     cv::Mat frame;
 
     const std::string videoStreamAddress = _protocol + "://" +
-    									   _loginUser + ":" +
-    									   _loginPassword + "@" +
-    									   _ip + "/" +
-    									   _videoStreamPath;
+                                           _loginUser + ":" +
+                                           _loginPassword + "@" +
+                                           _ip + "/" +
+                                           _videoStreamPath;
 
     std::cout << videoStreamAddress << std::endl;
     
