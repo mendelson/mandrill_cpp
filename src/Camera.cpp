@@ -52,7 +52,7 @@ void Camera::showVideoStreamRTSP()
     cv::Mat frame;
     cv::namedWindow("Live Streaming from " + _ip, 1);
 
-    cv::VideoCapture (videoStreamAddress);
+    cv::VideoCapture frameCap(videoStreamAddress);
     
     while (frameCap.isOpened())
     {
