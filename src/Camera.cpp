@@ -44,8 +44,8 @@ void Camera::showSnapShot()
 void Camera::showVideoStreamRTSP()
 {
     const std::string videoStreamAddress = _protocol + "://" +
-                                        // _loginUser + ":" +
-                                        // _loginPassword + "@" +
+                                        _loginUser + ":" +
+                                        _loginPassword + "@" +
                                         _ip + "/" +
                                         _videoStreamPath;
 
