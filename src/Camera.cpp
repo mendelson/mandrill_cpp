@@ -64,3 +64,5 @@ void Camera::showVideoStreamRTSP()
         if (cv::waitKey(30) >= 0) break;
     }
 }
+
+// .mp4 ou .mkv
