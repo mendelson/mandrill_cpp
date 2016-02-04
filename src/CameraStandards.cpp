@@ -8,8 +8,8 @@ std::string CameraStandards::getSnapShotPath(const CameraStandards::MODEL& model
 		case VIVOTEK_FD8136:
 			return "cgi-bin/viewer/video.jpg";
 			break;
-		case FOO:
-			return "FOOOOOOOOO!!!!!";
+		case AXIS_M1014:
+			return "axis-cgi/jpg/image.cgi";
 			break;
 		default:
 			return "invalid_model";
@@ -24,8 +24,8 @@ std::string CameraStandards::getVideoStreamPath(const CameraStandards::MODEL& mo
 		case VIVOTEK_FD8136:
 			return "live.sdp";
 			break;
-		case FOO:
-			return "FOOOOOOOOO STREAM!!!!!";
+		case AXIS_M1014:
+			return "axis-media/media.amp";
 			break;
 		default:
 			return "invalid_model";

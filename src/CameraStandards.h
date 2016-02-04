@@ -9,7 +9,7 @@ public:
 	enum MODEL
 	{
 		VIVOTEK_FD8136,
-		FOO
+		AXIS_M1014
 	};
 
 	CameraStandards(){}

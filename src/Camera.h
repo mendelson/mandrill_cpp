@@ -7,10 +7,13 @@
 class Camera
 {
 public:
-    Camera(std::string _protocol, std::string ip, std::string _loginUser, std::string _loginPassword, CameraStandards::MODEL model);
+    Camera(std::string _protocol, std::string ip, std::string _loginUser, std::string _loginPassword, CameraStandards::MODEL model, cv::Mat frame);
 
     void showSnapShot();
     void showVideoStreamRTSP();
+    const std::string getIp();
+    std::string getVideoStreamAddress();
+    cv::Mat _frame;
 
 private:
     const std::string _ip;
@@ -18,8 +21,9 @@ private:
     const std::string _loginPassword;
     const std::string _protocol;
     const std::string _snapShotPath;
-    const std::string _videoStreamPath;
+    // const std::string _videoStreamPath;
     const CameraStandards::MODEL _model;
+    std::string _videoStreamAddress;
 };
 
 #endif
