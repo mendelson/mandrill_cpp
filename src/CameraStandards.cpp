@@ -22,7 +22,7 @@ std::string CameraStandards::getVideoStreamPath(const CameraStandards::MODEL& mo
 	switch(model)
 	{
 		case VIVOTEK_FD8136:
-			return "cgi-bin/viewer/video.jpg";
+			return "live.sdp";
 			break;
 		case FOO:
 			return "FOOOOOOOOO STREAM!!!!!";

@@ -9,8 +9,8 @@ class Camera
 public:
     Camera(std::string _protocol, std::string ip, std::string _loginUser, std::string _loginPassword, CameraStandards::MODEL model);
 
-    void getSnapShot();
-    void showVideoStream();
+    void showSnapShot();
+    void showVideoStreamRTSP();
 
 private:
     const std::string _ip;

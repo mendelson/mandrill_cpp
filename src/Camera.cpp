@@ -14,7 +14,7 @@ Camera::Camera(std::string protocol, std::string ip, std::string loginUser, std:
   _videoStreamPath(CameraStandards::getVideoStreamPath(model))
 {}
 
-void Camera::getSnapShot()
+void Camera::showSnapShot()
 {
 	cv::VideoCapture videoCapture;
     cv::Mat snapShot;
@@ -25,88 +25,42 @@ void Camera::getSnapShot()
     									_ip + "/" +
     									_snapShotPath;
 
-    for(;;) {
-        if(!videoCapture.open(snapShotAddress))
-        {
-            std::cout << "Error acquiring snapshot" << std::endl;
-            return;
-        }
-
-        if(!videoCapture.read(snapShot))
-        {
-            std::cout << "No frame" << std::endl;
-            cv::waitKey();
-        }
-
-        cv::imshow("Snap Shot", snapShot);
-        // std::cout << videoCapture.get(CV_CAP_PROP_FRAME_COUNT) << std::endl;
-
-        if(cv::waitKey(1) >= 0) break;
-    }   
-}
-
-// void Camera::showVideoStream()
-// {
-// 	cv::VideoCapture vcap;
-//     cv::Mat frame;
-
-//     const std::string videoStreamAddress = _protocol + "://" +
-//     									   _loginUser + ":" +
-//     									   _loginPassword + "@" +
-//     									   _ip + "/" +
-//     									   _videoStreamPath;
-
-//     std::cout << videoStreamAddress << std::endl;
     
-//     //open the video stream and make sure it's opened
-//     if(!vcap.open(videoStreamAddress))
-//     {
-//         std::cout << "Error opening video stream or file" << std::endl;
-//         return;
-//     }
-
-//     for(;;)
-//     {
-//         if(!vcap.read(frame)) {
-//             std::cout << "No frame" << std::endl;
-//             cv::waitKey();
-//         }
-
-//         cv::imshow("Snap Shot", frame);
-
-//         if(cv::waitKey(1) >= 0) break;
-//     }   
-// }
-
-void Camera::showVideoStream()
-{
-    cv::VideoCapture vcap;
-    cv::Mat frame;
-
-    const std::string videoStreamAddress = _protocol + "://" +
-                                           _loginUser + ":" +
-                                           _loginPassword + "@" +
-                                           _ip + "/" +
-                                           _videoStreamPath;
-
-    std::cout << videoStreamAddress << std::endl;
-    
-    //open the video stream and make sure it's opened
-    if(!vcap.open(videoStreamAddress))
+    if(!videoCapture.open(snapShotAddress))
     {
-        std::cout << "Error opening video stream or file" << std::endl;
+        std::cout << "Error acquiring snapshot" << std::endl;
         return;
     }
 
-    for(;;)
+    if(!videoCapture.read(snapShot))
     {
-        if(!vcap.read(frame)) {
-            std::cout << "No frame" << std::endl;
-            cv::waitKey();
-        }
+        std::cout << "No frame" << std::endl;
+        cv::waitKey();
+    }
 
-        cv::imshow("Snap Shot", frame);
+    cv::imshow("Snap Shot from " + _ip, snapShot);
+}
 
-        if(cv::waitKey(1) >= 0) break;
-    }   
+void Camera::showVideoStreamRTSP()
+{
+    const std::string videoStreamAddress = _protocol + "://" +
+                                        // _loginUser + ":" +
+                                        // _loginPassword + "@" +
+                                        _ip + "/" +
+                                        _videoStreamPath;
+
+    cv::Mat frame;
+    cv::namedWindow("Live Streaming from " + _ip, 1);
+
+    cv::VideoCapture cap(videoStreamAddress);
+    
+    while (cap.isOpened())
+    {
+        cap >> frame;
+        if (frame.empty()) continue;
+
+        cv::imshow("video", frame);
+
+        if (cv::waitKey(30) >= 0) break;
+    }
 }
