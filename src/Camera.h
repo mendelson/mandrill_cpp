@@ -2,28 +2,25 @@
 #define CAMERA_H
 
 #include <iostream>
-#include "CameraStandards.h"
+#include <opencv2/opencv.hpp>
 
 class Camera
 {
 public:
-    Camera(std::string _protocol, std::string ip, std::string _loginUser, std::string _loginPassword, CameraStandards::MODEL model, cv::Mat frame);
+    Camera(std::string url, std::string model);
+    ~Camera();
 
-    void showSnapShot();
-    void showVideoStreamRTSP();
+    void updateFrame();
+    cv::Mat getFrame();
     const std::string getIp();
-    std::string getVideoStreamAddress();
-    cv::Mat _frame;
+    std::string getUrl();
 
 private:
-    const std::string _ip;
-    const std::string _loginUser;
-    const std::string _loginPassword;
-    const std::string _protocol;
-    const std::string _snapShotPath;
-    // const std::string _videoStreamPath;
-    const CameraStandards::MODEL _model;
-    std::string _videoStreamAddress;
+    const std::string _url;
+    const std::string _model;
+    std::string _ip;
+    cv::VideoCapture* _frameCap;
+    cv::Mat _frame;
 };
 
 #endif
