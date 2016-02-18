@@ -4,10 +4,13 @@
 #include <thread>
 #include "Camera.h"
 #include "FramesManager.h"
+#include "Analyser.h"
 
 int main(int argc, char *argv[])
 {
 	FramesManager* manager = FramesManager::Instance();
+	Analyser* anal = new Analyser();
+	manager->Attach(anal);
 
 	if(argc != 3)
 	{
@@ -24,20 +27,20 @@ int main(int argc, char *argv[])
 	{
 		camera->updateFrame();
 
-		// cv::Mat frame = camera->getFrame();
+		cv::Mat frame = camera->getFrame().clone();
 
-		cv::Mat* frame = new cv::Mat(camera->getFrame().clone());
+		// cv::Mat* frame = new cv::Mat(camera->getFrame().clone());
 
 
-		if(!frame->empty())
+		if(!frame.empty())
 		{
 			counter++;
 
-			cv::imshow("Live streaming from " + camera->getIp(), *frame);
+			cv::imshow("Live streaming from " + camera->getIp(), frame);
 
-			manager->addFrame(*frame);
+			manager->addFrame(frame);
 
-			delete frame;
+			//delete frame;
 
 			// frame->release();
 
@@ -49,7 +52,9 @@ int main(int argc, char *argv[])
 		// 	cv::imshow("Stored streaming", manager->getFrame(counter - 5));
 		// }
 		
-		// "ESC" key aborts execution
-		if (cv::waitKey(30) == 27) break;
+		// "ESC" key aborts execution		
+		char pressedKey = cv::waitKey(30);
+		// std::cout << (int) pressedKey << std::endl;
+		if (pressedKey == 27) break;
 	}
 }
