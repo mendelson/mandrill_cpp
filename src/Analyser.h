@@ -11,7 +11,6 @@ public:
 	~Analyser();
 	void Update(FramesManager* theChangedSubject);
 	void setSubject(FramesManager* subject);
-	// void setSubject(FramesManager* subject); 
 
 private:
 	void showLastFrameIndex();

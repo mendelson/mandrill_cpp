@@ -27,5 +27,5 @@ void Analyser::setSubject(FramesManager* subject)
 void Analyser::showLastFrameIndex()
 {
 	auto frame = std::make_shared<cv::Mat>(_subject->getLatestFrame());
-	std::cout << "New index received: " << 1 << std::endl;
+	std::cout << "New index received: " << _subject->getLatestFrameIndex() << std::endl;
 }

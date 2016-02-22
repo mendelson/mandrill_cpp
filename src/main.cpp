@@ -31,7 +31,6 @@ int main(int argc, char *argv[])
 
 		// cv::Mat* frame = new cv::Mat(camera->getFrame().clone());
 
-
 		if(!frame.empty())
 		{
 			counter++;
@@ -39,19 +38,8 @@ int main(int argc, char *argv[])
 			cv::imshow("Live streaming from " + camera->getIp(), frame);
 
 			manager->addFrame(frame);
-
-			//delete frame;
-
-			// frame->release();
-
-			// std::cout <<  << std::endl;
 		}
 
-		// if(counter > 5)
-		// {
-		// 	cv::imshow("Stored streaming", manager->getFrame(counter - 5));
-		// }
-		
 		// "ESC" key aborts execution		
 		char pressedKey = cv::waitKey(30);
 		// std::cout << (int) pressedKey << std::endl;

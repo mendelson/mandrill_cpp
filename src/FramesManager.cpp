@@ -1,5 +1,6 @@
 #include <iostream>
 #include <memory>
+#include <opencv2/opencv.hpp>
 #include "FramesManager.h"
 
 FramesManager* FramesManager::_instance = 0;
@@ -16,21 +17,21 @@ FramesManager* FramesManager::Instance()
 
 FramesManager::FramesManager()
 {
-	latestFrame = -1;
+	_latestFrame = -1;
 }
 
 void FramesManager::addFrame(cv::Mat frame)
 {
-	latestFrame++;
+	_latestFrame++;
 	
-	// std::cout << latestFrame << std::endl;
+	// std::cout << _latestFrame << std::endl;
 
 	if(framesSet.size() >= MAXFRAMES)
 	{
-		framesSet.erase(latestFrame - MAXFRAMES);
+		framesSet.erase(_latestFrame - MAXFRAMES);
 	}
 
-	framesSet.emplace(latestFrame, std::make_shared<cv::Mat>(frame));
+	framesSet.emplace(_latestFrame, std::make_shared<cv::Mat>(frame));
 
 	Notify();
 }
@@ -42,7 +43,12 @@ cv::Mat FramesManager::getFrame(unsigned int index)
 
 cv::Mat FramesManager::getLatestFrame()
 {
-	return *framesSet[latestFrame];
+	return *framesSet[_latestFrame];
+}
+
+unsigned int FramesManager::getLatestFrameIndex()
+{
+	return _latestFrame;
 }
 
 void FramesManager::Attach(Observer* newObserver)
