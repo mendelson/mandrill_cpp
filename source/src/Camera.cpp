@@ -1,7 +1,7 @@
-#include <stdio.h>
+// #include <stdio.h>
 #include <opencv2/opencv.hpp>
-#include <iostream>
-#include "Camera.h"
+// #include <iostream>
+#include "Camera.hpp"
 
 Camera::Camera(std::string url, std::string model)
 : _url(url),

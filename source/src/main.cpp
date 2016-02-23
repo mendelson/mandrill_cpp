@@ -2,13 +2,13 @@
 #include <vector>
 #include <opencv2/opencv.hpp>
 #include <thread>
-#include "Camera.h"
-#include "FramesManager.h"
-#include "Analyser.h"
+#include "Camera.hpp"
+#include "FramesManager.hpp"
+#include "Analyser.hpp"
 
 int main(int argc, char *argv[])
 {
-	FramesManager* manager = FramesManager::Instance();
+	FramesManager* manager = FramesManager::getManager();
 	Analyser* anal = new Analyser();
 	manager->Attach(anal);
 

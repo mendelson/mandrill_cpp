@@ -1,11 +1,14 @@
 #include <iostream>
-#include <memory>
-#include <opencv2/opencv.hpp>
-#include "FramesManager.h"
+// #include <memory>
+// #include <opencv2/opencv.hpp>
+// #include <unordered_map>
+// #include <list>
+// #include "Observer.hpp"
+#include "FramesManager.hpp"
 
 FramesManager* FramesManager::_instance = 0;
 
-FramesManager* FramesManager::Instance()
+FramesManager* FramesManager::getManager()
 {
 	if (_instance == 0)
 	{

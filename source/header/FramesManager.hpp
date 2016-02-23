@@ -5,17 +5,17 @@
 #include <unordered_map>
 #include <opencv2/opencv.hpp>
 #include <list>
-#include "Observer.h"
+#include "Observer.hpp"
 
 const unsigned int MAXFRAMES = 10;
 
 typedef std::list<Observer*> observersList;
 typedef std::unordered_map<unsigned int, std::shared_ptr<cv::Mat>> FramesSet;
 
-class FramesManager// : public Subject
+class FramesManager
 {
 public:
-	static FramesManager* Instance();
+	static FramesManager* getManager();
 	void addFrame(cv::Mat frame);
 	cv::Mat getFrame(unsigned int index);
 	cv::Mat getLatestFrame();

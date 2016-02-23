@@ -1,5 +1,7 @@
 #include <iostream>
-#include "Analyser.h"
+#include "Observer.hpp"
+#include "FramesManager.hpp"
+#include "Analyser.hpp"
 
 Analyser::Analyser()
 {

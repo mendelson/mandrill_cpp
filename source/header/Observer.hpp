@@ -1,7 +1,7 @@
 #ifndef OBSERVER_H
 #define OBSERVER_H
 
-// #include "FramesManager.h"
+// #include "FramesManager.hpp"
 
 class FramesManager;
 

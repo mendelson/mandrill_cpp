@@ -1,8 +1,8 @@
 #ifndef ANALYSER_H
 #define ANALYSER_H
 
-#include "Observer.h"
-#include "FramesManager.h"
+// #include "Observer.h"
+// #include "FramesManager.h"
 
 class Analyser : public Observer
 {

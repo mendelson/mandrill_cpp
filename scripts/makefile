@@ -1,0 +1,44 @@
+HEADER_PATH = ../source/header/
+SRC_PATH = ../source/src/
+
+MAIN_CPP = $(SRC_PATH)main.cpp
+FRAMESMANAGER_CPP = $(SRC_PATH)FramesManager.cpp
+ANALYSER_CPP = $(SRC_PATH)Analyser.cpp
+CAMERA_CPP = $(SRC_PATH)Camera.cpp
+
+
+FRAMESMANAGER_HPP = $(HEADER_PATH)FramesManager.hpp
+OBSERVER_HPP = $(HEADER_PATH)Observer.hpp
+ANALYSER_HPP = $(HEADER_PATH)Analyser.hpp
+CAMERA_HPP = $(HEADER_PATH)Camera.hpp
+
+MAIN = ../bin/main
+
+MAIN_O = ../bin/main.o
+FRAMESMANAGER_O = ../bin/FramesManager.o
+ANALYSER_O = ../bin/Analyser.o
+CAMERA_O = ../bin/Camera.o
+
+
+DIRECTIVES = -std=c++0x -pthread -c -I $(HEADER_PATH)
+OPENCV = `pkg-config --libs opencv` -O4
+OBJS = $(FRAMESMANAGER_O) $(ANALYSER_O) $(CAMERA_O) $(MAIN_O)
+
+
+$(MAIN): $(OBJS)
+	g++ -std=c++0x -pthread -I $(HEADER_PATH) $(OBJS) -o $(MAIN) $(OPENCV)
+
+$(MAIN_O): $(MAIN_CPP)
+	g++ $(DIRECTIVES) $(MAIN_CPP) -o $(MAIN_O) $(OPENCV)
+
+$(FRAMESMANAGER_O): $(FRAMESMANAGER_HPP) $(FRAMESMANAGER_CPP) $(OBSERVER_HPP)
+	g++ $(DIRECTIVES) $(FRAMESMANAGER_CPP) -o $(FRAMESMANAGER_O) $(OPENCV)
+
+$(ANALYSER_O): $(ANALYSER_HPP) $(ANALYSER_CPP) $(OBSERVER_HPP) $(FRAMESMANAGER_HPP) $(FRAMESMANAGER_CPP)
+	g++ $(DIRECTIVES) $(ANALYSER_CPP) -o $(ANALYSER_O) $(OPENCV)
+
+$(CAMERA_O): $(CAMERA_HPP) $(CAMERA_CPP)
+	g++ $(DIRECTIVES) $(CAMERA_CPP) -o $(CAMERA_O) $(OPENCV)
+
+clean:
+	rm -rf $(OBJS)
