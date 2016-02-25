@@ -1,5 +1,6 @@
 HEADER_PATH = ../source/header/
 SRC_PATH = ../source/src/
+BIN_DIR = ../bin/
 
 MAIN_CPP = $(SRC_PATH)main.cpp
 FRAMESMANAGER_CPP = $(SRC_PATH)FramesManager.cpp
@@ -14,13 +15,13 @@ ANALYSER_HPP = $(HEADER_PATH)Analyser.hpp
 PRINTER_HPP = $(HEADER_PATH)Printer.hpp
 CAMERA_HPP = $(HEADER_PATH)Camera.hpp
 
-MAIN = ../bin/main
+MAIN = $(BIN_DIR)main
 
-MAIN_O = ../bin/main.o
-FRAMESMANAGER_O = ../bin/FramesManager.o
-ANALYSER_O = ../bin/Analyser.o
-PRINTER_O = ../bin/Printer.o
-CAMERA_O = ../bin/Camera.o
+MAIN_O = $(BIN_DIR)main.o
+FRAMESMANAGER_O = $(BIN_DIR)FramesManager.o
+ANALYSER_O = $(BIN_DIR)Analyser.o
+PRINTER_O = $(BIN_DIR)Printer.o
+CAMERA_O = $(BIN_DIR)Camera.o
 
 
 DIRECTIVES = -std=c++0x -Wall -c -I $(HEADER_PATH)
@@ -28,7 +29,7 @@ OPENCV = `pkg-config --libs opencv` -O4
 OBJS = $(FRAMESMANAGER_O) $(ANALYSER_O) $(PRINTER_O) $(CAMERA_O) $(MAIN_O)
 
 
-$(MAIN): $(OBJS)
+$(MAIN): $(OBJS) $(BIN_DIR)
 	g++ -std=c++0x -I $(HEADER_PATH) $(OBJS) -o $(MAIN) $(OPENCV)
 
 $(MAIN_O): $(MAIN_CPP)
@@ -36,7 +37,6 @@ $(MAIN_O): $(MAIN_CPP)
 
 $(FRAMESMANAGER_O): $(FRAMESMANAGER_HPP) $(FRAMESMANAGER_CPP) $(OBSERVER_HPP)
 	g++ $(DIRECTIVES) $(FRAMESMANAGER_CPP) -o $(FRAMESMANAGER_O) $(OPENCV)
-	# g++ -pthread $(DIRECTIVES) $(FRAMESMANAGER_CPP) -o $(FRAMESMANAGER_O) $(OPENCV)
 
 $(ANALYSER_O): $(ANALYSER_HPP) $(ANALYSER_CPP) $(OBSERVER_HPP) $(FRAMESMANAGER_HPP) $(FRAMESMANAGER_CPP)
 	g++ $(DIRECTIVES) $(ANALYSER_CPP) -o $(ANALYSER_O) $(OPENCV)
@@ -47,5 +47,9 @@ $(CAMERA_O): $(CAMERA_HPP) $(CAMERA_CPP)
 $(PRINTER_O): $(PRINTER_HPP) $(PRINTER_CPP) $(OBSERVER_HPP) $(FRAMESMANAGER_HPP) $(FRAMESMANAGER_CPP)
 	g++ $(DIRECTIVES) $(PRINTER_CPP) -o $(PRINTER_O) $(OPENCV)
 
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
+
 clean:
 	rm -rf $(OBJS)
+	rm -rf $(BIN_DIR)

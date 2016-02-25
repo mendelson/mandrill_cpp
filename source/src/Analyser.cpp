@@ -34,5 +34,5 @@ void Analyser::showLastFrameIndex()
 
 	std::unique_lock<std::mutex> _lock(_mutex);
 	_currentFrame = _subject->getLatestFrameIndex();
-	std::cout << "Analyser: " << _currentFrame << "|" << std::endl;
+	// std::cout << "Analyser: " << _currentFrame << "|" << std::endl;
 }
