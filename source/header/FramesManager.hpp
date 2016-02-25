@@ -5,6 +5,8 @@
 #include <unordered_map>
 #include <opencv2/opencv.hpp>
 #include <list>
+#include <vector>
+#include <thread>
 #include "Observer.hpp"
 
 const unsigned int MAXFRAMES = 10;
@@ -29,9 +31,11 @@ protected:
 	FramesSet framesSet;
 
 private:
+	static void updateHelper(std::list<Observer*>::iterator it);
 	static FramesManager* _instance;
 	unsigned int _latestFrame;
 	observersList _observers;
+	std::vector<std::thread> threadsVector;
 };
 
 #endif

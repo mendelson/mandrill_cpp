@@ -5,12 +5,15 @@
 #include "Camera.hpp"
 #include "FramesManager.hpp"
 #include "Analyser.hpp"
+#include "Printer.hpp"
 
 int main(int argc, char *argv[])
 {
 	FramesManager* manager = FramesManager::getManager();
 	Analyser* anal = new Analyser();
+	Printer* printer = new Printer();
 	manager->Attach(anal);
+	manager->Attach(printer);
 
 	if(argc != 3)
 	{

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <thread>
 // #include <memory>
 // #include <opencv2/opencv.hpp>
 // #include <unordered_map>
@@ -71,6 +72,25 @@ void FramesManager::Notify()
 
 	for(it = _observers.begin(); it != _observers.end(); it++)
 	{
-		(*it)->Update(this);
+		std::thread(FramesManager::updateHelper, it).detach();
+		// threadsVector.push_back(std::thread(FramesManager::updateHelper, it));
+		// threadsVector[threadsVector.size() - 1].detach();
+		// (*it)->Update(this);
 	}
+
+	// if(threadsVector.size() == 0)
+	// {
+	// 	for(it = _observers.begin(); it != _observers.end(); it++)
+	// 	{
+	// 		threadsVector.push_back(std::thread(FramesManager::updateHelper, it));
+	// 		threadsVector[threadsVector.size() - 1].detach();
+	// 		// (*it)->Update(this);
+	// 	}
+	// }
+}
+
+void FramesManager::updateHelper(std::list<Observer*>::iterator it)
+{
+	(*it)->Update(FramesManager::getManager());
+	// std::cout << "Ha!" << std::endl;
 }

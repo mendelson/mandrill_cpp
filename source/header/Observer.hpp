@@ -1,6 +1,7 @@
 #ifndef OBSERVER_H
 #define OBSERVER_H
 
+#include <mutex>
 // #include "FramesManager.hpp"
 
 class FramesManager;
@@ -13,6 +14,9 @@ public:
 
 protected:
 	FramesManager* _subject;
+	unsigned int _currentFrame;
+	bool locked;
+	std::mutex _mutex;
 };
 
 #endif

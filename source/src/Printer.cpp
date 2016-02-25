@@ -1,21 +1,21 @@
 #include <iostream>
 #include "Observer.hpp"
 #include "FramesManager.hpp"
-#include "Analyser.hpp"
+#include "Printer.hpp"
 
-Analyser::Analyser()
+Printer::Printer()
 {
 	_subject = 0;
 	locked = false;
 	_currentFrame = -1;
 }
 
-Analyser::~Analyser()
+Printer::~Printer()
 {
 	_subject = 0;
 }
 
-void Analyser::Update(FramesManager* theChangedSubject)
+void Printer::Update(FramesManager* theChangedSubject)
 {
 	if(theChangedSubject == _subject)
 	{
@@ -23,16 +23,16 @@ void Analyser::Update(FramesManager* theChangedSubject)
 	}
 }
 
-void Analyser::setSubject(FramesManager* subject)
+void Printer::setSubject(FramesManager* subject)
 {
 	_subject = subject;
 }
 
-void Analyser::showLastFrameIndex()
+void Printer::showLastFrameIndex()
 {
 	auto frame = std::make_shared<cv::Mat>(_subject->getLatestFrame());
 
 	std::unique_lock<std::mutex> _lock(_mutex);
 	_currentFrame = _subject->getLatestFrameIndex();
-	std::cout << "Analyser: " << _currentFrame << "|" << std::endl;
+	std::cout << "Printer: " << _currentFrame << "|" << std::endl;
 }
