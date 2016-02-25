@@ -29,7 +29,7 @@ OPENCV = `pkg-config --libs opencv` -O4
 OBJS = $(FRAMESMANAGER_O) $(ANALYSER_O) $(PRINTER_O) $(CAMERA_O) $(MAIN_O)
 
 
-$(MAIN): $(OBJS) $(BIN_DIR)
+$(MAIN): $(BIN_DIR) $(OBJS)
 	g++ -std=c++0x -I $(HEADER_PATH) $(OBJS) -o $(MAIN) $(OPENCV)
 
 $(MAIN_O): $(MAIN_CPP)
