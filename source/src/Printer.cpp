@@ -6,7 +6,7 @@
 Printer::Printer()
 {
 	_subject = 0;
-	locked = false;
+	// locked = false;
 	_currentFrame = -1;
 }
 

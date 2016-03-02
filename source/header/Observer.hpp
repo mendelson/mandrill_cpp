@@ -15,7 +15,7 @@ public:
 protected:
 	FramesManager* _subject;
 	unsigned int _currentFrame;
-	bool locked;
+	// bool locked;
 	std::mutex _mutex;
 };
 

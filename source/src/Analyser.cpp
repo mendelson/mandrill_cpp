@@ -6,7 +6,7 @@
 Analyser::Analyser()
 {
 	_subject = 0;
-	locked = false;
+	// locked = false;
 	_currentFrame = -1;
 }
 
