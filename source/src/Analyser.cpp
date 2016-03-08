@@ -21,10 +21,6 @@ void Analyser::Update(FramesManager* theChangedSubject)
 	{
 		showLastFrameIndex();
 	}
-	else
-	{
-		std::cout << "Guardado: " << _subject << " | Recebido: " << theChangedSubject << std::endl;
-	}
 }
 
 void Analyser::setSubject(FramesManager* subject)

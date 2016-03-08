@@ -25,7 +25,7 @@ PRINTER_O = $(BIN_DIR)Printer.o
 CAMERA_O = $(BIN_DIR)Camera.o
 
 
-DIRECTIVES = -std=c++0x -Wall -c -I $(HEADER_PATH)
+DIRECTIVES = -std=c++0x -Wall -g -c -I $(HEADER_PATH)
 OPENCV = `pkg-config --libs opencv` -O4
 OBJS = $(FRAMESMANAGER_O) $(ANALYSER_O) $(PRINTER_O) $(CAMERA_O) $(CORE_O) $(MAIN_CPP)
 

@@ -17,17 +17,7 @@ FramesManager* FramesManager::getManager()
 	if (_instance == 0)
 	{
 		_instance = new FramesManager();
-		// _instance->nha = 123;
-		// std::cout << "nha0 " << _instance->nha << std::endl;
-		// std::cout << "Mudou!" << std::endl;
 	}
-	// std::cout << "nha01 " << _instance->nha << std::endl;
-	// else
-	// {
-		// std::cout << "Nao mudou!" << std::endl;
-	// }
-
-	// std::cout << "getManager: " << _instance << std::endl;
 	
 	return _instance;
 }
@@ -78,39 +68,31 @@ unsigned int FramesManager::getLatestFrameIndex()
 
 void FramesManager::run()
 {
-	// std::cout << 1 << std::endl;
+	if(_url.compare("") == 0 || _model.compare("") == 0)
+	{
+		std::cout << "You have not set the address and model of your streaming camera!" << std::endl;
 
-	std::cout << "hey run!" << std::endl;
+		exit(1);
+	}
 
+	while(true)
+	{
+		_camera->updateFrame();
 
-	// std::cout << _url << std::endl;
-	// if(_url.compare("") == 0 || _url.compare("") == 0)
-	// {
-	// 	std::cout << "You have not set the address and model of your streaming camera!" << std::endl;
+		cv::Mat frame = _camera->getFrame().clone();
 
-	// 	exit(1);
-	// }
+		if(!frame.empty())
+		{
+			// cv::imshow("Live streaming from " + _camera->getIp(), frame);
 
-	// std::cout << 2 << std::endl;
+			addFrame(frame);
+		}
 
-	// while(true)
-	// {
-	// 	_camera->updateFrame();
-
-	// 	cv::Mat frame = _camera->getFrame().clone();
-
-	// 	if(!frame.empty())
-	// 	{
-	// 		// cv::imshow("Live streaming from " + camera->getIp(), frame);
-
-	// 		addFrame(frame);
-	// 	}
-
-	// 	// "ESC" key aborts execution
-	// 	char pressedKey = cv::waitKey(30);
-	// 	// std::cout << (int) pressedKey << std::endl;
-	// 	if (pressedKey == 27) break;
-	// }
+		// // "ESC" key aborts execution
+		// char pressedKey = cv::waitKey(30);
+		// // std::cout << (int) pressedKey << std::endl;
+		// if (pressedKey == 27) break;
+	}
 }
 
 void FramesManager::setStreamSource(std::string url, std::string model)
@@ -119,11 +101,6 @@ void FramesManager::setStreamSource(std::string url, std::string model)
 	_model = model;
 	
 	_camera = new Camera(_url, _model);
-	// std::cout << "Manolo" << std::endl;
-	// std::cout << nha << std::endl;
-	// nha = 10;
-	// std::cout << "nha na definicao: " << nha << std::endl;
-	// std::cout << "Manolo 2" << std::endl;
 }
 
 void FramesManager::Attach(Observer* newObserver)
@@ -149,25 +126,12 @@ void FramesManager::Notify()
 
 	for(it = _observers.begin(); it != _observers.end(); it++)
 	{
+		// TODO: thread pool instead of the following gambiarra
 		std::thread(FramesManager::updateHelper, it).detach();
-		// threadsVector.push_back(std::thread(FramesManager::updateHelper, it));
-		// threadsVector[threadsVector.size() - 1].detach();
-		// (*it)->Update(this);
 	}
-
-	// if(threadsVector.size() == 0)
-	// {
-	// 	for(it = _observers.begin(); it != _observers.end(); it++)
-	// 	{
-	// 		threadsVector.push_back(std::thread(FramesManager::updateHelper, it));
-	// 		threadsVector[threadsVector.size() - 1].detach();
-	// 		// (*it)->Update(this);
-	// 	}
-	// }
 }
 
 void FramesManager::updateHelper(std::list<Observer*>::iterator it)
 {
 	(*it)->Update(FramesManager::getManager());
-	// std::cout << "Ha!" << std::endl;
 }

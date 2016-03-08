@@ -2,7 +2,7 @@
 
 # mkdir -p ../data
 
-./../bin/MandrillCore rtsp://root:akts@10.190.60.131/live.sdp vivotek_fd8136 #&
+valgrind --leak-check=full ./../bin/MandrillCore rtsp://root:akts@10.190.60.131/live.sdp vivotek_fd8136 #&
 # ./../bin/MandrillCore rtsp://root:akts@10.190.60.128/live.sdp vivotek_ip8337h-c &
 # ./../bin/MandrillCore rtsp://root:akts@10.190.60.105/axis-media/media.amp axis_m1014 &
 # ./../bin/MandrillCore rtsp://root:akts@10.190.60.101/axis-media/media.amp axis_p5534 & #PTZ!

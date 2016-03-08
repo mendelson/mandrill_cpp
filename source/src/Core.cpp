@@ -27,6 +27,12 @@ void Core::run()
 	_framesManager->Attach(printer);
 	
 	_threadVector->emplace_back(std::thread(framesManagerRunHelper, _framesManager));
+
+	// for(int i = 0; i < 100; i++)
+	// {
+	// 	std::cout << "hey" << std::endl;
+	// }
+
 	// if(_framesManager == FramesManager::getManager())
 	// {
 		// std::cout << "Sao iguais!" << std::endl;
@@ -46,20 +52,20 @@ void Core::run()
 	// std::cout << "ha" << std::endl;
 
 
-	std::string test = getAction();
+	// std::string test = getAction();
 
 	// std::cout << "ha" << std::endl;
-	int i = 0;
-	while(true)
-	{
-		std::cout << i << std::endl;
-		i++;
-	}
+	// int i = 0;
+	// while(true)
+	// {
+	// 	std::cout << i << std::endl;
+	// 	i++;
+	// }
 
-	joinAllThreads();
-	std::cout << "ha" << std::endl;
+	// joinAllThreads();
+	// std::cout << "ha" << std::endl;
 	// (*_threadVector)[0].join();
-	// while(true);
+	while(true);
 
 }
 
