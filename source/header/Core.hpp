@@ -16,8 +16,8 @@ private:
 	void killThread(std::thread target);
 	void joinAllThreads();
 
-	std::vector<std::thread>* threadVector;
-	FramesManager* framesManager;
+	std::vector<std::thread>* _threadVector;
+	FramesManager* _framesManager;
 };
 
 #endif

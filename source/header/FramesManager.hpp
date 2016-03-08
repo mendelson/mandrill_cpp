@@ -24,25 +24,21 @@ public:
 	unsigned int getLatestFrameIndex();
 	void run();
 	void setStreamSource(std::string url, std::string model);
-	
 
 	// Singleton pattern
 	static FramesManager* getManager();
+	FramesManager(FramesManager const&)  =  delete; // Desabling copy constructor
+	void operator=(FramesManager const&) =  delete; // Desabling copy operator
 
 	// Subject-observer pattern
 	void Attach(Observer*);
 	void Detach(Observer*);
 
-protected:
-	FramesSet framesSet;
-	
-	// Singleton pattern
-	FramesManager();
-
 private:
 	void addFrame(cv::Mat frame);
 	void Notify();
 
+	FramesSet framesSet;
 	std::string _url;
 	std::string _model;
 	Camera* _camera;
@@ -53,6 +49,10 @@ private:
 
 	// Singleton pattern
 	static FramesManager* _instance;
+	FramesManager();
+	static std::mutex _instaceMutex;
+	// FramesManager(FramesManager const&);  // Desabling copy constructor
+	// void operator=(FramesManager const&); // Desabling copy operator
 
 	// Allowing parallelism
 	static void updateHelper(std::list<Observer*>::iterator it);
