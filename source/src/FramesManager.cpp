@@ -29,6 +29,7 @@ FramesManager::FramesManager()
 	_model = "";
 	_latestFrame = -1;
 	_camera = NULL;
+	_threadPool = ThreadPool::getThreadPool();
 }
 
 void FramesManager::addFrame(cv::Mat frame)
@@ -39,12 +40,12 @@ void FramesManager::addFrame(cv::Mat frame)
 	
 	// std::cout << _latestFrame << std::endl;
 
-	if(framesSet.size() >= MAXFRAMES)
+	if(_framesSet.size() >= MAXFRAMES)
 	{
-		framesSet.erase(_latestFrame - MAXFRAMES);
+		_framesSet.erase(_latestFrame - MAXFRAMES);
 	}
 
-	framesSet.emplace(_latestFrame, std::make_shared<cv::Mat>(frame));
+	_framesSet.emplace(_latestFrame, std::make_shared<cv::Mat>(frame));
 	
 	_mutex.unlock();
 
@@ -53,12 +54,12 @@ void FramesManager::addFrame(cv::Mat frame)
 
 cv::Mat FramesManager::getFrame(unsigned int index)
 {
-	return *framesSet[index];
+	return *_framesSet[index];
 }
 
 cv::Mat FramesManager::getLatestFrame()
 {
-	return *framesSet[_latestFrame];
+	return *_framesSet[_latestFrame];
 }
 
 unsigned int FramesManager::getLatestFrameIndex()
@@ -77,6 +78,9 @@ void FramesManager::run()
 
 	while(true)
 	{
+		if(ThreadPool::mustStop())
+			break;
+
 		_camera->updateFrame();
 
 		cv::Mat frame = _camera->getFrame().clone();
@@ -85,7 +89,8 @@ void FramesManager::run()
 		{
 			// cv::imshow("Live streaming from " + _camera->getIp(), frame);
 
-			addFrame(frame);
+			if(!ThreadPool::mustStop())
+				addFrame(frame);
 		}
 
 		// // "ESC" key aborts execution
@@ -127,11 +132,13 @@ void FramesManager::Notify()
 	for(it = _observers.begin(); it != _observers.end(); it++)
 	{
 		// TODO: thread pool instead of the following gambiarra
-		std::thread(FramesManager::updateHelper, it).detach();
+		// std::thread(FramesManager::updateHelper, it).detach();
+		_threadPool->enqueue(*it);
 	}
 }
 
-void FramesManager::updateHelper(std::list<Observer*>::iterator it)
-{
-	(*it)->Update(FramesManager::getManager());
-}
+// void FramesManager::updateHelper(std::list<Observer*>::iterator it)
+// {
+// 	// (*it)->Update(FramesManager::getManager());
+// 	(*it)->Update();
+// }

@@ -9,7 +9,7 @@ class Printer : public Observer
 public:
 	Printer();
 	~Printer();
-	void Update(FramesManager* theChangedSubject);
+	void Update();
 	void setSubject(FramesManager* subject);
 
 private:

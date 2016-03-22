@@ -10,6 +10,7 @@
 #include <mutex>
 #include "Observer.hpp"
 #include "Camera.hpp"
+#include "ThreadPool.hpp"
 
 const unsigned int MAXFRAMES = 10;
 
@@ -38,21 +39,20 @@ private:
 	void addFrame(cv::Mat frame);
 	void Notify();
 
-	FramesSet framesSet;
+	FramesSet _framesSet;
 	std::string _url;
 	std::string _model;
 	Camera* _camera;
 	unsigned int _latestFrame;
 	observersList _observers;
-	std::vector<std::thread> _threadsVector;
+	// std::vector<std::thread> _threadsVector;
 	std::mutex _mutex;
+	ThreadPool* _threadPool;
 
 	// Singleton pattern
 	static FramesManager* _instance;
 	FramesManager();
 	static std::mutex _instaceMutex;
-	// FramesManager(FramesManager const&);  // Desabling copy constructor
-	// void operator=(FramesManager const&); // Desabling copy operator
 
 	// Allowing parallelism
 	static void updateHelper(std::list<Observer*>::iterator it);

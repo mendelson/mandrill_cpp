@@ -9,7 +9,7 @@ class FramesManager;
 class Observer
 {
 public:
-	virtual void Update(FramesManager* theChangedSubject) = 0;
+	virtual void Update() = 0;
 	virtual void setSubject(FramesManager* subject) = 0;
 
 protected:

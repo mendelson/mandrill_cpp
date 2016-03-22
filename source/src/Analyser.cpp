@@ -15,12 +15,9 @@ Analyser::~Analyser()
 	_subject = 0;
 }
 
-void Analyser::Update(FramesManager* theChangedSubject)
+void Analyser::Update()
 {
-	if(theChangedSubject == _subject)
-	{
-		showLastFrameIndex();
-	}
+	showLastFrameIndex();
 }
 
 void Analyser::setSubject(FramesManager* subject)
@@ -35,4 +32,5 @@ void Analyser::showLastFrameIndex()
 	std::unique_lock<std::mutex> _lock(_mutex);
 	_currentFrame = _subject->getLatestFrameIndex();
 	std::cout << "Analyser: " << _currentFrame << "|" << std::endl;
+	// std::cout << "Analyser" << std::endl;
 }

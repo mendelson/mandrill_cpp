@@ -1,72 +1,56 @@
 #include <opencv2/opencv.hpp>
 #include <thread>
+#include <signal.h>
 #include "Core.hpp"
 #include "Analyser.hpp"
 #include "Printer.hpp"
 
 static void framesManagerRunHelper(FramesManager* framesManager);
+volatile sig_atomic_t flag = 0;
+
+void handleInterruptionSignal(int sig)
+{
+	flag = 1;
+}
 
 Core::Core(std::string url, std::string model)
 {
-	// std::cout << "framesManager lixo: " << _framesManager << std::endl;
-	// std::cout << "retorno: " << FramesManager::getManager() << std::endl;
 	_framesManager = FramesManager::getManager();
 	_framesManager->setStreamSource(url, model);
-	// std::cout << "nha1 " << _framesManager->nha << std::endl;
-	// std::cout << "framesManager no construtor: " << _framesManager << std::endl;
 }
 
 void Core::run()
 {
-	// std::cout << "framesManager na run: " << _framesManager << std::endl;
+	signal(SIGINT, handleInterruptionSignal);
 
-	Analyser* anal = new Analyser();
+	Analyser* analyser = new Analyser();
 	Printer* printer = new Printer();
-	_framesManager->Attach(anal);
-	// FramesManager::getManager()->Attach(anal);
+	_framesManager->Attach(analyser);
 	_framesManager->Attach(printer);
-	
-	_threadVector->emplace_back(std::thread(framesManagerRunHelper, _framesManager));
 
-	// for(int i = 0; i < 100; i++)
-	// {
-	// 	std::cout << "hey" << std::endl;
-	// }
+	std::thread framesManagerThread (framesManagerRunHelper, _framesManager);
 
-	// if(_framesManager == FramesManager::getManager())
-	// {
-		// std::cout << "Sao iguais!" << std::endl;
-	// }
-	// else if (_framesManager != FramesManager::getManager())
-	// {
-		// std::cout << "Sao diferentes!" << std::endl;
-	// }
-
-	// std::cout << "nha2 " << _framesManager->nha << std::endl;
-	// std::cout << "nha02 " << FramesManager::getManager()->nha << std::endl;
-
-	// std::thread(framesManagerRunHelper, _framesManager).detach();
-	// framesManagerRunHelper(_framesManager);
-	// std::cout << "nha3 " << _framesManager->nha << std::endl;
-	// (*_threadVector)[0].join();
-	// std::cout << "ha" << std::endl;
 
 
 	// std::string test = getAction();
 
-	// std::cout << "ha" << std::endl;
-	// int i = 0;
-	// while(true)
-	// {
-	// 	std::cout << i << std::endl;
-	// 	i++;
-	// }
-
 	// joinAllThreads();
 	// std::cout << "ha" << std::endl;
-	// (*_threadVector)[0].join();
-	while(true);
 
+	std::cout << "hey" << std::endl;
+	while(true)
+	{
+		if(flag)
+		{
+			std::cout << "\n\nSIGINT caught!" << std::endl;
+			std::cout << "\n\nExiting Core smoothly..." << std::endl;
+			delete(ThreadPool::getThreadPool());
+			flag = 0;
+			break;
+		}
+	}
+
+	framesManagerThread.join();
 }
 
 void framesManagerRunHelper(FramesManager* framesManager)
@@ -85,15 +69,10 @@ std::string Core::getAction()
 	return action;
 }
 
-void Core::killThread(std::thread target)
-{
-	// TODO
-}
-
-void Core::joinAllThreads()
-{
-	for(unsigned int i = 0; i < (*_threadVector).size(); i++)
-	{
-		(*_threadVector)[i].join();
-	}
-}
+// void Core::joinAllThreads()
+// {
+// 	for(unsigned int i = 0; i < (*_threadVector).size(); i++)
+// 	{
+// 		(*_threadVector)[i].join();
+// 	}
+// }

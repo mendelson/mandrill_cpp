@@ -15,12 +15,9 @@ Printer::~Printer()
 	_subject = 0;
 }
 
-void Printer::Update(FramesManager* theChangedSubject)
+void Printer::Update()
 {
-	if(theChangedSubject == _subject)
-	{
-		showLastFrameIndex();
-	}
+	showLastFrameIndex();
 }
 
 void Printer::setSubject(FramesManager* subject)
@@ -35,4 +32,5 @@ void Printer::showLastFrameIndex()
 	std::unique_lock<std::mutex> _lock(_mutex);
 	_currentFrame = _subject->getLatestFrameIndex();
 	std::cout << "Printer: " << _currentFrame << "|" << std::endl;
+	// std::cout << "Printer" << std::endl;
 }

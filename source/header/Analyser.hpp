@@ -9,7 +9,7 @@ class Analyser : public Observer
 public:
 	Analyser();
 	~Analyser();
-	void Update(FramesManager* theChangedSubject);
+	void Update();
 	void setSubject(FramesManager* subject);
 
 private:
