@@ -20,10 +20,10 @@ void Printer::Update()
 	showLastFrameIndex();
 }
 
-void Printer::setSubject(FramesManager* subject)
-{
-	_subject = subject;
-}
+// void Printer::setSubject(FramesManager* subject)
+// {
+// 	_subject = subject;
+// }
 
 void Printer::showLastFrameIndex()
 {

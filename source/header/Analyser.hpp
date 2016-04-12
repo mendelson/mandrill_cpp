@@ -10,7 +10,7 @@ public:
 	Analyser();
 	~Analyser();
 	void Update();
-	void setSubject(FramesManager* subject);
+	// void setSubject(FramesManager* subject);
 
 private:
 	void showLastFrameIndex();

@@ -20,10 +20,10 @@ void Analyser::Update()
 	showLastFrameIndex();
 }
 
-void Analyser::setSubject(FramesManager* subject)
-{
-	_subject = subject;
-}
+// void Analyser::setSubject(FramesManager* subject)
+// {
+// 	_subject = subject;
+// }
 
 void Analyser::showLastFrameIndex()
 {

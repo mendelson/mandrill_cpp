@@ -4,6 +4,7 @@
 #include "Core.hpp"
 #include "Analyser.hpp"
 #include "Printer.hpp"
+#include "Processor.hpp"
 
 static void framesManagerRunHelper(FramesManager* framesManager);
 volatile sig_atomic_t flag = 0;

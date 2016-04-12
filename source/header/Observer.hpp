@@ -10,7 +10,7 @@ class Observer
 {
 public:
 	virtual void Update() = 0;
-	virtual void setSubject(FramesManager* subject) = 0;
+	void setSubject(FramesManager* subject) {this->_subject = subject;};
 
 protected:
 	FramesManager* _subject;
