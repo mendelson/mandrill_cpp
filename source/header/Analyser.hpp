@@ -1,5 +1,4 @@
-#ifndef ANALYSER_H
-#define ANALYSER_H
+#pragma once
 
 // #include "Observer.h"
 // #include "FramesManager.h"
@@ -15,5 +14,3 @@ public:
 private:
 	void showLastFrameIndex();
 };
-
-#endif

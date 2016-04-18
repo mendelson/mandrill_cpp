@@ -3,18 +3,6 @@
 #include "FramesManager.hpp"
 #include "Printer.hpp"
 
-Printer::Printer()
-{
-	_subject = 0;
-	// locked = false;
-	_currentFrame = -1;
-}
-
-Printer::~Printer()
-{
-	_subject = 0;
-}
-
 void Printer::Update()
 {
 	showLastFrameIndex();
@@ -30,7 +18,7 @@ void Printer::showLastFrameIndex()
 	auto frame = std::make_shared<cv::Mat>(_subject->getLatestFrame());
 
 	std::unique_lock<std::mutex> _lock(_mutex);
-	_currentFrame = _subject->getLatestFrameIndex();
-	std::cout << "Printer: " << _currentFrame << "|" << std::endl;
+	_currentFrameIndex = _subject->getLatestFrameIndex();
+	std::cout << "Printer: " << _currentFrameIndex << "|" << std::endl;
 	// std::cout << "Printer" << std::endl;
 }

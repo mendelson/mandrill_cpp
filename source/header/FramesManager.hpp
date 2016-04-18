@@ -1,5 +1,4 @@
-#ifndef FRAMES_MANAGER_H
-#define FRAMES_MANAGER_H
+#pragma once
 
 #include <memory>
 #include <unordered_map>
@@ -57,5 +56,3 @@ private:
 	// Allowing parallelism
 	static void updateHelper(std::list<Observer*>::iterator it);
 };
-
-#endif

@@ -4,7 +4,8 @@
 #include "Core.hpp"
 #include "Analyser.hpp"
 #include "Printer.hpp"
-#include "Processor.hpp"
+#include "MeanCalculator.hpp"
+#include "GreyProcessor.hpp"
 
 static void framesManagerRunHelper(FramesManager* framesManager);
 volatile sig_atomic_t flag = 0;
@@ -24,10 +25,12 @@ void Core::run()
 {
 	signal(SIGINT, handleInterruptionSignal);
 
-	Analyser* analyser = new Analyser();
-	Printer* printer = new Printer();
-	_framesManager->Attach(analyser);
-	_framesManager->Attach(printer);
+	// Observer* analyser = new Analyser();
+	// Observer* printer = new Printer();
+	Observer* processor = new GreyProcessor();
+	// _framesManager->Attach(analyser);
+	// _framesManager->Attach(printer);
+	_framesManager->Attach(processor);
 
 	std::thread framesManagerThread (framesManagerRunHelper, _framesManager);
 
@@ -38,7 +41,7 @@ void Core::run()
 	// joinAllThreads();
 	// std::cout << "ha" << std::endl;
 
-	std::cout << "hey" << std::endl;
+	// std::cout << "hey" << std::endl;
 	while(true)
 	{
 		if(flag)
