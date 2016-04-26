@@ -2,7 +2,7 @@
 #include "GreyProcessor.hpp"
 #include "FramesManager.hpp"
 
-const double FPSGRAY = 30;
+const double FPSGRAY = 20;
 
 GreyProcessor::~GreyProcessor()
 {
@@ -41,5 +41,5 @@ void GreyProcessor::setSubject(FramesManager* subject)
 // void GreyProcessor::saveFrame(cv::Mat frame, cv::VideoWriter* outputStream)
 void GreyProcessor::saveFrame(cv::Mat frame)
 {
-	(*_outputStream) << frame;
+	*_outputStream << frame;
 }

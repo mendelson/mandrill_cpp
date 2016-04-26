@@ -2,7 +2,7 @@
 #include "Saver.hpp"
 #include "FramesManager.hpp"
 
-const double FPSSAVER = 30;
+const double FPSSAVER = 20;
 
 Saver::~Saver()
 {
