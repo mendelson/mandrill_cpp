@@ -1,5 +1,15 @@
 #include <iostream>
 #include "GreyProcessor.hpp"
+#include "FramesManager.hpp"
+
+const double FPSGRAY = 30;
+
+GreyProcessor::~GreyProcessor()
+{
+	_outputStream->release();
+	delete _outputStream;
+	std::cout << "wow!" << std::endl;
+}
 
 void GreyProcessor::Update()
 {
@@ -8,9 +18,28 @@ void GreyProcessor::Update()
 	std::unique_lock<std::mutex> _lock(_mutex);
   getCurrentFrame();
 
-	cv::cvtColor(*_frame, _greyFrame, CV_BGR2GRAY);
+	cv::Mat oneChannelGreyFrame;
+
+	cv::cvtColor(*_frame, oneChannelGreyFrame, CV_RGB2GRAY);
+	cv::cvtColor(oneChannelGreyFrame, _greyFrame, CV_GRAY2RGB);
 
 	std::cout << "GreyProcessor: " << _currentFrameIndex << "|" << std::endl;
 
-  // TODO: video writer!
+	saveFrame(_greyFrame);
+  // saveFrame(*_frame);
+}
+
+void GreyProcessor::setSubject(FramesManager* subject)
+{
+	this->_subject = subject;
+	_outputStream = new cv::VideoWriter("data/streaming/greyStream.avi",
+ 								 CV_FOURCC('M','P','E','G'),
+ 								 FPSGRAY,
+ 								 cvSize((int)_subject->getFramesWidth(),(int)_subject->getFramesHeight()));
+}
+
+// void GreyProcessor::saveFrame(cv::Mat frame, cv::VideoWriter* outputStream)
+void GreyProcessor::saveFrame(cv::Mat frame)
+{
+	(*_outputStream) << frame;
 }

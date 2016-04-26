@@ -4,8 +4,8 @@
 #include "Core.hpp"
 #include "Analyser.hpp"
 #include "Printer.hpp"
-#include "MeanCalculator.hpp"
 #include "GreyProcessor.hpp"
+#include "Saver.hpp"
 
 static void framesManagerRunHelper(FramesManager* framesManager);
 volatile sig_atomic_t flag = 0;
@@ -28,9 +28,11 @@ void Core::run()
 	// Observer* analyser = new Analyser();
 	// Observer* printer = new Printer();
 	Observer* processor = new GreyProcessor();
+	Observer* saver = new Saver();
 	// _framesManager->Attach(analyser);
 	// _framesManager->Attach(printer);
 	_framesManager->Attach(processor);
+	_framesManager->Attach(saver);
 
 	std::thread framesManagerThread (framesManagerRunHelper, _framesManager);
 

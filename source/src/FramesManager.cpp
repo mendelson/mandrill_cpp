@@ -1,14 +1,12 @@
+#include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
 #include <thread>
-// #include <memory>
-// #include <opencv2/opencv.hpp>
-// #include <unordered_map>
-// #include <list>
-// #include "Observer.hpp"
 #include "FramesManager.hpp"
 
 FramesManager* FramesManager::_instance = 0;
 std::mutex FramesManager::_instaceMutex;
+
+// void saveFrame(cv::Mat frame);
 
 FramesManager* FramesManager::getManager()
 {
@@ -18,10 +16,9 @@ FramesManager* FramesManager::getManager()
 	{
 		_instance = new FramesManager();
 	}
-	
+
 	return _instance;
 }
-
 
 FramesManager::FramesManager()
 {
@@ -37,7 +34,7 @@ void FramesManager::addFrame(cv::Mat frame)
 	_mutex.lock();
 
 	_latestFrame++;
-	
+
 	// std::cout << _latestFrame << std::endl;
 
 	if(_framesSet.size() >= MAXFRAMES)
@@ -46,7 +43,7 @@ void FramesManager::addFrame(cv::Mat frame)
 	}
 
 	_framesSet.emplace(_latestFrame, std::make_shared<cv::Mat>(frame));
-	
+
 	_mutex.unlock();
 
 	Notify();
@@ -76,6 +73,10 @@ void FramesManager::run()
 		exit(1);
 	}
 
+
+	// double fps = 30;
+	// cv::VideoWriter outputStream("streaming/testStream.avi", CV_FOURCC('M','P','E','G'), fps, cvSize((int)_camera->getWidth(),(int)_camera->getHeight()));
+
 	while(true)
 	{
 		if(ThreadPool::mustStop())
@@ -90,7 +91,10 @@ void FramesManager::run()
 			// cv::imshow("Live streaming from " + _camera->getIp(), frame);
 
 			if(!ThreadPool::mustStop())
+			{
 				addFrame(frame);
+				// saveFrame(frame, outputStream);
+			}
 		}
 
 		// // "ESC" key aborts execution
@@ -104,7 +108,7 @@ void FramesManager::setStreamSource(std::string url, std::string model)
 {
 	_url = url;
 	_model = model;
-	
+
 	_camera = new Camera(_url, _model);
 }
 
@@ -122,6 +126,17 @@ void FramesManager::Detach(Observer* observer)
 
 	_observers.remove(observer);
 }
+
+double FramesManager::getFramesWidth()
+{
+	return _camera->getWidth();
+}
+
+double FramesManager::getFramesHeight()
+{
+	return _camera->getHeight();
+}
+
 
 void FramesManager::Notify()
 {
@@ -142,3 +157,18 @@ void FramesManager::Notify()
 // 	// (*it)->Update(FramesManager::getManager());
 // 	(*it)->Update();
 // }
+
+void FramesManager::saveFrame(cv::Mat frame, cv::VideoWriter outputStream)
+{
+	// cv::Mat _greyFrame;
+	// cv::cvtColor(frame, _greyFrame, CV_RGB2GRAY);
+	// cv::cvtColor(_greyFrame, frame, CV_GRAY2RGB);
+
+	// std::cout << _greyFrame.cols << " | " << _greyFrame.rows << std::endl;
+	// std::cout << frame.channels() << " | " << _greyFrame.channels() << std::endl;
+
+	// outputStream << _greyFrame;
+	outputStream << frame;
+
+	// std::cout << "width = " << _camera->getWidth() << "     " << "height = "<< _camera->getHeight() << std::endl;
+}

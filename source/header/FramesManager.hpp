@@ -34,6 +34,9 @@ public:
 	void Attach(Observer*);
 	void Detach(Observer*);
 
+	double getFramesWidth();
+	double getFramesHeight();
+
 private:
 	void addFrame(cv::Mat frame);
 	void Notify();
@@ -44,7 +47,6 @@ private:
 	Camera* _camera;
 	unsigned int _latestFrame;
 	observersList _observers;
-	// std::vector<std::thread> _threadsVector;
 	std::mutex _mutex;
 	ThreadPool* _threadPool;
 
@@ -54,5 +56,8 @@ private:
 	static std::mutex _instaceMutex;
 
 	// Allowing parallelism
-	static void updateHelper(std::list<Observer*>::iterator it);
+	// static void updateHelper(std::list<Observer*>::iterator it);
+
+
+	void saveFrame(cv::Mat frame, cv::VideoWriter outputStream);
 };

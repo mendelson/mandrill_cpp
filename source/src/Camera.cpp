@@ -31,7 +31,8 @@ Camera::Camera(std::string url, std::string model)
 
     // Opening video capture
     _frameCap = new cv::VideoCapture(_url);
-
+    _width = _frameCap->get(CV_CAP_PROP_FRAME_WIDTH);
+    _height = _frameCap->get(CV_CAP_PROP_FRAME_HEIGHT);
 }
 
 void Camera::updateFrame()
@@ -60,6 +61,16 @@ std::string Camera::getUrl()
 Camera::~Camera()
 {
     free(_frameCap);
+}
+
+double Camera::getWidth()
+{
+  return _width;
+}
+
+double Camera::getHeight()
+{
+  return _height;
 }
 
 // .mp4 ou .mkv
