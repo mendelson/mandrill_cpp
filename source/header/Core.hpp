@@ -1,5 +1,4 @@
-#ifndef CORE_H
-#define CORE_H
+#pragma once
 
 #include <iostream>
 #include <vector>
@@ -18,5 +17,3 @@ private:
 	// std::vector<std::thread>* _threadVector;
 	FramesManager* _framesManager;
 };
-
-#endif

@@ -27,23 +27,15 @@ void Core::run()
 
 	// Observer* analyser = new Analyser();
 	// Observer* printer = new Printer();
-	Observer* processor = new GreyProcessor();
+	Observer* greyProcessor = new GreyProcessor();
 	Observer* saver = new Saver();
 	// _framesManager->Attach(analyser);
 	// _framesManager->Attach(printer);
-	_framesManager->Attach(processor);
+	_framesManager->Attach(greyProcessor);
 	_framesManager->Attach(saver);
 
 	std::thread framesManagerThread (framesManagerRunHelper, _framesManager);
 
-
-
-	// std::string test = getAction();
-
-	// joinAllThreads();
-	// std::cout << "ha" << std::endl;
-
-	// std::cout << "hey" << std::endl;
 	while(true)
 	{
 		if(flag)
@@ -74,11 +66,3 @@ std::string Core::getAction()
 
 	return action;
 }
-
-// void Core::joinAllThreads()
-// {
-// 	for(unsigned int i = 0; i < (*_threadVector).size(); i++)
-// 	{
-// 		(*_threadVector)[i].join();
-// 	}
-// }

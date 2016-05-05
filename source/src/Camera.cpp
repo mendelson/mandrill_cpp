@@ -33,6 +33,17 @@ Camera::Camera(std::string url, std::string model)
     _frameCap = new cv::VideoCapture(_url);
     _width = _frameCap->get(CV_CAP_PROP_FRAME_WIDTH);
     _height = _frameCap->get(CV_CAP_PROP_FRAME_HEIGHT);
+    _fps = _frameCap->get(CV_CAP_PROP_FPS);
+
+    // ///////////////////////////////////
+    // int ex = static_cast<int>(_frameCap->get(CV_CAP_PROP_FOURCC));
+    //
+    // // Transform from int to char via Bitwise operators
+    // char EXT[] = {(char)(ex & 0XFF),(char)((ex & 0XFF00) >> 8),(char)((ex & 0XFF0000) >> 16),(char)((ex & 0XFF000000) >> 24),0};
+    // std::cout << "Olha: |" << EXT << "|" << std::endl;
+    // // std::cout << "Olha: " << _frameCap->get(CV_CAP_PROP_FOURCC) << std::endl;
+    // ///////////////////////////////////
+
 }
 
 void Camera::updateFrame()
@@ -71,6 +82,12 @@ double Camera::getWidth()
 double Camera::getHeight()
 {
   return _height;
+}
+
+double Camera::getFps()
+{
+  _fps = _frameCap->get(CV_CAP_PROP_FPS);
+  return _fps;
 }
 
 // .mp4 ou .mkv

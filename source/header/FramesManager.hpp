@@ -36,6 +36,7 @@ public:
 
 	double getFramesWidth();
 	double getFramesHeight();
+	double getCameraFPS();
 
 private:
 	void addFrame(cv::Mat frame);
@@ -45,7 +46,7 @@ private:
 	std::string _url;
 	std::string _model;
 	Camera* _camera;
-	unsigned int _latestFrame;
+	unsigned int _latestFrameIndex;
 	observersList _observers;
 	std::mutex _mutex;
 	ThreadPool* _threadPool;

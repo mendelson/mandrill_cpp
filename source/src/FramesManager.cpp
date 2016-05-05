@@ -24,7 +24,7 @@ FramesManager::FramesManager()
 {
 	_url = "";
 	_model = "";
-	_latestFrame = -1;
+	_latestFrameIndex = -1;
 	_camera = NULL;
 	_threadPool = ThreadPool::getThreadPool();
 }
@@ -33,16 +33,16 @@ void FramesManager::addFrame(cv::Mat frame)
 {
 	_mutex.lock();
 
-	_latestFrame++;
-
-	// std::cout << _latestFrame << std::endl;
+	// std::cout << _latestFrameIndex << std::endl;
 
 	if(_framesSet.size() >= MAXFRAMES)
 	{
-		_framesSet.erase(_latestFrame - MAXFRAMES);
+		_framesSet.erase(_latestFrameIndex + 1 - MAXFRAMES);
 	}
 
-	_framesSet.emplace(_latestFrame, std::make_shared<cv::Mat>(frame));
+	_framesSet.emplace(_latestFrameIndex + 1, std::make_shared<cv::Mat>(frame));
+
+	_latestFrameIndex++;
 
 	_mutex.unlock();
 
@@ -51,17 +51,19 @@ void FramesManager::addFrame(cv::Mat frame)
 
 cv::Mat FramesManager::getFrame(unsigned int index)
 {
+	std::unique_lock<std::mutex> _lock(_mutex);
 	return *_framesSet[index];
 }
 
 cv::Mat FramesManager::getLatestFrame()
 {
-	return *_framesSet[_latestFrame];
+	std::unique_lock<std::mutex> _lock(_mutex);
+	return *_framesSet[_latestFrameIndex];
 }
 
 unsigned int FramesManager::getLatestFrameIndex()
 {
-	return _latestFrame;
+	return _latestFrameIndex;
 }
 
 void FramesManager::run()
@@ -83,6 +85,7 @@ void FramesManager::run()
 			break;
 
 		_camera->updateFrame();
+		// std::cout << "FPS: " << _camera->getFps() << std::endl;
 
 		cv::Mat frame = _camera->getFrame().clone();
 
@@ -137,6 +140,10 @@ double FramesManager::getFramesHeight()
 	return _camera->getHeight();
 }
 
+double FramesManager::getCameraFPS()
+{
+	return _camera->getFps();
+}
 
 void FramesManager::Notify()
 {
@@ -146,7 +153,6 @@ void FramesManager::Notify()
 
 	for(it = _observers.begin(); it != _observers.end(); it++)
 	{
-		// TODO: thread pool instead of the following gambiarra
 		// std::thread(FramesManager::updateHelper, it).detach();
 		_threadPool->enqueue(*it);
 	}

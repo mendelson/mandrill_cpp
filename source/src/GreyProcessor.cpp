@@ -2,8 +2,6 @@
 #include "GreyProcessor.hpp"
 #include "FramesManager.hpp"
 
-const double FPSGRAY = 20;
-
 GreyProcessor::~GreyProcessor()
 {
 	_outputStream->release();
@@ -16,7 +14,7 @@ void GreyProcessor::Update()
   // auto frame = std::make_shared<cv::Mat>(_subject->getLatestFrame());
 
 	std::unique_lock<std::mutex> _lock(_mutex);
-  getCurrentFrame();
+  	getCurrentFrame();
 
 	cv::Mat oneChannelGreyFrame;
 
@@ -33,8 +31,8 @@ void GreyProcessor::setSubject(FramesManager* subject)
 {
 	this->_subject = subject;
 	_outputStream = new cv::VideoWriter("data/streaming/greyStream.avi",
- 								 CV_FOURCC('M','P','E','G'),
- 								 FPSGRAY,
+ 								 CV_FOURCC('X', '2', '6', '4'),
+ 								 _subject->getCameraFPS(),
  								 cvSize((int)_subject->getFramesWidth(),(int)_subject->getFramesHeight()));
 }
 

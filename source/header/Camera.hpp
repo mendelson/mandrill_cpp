@@ -16,12 +16,14 @@ public:
     std::string getUrl();
     double getWidth();
     double getHeight();
+    double getFps();
 
 private:
     const std::string _url;
     const std::string _model;
     double _width;
     double _height;
+    double _fps;
     std::string _ip;
     cv::VideoCapture* _frameCap;
     cv::Mat _frame;

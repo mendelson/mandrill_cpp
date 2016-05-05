@@ -2,8 +2,6 @@
 #include "Saver.hpp"
 #include "FramesManager.hpp"
 
-const double FPSSAVER = 20;
-
 Saver::~Saver()
 {
 	_outputStream->release();
@@ -27,8 +25,8 @@ void Saver::setSubject(FramesManager* subject)
 {
 	this->_subject = subject;
 	_outputStream = new cv::VideoWriter("data/streaming/originalStream.avi",
- 								 CV_FOURCC('M','P','E','G'),
- 								 FPSSAVER,
+ 								 CV_FOURCC('X', '2', '6', '4'),
+ 								 _subject->getCameraFPS(),
  								 cvSize((int)_subject->getFramesWidth(),(int)_subject->getFramesHeight()));
 }
 
