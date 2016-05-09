@@ -1,5 +1,5 @@
-#ifndef THREADPOOL_H
-#define THREADPOOL_H
+#pragma once
+
 
 #include <thread>
 #include <mutex>
@@ -47,5 +47,3 @@ private:
     static bool stop;
 };
 
-
-#endif

@@ -1,4 +1,8 @@
 #include "Core.hpp"
+#define DEBUG
+
+std::mutex printer_mutex;
+
 
 int main(int argc, char *argv[])
 {

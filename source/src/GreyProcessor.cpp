@@ -1,6 +1,7 @@
 #include <iostream>
 #include "GreyProcessor.hpp"
 #include "FramesManager.hpp"
+#include "Printer.hpp"
 
 GreyProcessor::~GreyProcessor()
 {
@@ -21,7 +22,7 @@ void GreyProcessor::Update()
 	cv::cvtColor(*_frame, oneChannelGreyFrame, CV_RGB2GRAY);
 	cv::cvtColor(oneChannelGreyFrame, _greyFrame, CV_GRAY2RGB);
 
-	std::cout << "GreyProcessor: " << _currentFrameIndex << "|" << std::endl;
+	Printer::safe_print("GreyProcessor: " + std::to_string(_currentFrameIndex));
 
 	saveFrame(_greyFrame);
   // saveFrame(*_frame);

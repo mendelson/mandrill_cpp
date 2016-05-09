@@ -1,5 +1,5 @@
-#ifndef CAMERA_H
-#define CAMERA_H
+#pragma once
+
 
 // #include <iostream>
 // #include <opencv2/opencv.hpp>
@@ -28,5 +28,3 @@ private:
     cv::VideoCapture* _frameCap;
     cv::Mat _frame;
 };
-
-#endif

@@ -1,19 +1,10 @@
-#ifndef PRINTER_H
-#define PRINTER_H
+#pragma once
 
-// #include "Observer.h"
-// #include "FramesManager.h"
-
-class Printer : public Observer
+class Printer
 {
 public:
 	Printer();
 	~Printer();
-	void Update();
-	// void setSubject(FramesManager* subject);
-
-private:
-	void showLastFrameIndex();
+	static void safe_print(std::string);
 };
 
-#endif

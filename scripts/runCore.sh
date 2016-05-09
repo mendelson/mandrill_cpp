@@ -13,8 +13,7 @@
 # bin/MandrillCore rtsp://root:akts@10.190.60.117/live.sdp vivotek_fd8136
 # bin/MandrillCore rtsp://root:akts@10.190.60.117/axis-media/media.amp axis_p3364
 bin/MandrillCore rtsp://root:akts@10.190.60.102/live.sdp VIVOTEK_FD8136
-
-
+# bin/MandrillCore "rtsp://admin:admin@10.190.60.130:554/cam/realmonitor?channel=1&subtype=0" "INTELBRAS"
 
 
 # 10.190.60.102 VIVOTEK FD8136 MENDI 01

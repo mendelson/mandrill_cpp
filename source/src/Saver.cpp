@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Saver.hpp"
 #include "FramesManager.hpp"
+#include "Printer.hpp"
 
 Saver::~Saver()
 {
@@ -14,9 +15,9 @@ void Saver::Update()
   // auto frame = std::make_shared<cv::Mat>(_subject->getLatestFrame());
 
 	std::unique_lock<std::mutex> _lock(_mutex);
-  getCurrentFrame();
+  	getCurrentFrame();
 
-	std::cout << "Saver: " << _currentFrameIndex << "|" << std::endl;
+	Printer::safe_print("Saver: " + std::to_string(_currentFrameIndex));
 
 	saveFrame();
 }

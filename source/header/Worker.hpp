@@ -1,5 +1,5 @@
-#ifndef WORKER_H
-#define WORKER_H
+#pragma once
+
 
 #include <thread>
 #include <mutex>
@@ -17,4 +17,3 @@ private:
     ThreadPool &pool;
 };
 
-#endif

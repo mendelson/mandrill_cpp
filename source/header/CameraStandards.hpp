@@ -1,5 +1,4 @@
-#ifndef CAMERA_STANDARDS_H
-#define CAMERA_STANDARDS_H
+#pragma once
 
 #include <iostream>
 
@@ -17,4 +16,3 @@ public:
 	static std::string getVideoStreamPath(const CameraStandards::MODEL&);
 };
 
-#endif

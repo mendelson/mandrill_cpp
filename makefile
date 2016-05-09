@@ -5,7 +5,7 @@ BIN_PATH = bin
 DEP_PATH = dep
 
 _OBJ = main.o Core.o FramesManager.o Analyser.o Printer.o Camera.o ThreadPool.o
-_OBJ += Worker.o Processor.o Observer.o GreyProcessor.o Saver.o
+_OBJ += Worker.o Processor.o Observer.o GreyProcessor.o Saver.o MeanProcessor.o
 OBJ = $(patsubst %,$(BIN_PATH)/%,$(_OBJ))
 
 DIRECTIVES = -std=c++0x -Wall -c -I $(HEADER_PATH)

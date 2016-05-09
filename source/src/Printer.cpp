@@ -1,24 +1,20 @@
 #include <iostream>
-#include "Observer.hpp"
-#include "FramesManager.hpp"
+#include <mutex>
 #include "Printer.hpp"
 
-void Printer::Update()
+extern std::mutex printer_mutex;
+
+
+void Printer::safe_print(std::string Msg)
 {
-	showLastFrameIndex();
-}
+	#ifdef DEBUG
+		printer_mutex.lock();
+	#endif	
+		
+	std::cout << Msg << std::endl;
 
-// void Printer::setSubject(FramesManager* subject)
-// {
-// 	_subject = subject;
-// }
+	#ifdef DEBUG
+		printer_mutex.unlock();
+	#endif	
 
-void Printer::showLastFrameIndex()
-{
-	auto frame = std::make_shared<cv::Mat>(_subject->getLatestFrame());
-
-	std::unique_lock<std::mutex> _lock(_mutex);
-	_currentFrameIndex = _subject->getLatestFrameIndex();
-	std::cout << "Printer: " << _currentFrameIndex << "|" << std::endl;
-	// std::cout << "Printer" << std::endl;
 }
