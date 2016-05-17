@@ -7,6 +7,7 @@
 #include "GreyProcessor.hpp"
 #include "Saver.hpp"
 #include "MeanProcessor.hpp"
+#include "MovementProcessor.hpp"
 
 
 static void framesManagerRunHelper(FramesManager* framesManager);
@@ -32,11 +33,14 @@ void Core::run()
 	Observer* greyProcessor = new GreyProcessor();
 	Observer* saver = new Saver();
 	Observer* meanProcessor = new MeanProcessor();
+	Observer* moveProcessor = new MovementProcessor();
 	// _framesManager->Attach(analyser);
 	// _framesManager->Attach(printer);
 	_framesManager->Attach(greyProcessor);
 	_framesManager->Attach(saver);
 	_framesManager->Attach(meanProcessor);
+	_framesManager->Attach(moveProcessor);
+
 
 	std::thread framesManagerThread (framesManagerRunHelper, _framesManager);
 

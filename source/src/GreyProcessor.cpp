@@ -7,7 +7,7 @@ GreyProcessor::~GreyProcessor()
 {
 	_outputStream->release();
 	delete _outputStream;
-	std::cout << "wow!" << std::endl;
+	// std::cout << "wow!" << std::endl;
 }
 
 void GreyProcessor::Update()
