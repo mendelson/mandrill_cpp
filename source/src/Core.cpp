@@ -8,6 +8,7 @@
 #include "Saver.hpp"
 #include "MeanProcessor.hpp"
 #include "CodecsConfig.hpp"
+#include "MovementProcessor.hpp"
 
 static void framesManagerRunHelper(FramesManager* framesManager);
 volatile sig_atomic_t flag = 0;
@@ -32,12 +33,15 @@ void Core::run()
 	// Observer* printer = new Printer();
 	Observer* greyProcessor = new GreyProcessor("H.264");
 	Observer* saver = new Saver("H.264");
-	// Observer* meanProcessor = new MeanProcessor();
+	Observer* meanProcessor = new MeanProcessor();
+	Observer* moveProcessor = new MovementProcessor();
+
 	// _framesManager->Attach(analyser);
 	// _framesManager->Attach(printer);
 	_framesManager->Attach(greyProcessor);
 	_framesManager->Attach(saver);
-	// _framesManager->Attach(meanProcessor);
+	_framesManager->Attach(meanProcessor);
+	_framesManager->Attach(moveProcessor);
 
 	std::thread framesManagerThread (framesManagerRunHelper, _framesManager);
 
