@@ -2,8 +2,13 @@
 #include "MovementProcessor.hpp"
 #include "FramesManager.hpp"
 #include "Printer.hpp"
+#include "CodecsConfig.hpp"
 
-
+MovementProcessor::MovementProcessor(std::string codecName) : _codecName(codecName)
+{
+  _currentFrameIndex = -1;
+  _subject = nullptr;
+}
 
 MovementProcessor::~MovementProcessor()
 {
@@ -64,8 +69,14 @@ void MovementProcessor::Update()
 void MovementProcessor::setSubject(FramesManager* subject)
 {
 	this->_subject = subject;
-	_outputStream = new cv::VideoWriter("data/streaming/moveStream.avi",
- 								 CV_FOURCC('X', '2', '6', '4'),
+	std::string extension = CodecsConfig::getCodecExtension(_codecName);
+	int fourccCode = CodecsConfig::getCodecFourcc(_codecName);
+
+	if(extension.empty() || fourccCode == -4)
+		exit(-4);
+
+	_outputStream = new cv::VideoWriter("data/streaming/moveStream." + extension,
+ 								 fourccCode,
  								 _subject->getCameraFPS(),
  								 cvSize((int)_subject->getFramesWidth(),(int)_subject->getFramesHeight()));
 }

@@ -5,6 +5,7 @@
 class MovementProcessor : public Processor
 {
 public:
+  MovementProcessor(std::string codecName);
   ~MovementProcessor();
   void Update();
   void searchMovement(cv::Mat, cv::Mat);
@@ -19,4 +20,5 @@ private:
   unsigned int _storedFrameIndex;
   cv::Mat _storedFrame;
   void saveFrame(cv::Mat frame);
+  std::string _codecName;
 };

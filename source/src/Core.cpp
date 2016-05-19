@@ -34,7 +34,7 @@ void Core::run()
 	Observer* greyProcessor = new GreyProcessor("H.264");
 	Observer* saver = new Saver("H.264");
 	Observer* meanProcessor = new MeanProcessor();
-	Observer* moveProcessor = new MovementProcessor();
+	Observer* moveProcessor = new MovementProcessor("H.264");
 
 	// _framesManager->Attach(analyser);
 	// _framesManager->Attach(printer);

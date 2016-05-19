@@ -12,8 +12,5 @@ public:
 
 private:
 	std::string getAction();
-	// void killThread(std::thread target);
-
-	// std::vector<std::thread>* _threadVector;
 	FramesManager* _framesManager;
 };
