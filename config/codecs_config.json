@@ -1,0 +1,39 @@
+// http://www.fourcc.org/codecs.php
+
+// codecName=    H.264
+// codecFourcc   =X264
+// fileExtension = avi
+
+// codecName=    H.264
+// codecFourcc    =X264
+// fileExtension = avi
+
+// codecName=    H.264
+// codecFourcc    =X264
+// fileExtension = avi
+
+// codecName=    H.264
+// codecFourcc    =X264
+// fileExtension = avi
+
+// codecName=    H.264
+// codecFourcc    =X264
+// fileExtension = avi
+
+// codecName=    H.264
+// codecFourcc    =X264
+// fileExtension = avi
+
+[
+	{
+		"codecName": "H.264",
+		"codecFourcc": "X264",
+		"fileExtension": "avi"
+	},
+
+	{
+		"codecName": "abc",
+		"codecFourcc": "asdf",
+		"fileExtension": "mp4"
+	}
+]

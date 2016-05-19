@@ -5,12 +5,14 @@
 class GreyProcessor : public Processor
 {
 public:
-  ~GreyProcessor();
-  void Update();
-  void setSubject(FramesManager* subject);
+	GreyProcessor(std::string codecName);
+  	~GreyProcessor();
+  	void Update();
+  	void setSubject(FramesManager* subject);
 
 private:
-  cv::Mat _greyFrame;
-  cv::VideoWriter* _outputStream;
-  void saveFrame(cv::Mat frame);
+  	cv::Mat _greyFrame;
+  	cv::VideoWriter* _outputStream;
+  	void saveFrame(cv::Mat frame);
+  	std::string _codecName;
 };

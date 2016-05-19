@@ -2,18 +2,22 @@
 #include "Saver.hpp"
 #include "FramesManager.hpp"
 #include "Printer.hpp"
+#include "CodecsConfig.hpp"
+
+Saver::Saver(std::string codecName) : _codecName(codecName)
+{
+  _currentFrameIndex = -1;
+  _subject = nullptr;
+}
 
 Saver::~Saver()
 {
 	_outputStream->release();
 	delete _outputStream;
-	std::cout << "wow!" << std::endl;
 }
 
 void Saver::Update()
 {
-  // auto frame = std::make_shared<cv::Mat>(_subject->getLatestFrame());
-
 	std::unique_lock<std::mutex> _lock(_mutex);
   	getCurrentFrame();
 
@@ -25,8 +29,15 @@ void Saver::Update()
 void Saver::setSubject(FramesManager* subject)
 {
 	this->_subject = subject;
-	_outputStream = new cv::VideoWriter("data/streaming/originalStream.avi",
- 								 CV_FOURCC('X', '2', '6', '4'),
+	std::string extension = CodecsConfig::getCodecExtension(_codecName);
+	int fourccCode = CodecsConfig::getCodecFourcc(_codecName);
+
+	if(extension.empty() || fourccCode == -4)
+		exit(-4);
+
+	std::string outputFile = "data/streaming/originalStream." + extension;
+	_outputStream = new cv::VideoWriter(outputFile,
+ 								 fourccCode,
  								 _subject->getCameraFPS(),
  								 cvSize((int)_subject->getFramesWidth(),(int)_subject->getFramesHeight()));
 }

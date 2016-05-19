@@ -1,0 +1,15 @@
+Códigos de saída de erro:
+-1: Não foi possível abrir o arquivo de configuração dos codecs.
+
+-2: Não foi possível carregar o arquivo de configuração dos codecs no buffer de memória.
+
+-3: O arquivo JSON de configurações de codecs possui erros.
+
+-4: Nome de codec inválido.
+
+-5: O arquivo JSON de configurações de codecs não foi carregado em memória ainda.
+
+Jsoncpp em uso: 1.7.2
+$ git clone --branch 1.7.2 https://github.com/open-source-parsers/jsoncpp.git
+$ cd jsoncpp
+$ python amalgamate.py

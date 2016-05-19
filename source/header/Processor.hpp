@@ -7,10 +7,11 @@
 class Processor : public Observer
 {
 public:
-  virtual void Update() = 0;
+	virtual void Update() = 0;
 
 protected:
-  void getCurrentFrame();
+	void getCurrentFrame();
 
-  std::shared_ptr<cv::Mat> _frame;
+  	std::shared_ptr<cv::Mat> _frame;
+  	const std::string _codecName;
 };

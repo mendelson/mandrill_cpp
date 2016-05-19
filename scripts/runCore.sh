@@ -13,6 +13,7 @@
 # bin/MandrillCore rtsp://root:akts@10.190.60.117/live.sdp vivotek_fd8136
 # bin/MandrillCore rtsp://root:akts@10.190.60.117/axis-media/media.amp axis_p3364
 bin/MandrillCore rtsp://root:akts@10.190.60.102/live.sdp VIVOTEK_FD8136
+# gdb --args bin/MandrillCore rtsp://root:akts@10.190.60.102/live.sdp VIVOTEK_FD8136
 # bin/MandrillCore "rtsp://admin:admin@10.190.60.130:554/cam/realmonitor?channel=1&subtype=0" "INTELBRAS"
 
 
@@ -21,4 +22,4 @@ bin/MandrillCore rtsp://root:akts@10.190.60.102/live.sdp VIVOTEK_FD8136
 # 10.190.60.114 AXIS AXIS M1014
 # 10.190.60.108 IntelBras VIP-S3120
 # 10.190.60.115 AXIS AXIS Q1755
-# 10.190;60.123 GIGANTONA
+# 10.190.60.123 GIGANTONA

@@ -7,7 +7,7 @@
 #include "GreyProcessor.hpp"
 #include "Saver.hpp"
 #include "MeanProcessor.hpp"
-
+#include "CodecsConfig.hpp"
 
 static void framesManagerRunHelper(FramesManager* framesManager);
 volatile sig_atomic_t flag = 0;
@@ -21,6 +21,7 @@ Core::Core(std::string url, std::string model)
 {
 	_framesManager = FramesManager::getManager();
 	_framesManager->setStreamSource(url, model);
+	CodecsConfig::update();
 }
 
 void Core::run()
@@ -29,14 +30,14 @@ void Core::run()
 
 	// Observer* analyser = new Analyser();
 	// Observer* printer = new Printer();
-	Observer* greyProcessor = new GreyProcessor();
-	Observer* saver = new Saver();
-	Observer* meanProcessor = new MeanProcessor();
+	Observer* greyProcessor = new GreyProcessor("H.264");
+	Observer* saver = new Saver("H.264");
+	// Observer* meanProcessor = new MeanProcessor();
 	// _framesManager->Attach(analyser);
 	// _framesManager->Attach(printer);
 	_framesManager->Attach(greyProcessor);
 	_framesManager->Attach(saver);
-	_framesManager->Attach(meanProcessor);
+	// _framesManager->Attach(meanProcessor);
 
 	std::thread framesManagerThread (framesManagerRunHelper, _framesManager);
 

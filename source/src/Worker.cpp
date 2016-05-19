@@ -33,6 +33,8 @@ void Worker::operator()()
     Observer* task;
     while(true)
     {
+        task = nullptr;
+
         {   // acquire lock
             std::unique_lock<std::mutex> lock(pool.queue_mutex);
              
@@ -53,5 +55,6 @@ void Worker::operator()()
  
         // execute the task
         task->Update();
+
     }
 }

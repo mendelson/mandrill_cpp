@@ -2,18 +2,22 @@
 #include "GreyProcessor.hpp"
 #include "FramesManager.hpp"
 #include "Printer.hpp"
+#include "CodecsConfig.hpp"
+
+GreyProcessor::GreyProcessor(std::string codecName) : _codecName(codecName)
+{
+  _currentFrameIndex = -1;
+  _subject = nullptr;
+}
 
 GreyProcessor::~GreyProcessor()
 {
 	_outputStream->release();
 	delete _outputStream;
-	std::cout << "wow!" << std::endl;
 }
 
 void GreyProcessor::Update()
 {
-  // auto frame = std::make_shared<cv::Mat>(_subject->getLatestFrame());
-
 	std::unique_lock<std::mutex> _lock(_mutex);
   	getCurrentFrame();
 
@@ -25,19 +29,24 @@ void GreyProcessor::Update()
 	Printer::safe_print("GreyProcessor: " + std::to_string(_currentFrameIndex));
 
 	saveFrame(_greyFrame);
-  // saveFrame(*_frame);
 }
 
 void GreyProcessor::setSubject(FramesManager* subject)
 {
 	this->_subject = subject;
-	_outputStream = new cv::VideoWriter("data/streaming/greyStream.avi",
- 								 CV_FOURCC('X', '2', '6', '4'),
+	std::string extension = CodecsConfig::getCodecExtension(_codecName);
+	int fourccCode = CodecsConfig::getCodecFourcc(_codecName);
+
+	if(extension.empty() || fourccCode == -4)
+		exit(-4);
+
+	std::string outputFile = "data/streaming/greyStream." + extension;
+	_outputStream = new cv::VideoWriter(outputFile,
+ 								 fourccCode,
  								 _subject->getCameraFPS(),
  								 cvSize((int)_subject->getFramesWidth(),(int)_subject->getFramesHeight()));
 }
 
-// void GreyProcessor::saveFrame(cv::Mat frame, cv::VideoWriter* outputStream)
 void GreyProcessor::saveFrame(cv::Mat frame)
 {
 	*_outputStream << frame;

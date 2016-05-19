@@ -2,7 +2,7 @@
 
 #include <mutex>
 #include <iostream>
-// #include "FramesManager.hpp"
+#include <string>
 
 class FramesManager;
 
@@ -17,6 +17,5 @@ public:
 protected:
 	FramesManager* _subject;
 	unsigned int _currentFrameIndex;
-	// bool locked;
 	std::mutex _mutex;
 };

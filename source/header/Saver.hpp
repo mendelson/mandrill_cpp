@@ -5,11 +5,13 @@
 class Saver : public Processor
 {
 public:
-  ~Saver();
-  void Update();
-  void setSubject(FramesManager* subject);
+	Saver(std::string codecName);
+  	~Saver();
+  	void Update();
+  	void setSubject(FramesManager* subject);
 
 private:
-  cv::VideoWriter* _outputStream;
-  void saveFrame();
+  	cv::VideoWriter* _outputStream;
+  	void saveFrame();
+  	std::string _codecName;
 };
