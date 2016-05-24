@@ -4,6 +4,9 @@
 #include "Printer.hpp"
 #include "CodecsConfig.hpp"
 
+extern bool movDetected;
+
+
 MovementProcessor::MovementProcessor(std::string codecName) : _codecName(codecName)
 {
   _currentFrameIndex = -1;
@@ -61,13 +64,20 @@ void MovementProcessor::Update()
 	_storedFrame = *_frame;
   	_storedFrameIndex = _currentFrameIndex;
 
-	saveFrame(thresholdImage);
+  	searchMovement(frame1, frame2);
 
-	searchMovement(frame1, frame2);
+  	if(movDetected)
+		saveFrame(thresholdImage);
+
 }
 
 void MovementProcessor::setSubject(FramesManager* subject)
 {
+	// gets current time
+	time_t now = time(0);
+	tm *ltm = localtime(&now);
+	std::stringstream path;
+
 	this->_subject = subject;
 	std::string extension = CodecsConfig::getCodecExtension(_codecName);
 	int fourccCode = CodecsConfig::getCodecFourcc(_codecName);
@@ -75,7 +85,9 @@ void MovementProcessor::setSubject(FramesManager* subject)
 	if(extension.empty() || fourccCode == -4)
 		exit(-4);
 
-	_outputStream = new cv::VideoWriter("data/streaming/moveStream." + extension,
+	path <<  "data/streaming/moveStream/" << ltm->tm_mday << "." << extension;
+
+	_outputStream = new cv::VideoWriter(path.str() ,
  								 fourccCode,
  								 _subject->getCameraFPS(),
  								 cvSize((int)_subject->getFramesWidth(),(int)_subject->getFramesHeight()));
@@ -90,7 +102,6 @@ void MovementProcessor::saveFrame(cv::Mat frame)
 
 void MovementProcessor::searchMovement(cv::Mat frame1, cv::Mat frame2)
 {
-	bool movDetected = false;
 	cv::Mat thresholdImage;
 	cv::Mat temp;
 	std::vector< std::vector<cv::Point> > contours;

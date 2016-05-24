@@ -2,7 +2,7 @@
 #define DEBUG
 
 std::mutex printer_mutex;
-
+bool movDetected;
 
 int main(int argc, char *argv[])
 {
