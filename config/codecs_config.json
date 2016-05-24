@@ -8,8 +8,26 @@
 	},
 
 	{
-		"codecName": "abc",
-		"codecFourcc": "asdf",
-		"fileExtension": "mp4"
+		"codecName": "H.265/HEVC",
+		"codecFourcc": "HEVC",
+		"fileExtension": "avi"
+	},
+
+	{
+		"codecName": "DAVC",
+		"codecFourcc": "DAVC",
+		"fileExtension": "avi"
+	},
+
+	{
+		"codecName": "LEAD MPEG-4 Video Codec",
+		"codecFourcc": "LMP4",
+		"fileExtension": "avi"
+	},
+
+	{
+		"codecName": "FFMpeg",
+		"codecFourcc": "FMP4",
+		"fileExtension": "avi"
 	}
 ]

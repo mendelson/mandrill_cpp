@@ -13,3 +13,10 @@ Jsoncpp em uso: 1.7.2
 $ git clone --branch 1.7.2 https://github.com/open-source-parsers/jsoncpp.git
 $ cd jsoncpp
 $ python amalgamate.py
+
+
+To compile this module, simply run from the project's root directory:
+$ make
+
+If you want to make it faster to compile, add multi-core compilation:
+$ make -j $(nproc)
