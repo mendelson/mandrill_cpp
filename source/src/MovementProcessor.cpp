@@ -11,6 +11,8 @@ MovementProcessor::MovementProcessor(std::string codecName) : _codecName(codecNa
 {
   _currentFrameIndex = -1;
   _subject = nullptr;
+  _latestFrameIndex = -1;
+
 }
 
 MovementProcessor::~MovementProcessor()
@@ -41,6 +43,7 @@ void MovementProcessor::Update()
   	cv::cvtColor(frame1, grayImage1, CV_RGB2GRAY);
 	cv::cvtColor(grayImage1, _greyFrame, CV_GRAY2RGB);
 
+	addFrame(frame1);
 
   	// Printer::safe_print("MovementProcessor: " + std::to_string(_currentFrameIndex));
 
@@ -51,6 +54,8 @@ void MovementProcessor::Update()
   	// Printer::safe_print("MovementProcessor: " + std::to_string(_currentFrameIndex));
 
   	frame2 = *_frame;
+
+	addFrame(frame2);
 
   	cv::cvtColor(frame2, grayImage2, CV_RGB2GRAY);
 	cv::cvtColor(grayImage2, _greyFrame2, CV_GRAY2RGB);
@@ -66,7 +71,7 @@ void MovementProcessor::Update()
 
   	searchMovement(frame1, frame2);
 
-  	if(movDetected)
+  	if(_currentFrameIndex >= _firstFrame && _currentFrameIndex <= _lastFrame)
 		saveFrame(thresholdImage);
 
 }
@@ -108,7 +113,7 @@ void MovementProcessor::searchMovement(cv::Mat frame1, cv::Mat frame2)
 	std::vector<cv::Vec4i> hierarchy;
 	cv::Mat differenceImage;
 
-
+	// movement detection processing
 	cv::cvtColor(frame1, _greyFrame, cv::COLOR_BGR2GRAY);
 	cv::cvtColor(frame2, _greyFrame2, cv::COLOR_BGR2GRAY);
 	cv::absdiff(_greyFrame, _greyFrame2, differenceImage);	
@@ -116,21 +121,55 @@ void MovementProcessor::searchMovement(cv::Mat frame1, cv::Mat frame2)
 	cv::blur(thresholdImage,thresholdImage,cv::Size(BLUR_SIZE,BLUR_SIZE));
 	cv::threshold(thresholdImage,thresholdImage,SENSITIVITY_VALUE,255,cv::THRESH_BINARY);
 
+	// verifies if detection ocurres by analysing diff treated image
 	thresholdImage.copyTo(temp);
-
 	findContours(temp, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE );
 
-	if(contours.size() > 0){
-		movDetected = true;
-		Printer::safe_print("Movement found\n");
+	// verifies the occurrence of movement detection events
+	switch (movDetected) {
+		case true: // movement was detected in previous frame
+			// movement is detected again
+			if(contours.size() > 0){
+					movDetected = true;
+					Printer::safe_print("Movement found\n");
+			}
+			// movement stopped
+			else {
+				movDetected = false;
+				Printer::safe_print("Movement not found\n");
+				_lastFrame = _storedFrameIndex;
+			}
+		break;
 
+		case false: // movement was not detected till now
+			// movement is detected for the first time
+			if(contours.size() > 0){
+					movDetected = true;
+					Printer::safe_print("Movement found\n");
+					_firstFrame = _storedFrameIndex - 1;
+					_lastFrame = -1;
+			}
+			// movement  still not detected
+			else {
+				movDetected = false;
+				Printer::safe_print("Movement not found\n");
+			}
+		break;
 	}
-	else {
-		movDetected = false;
-		Printer::safe_print("Movement not found\n");
+	
 
+}
+
+
+void MovementProcessor::addFrame(cv::Mat frame)
+{
+
+	if(_cameraBuffer.size() >= MAXFRAMES)
+	{
+		_cameraBuffer.erase(_latestFrameIndex + 1 - MAXFRAMES);
 	}
 
+	_cameraBuffer.emplace(_latestFrameIndex + 1, std::make_shared<cv::Mat>(frame));
 
-
+	_latestFrameIndex++;
 }
