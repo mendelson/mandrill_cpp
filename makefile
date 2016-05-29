@@ -1,4 +1,4 @@
-CC = g++
+CC = g++ -pipe
 HEADER_PATH = source/header
 SRC_PATH = source/src
 BIN_PATH = bin

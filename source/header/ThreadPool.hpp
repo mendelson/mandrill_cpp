@@ -1,12 +1,10 @@
 #pragma once
 
-
 #include <thread>
 #include <mutex>
 #include <condition_variable>
 #include <vector>
 #include <deque>
-// #include <functional>
 #include "Worker.hpp"
 #include "Observer.hpp"
 
@@ -14,14 +12,9 @@ class ThreadPool {
 public:
     // Singleton pattern
     static ThreadPool* getThreadPool();
-    // ThreadPool(ThreadPool const&)  =  delete; // Desabling copy constructor
     void operator=(ThreadPool const&) =  delete; // Desabling copy operator
 
-    // template<class F>
-    // void enqueue(F f);
-    // void enqueue(std::function<void()> f);
-    // void enqueue(Observer* observer, FramesManager* framesManager);
-    void enqueue(Observer* observer);
+   void enqueue(Observer* observer);
     static bool mustStop() { return stop; }
     ~ThreadPool();
 
