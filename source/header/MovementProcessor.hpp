@@ -4,6 +4,8 @@
 #include "Processor.hpp"
 #include <ctime>
 
+const int MAXSAVING = 10;
+
 typedef std::unordered_map<unsigned int, std::shared_ptr<cv::Mat>> FramesSet;
 
 
@@ -24,12 +26,16 @@ private:
   cv::Mat _storedFrame;
   cv::VideoWriter* _outputStream;
   unsigned int _storedFrameIndex;
-  unsigned int _latestFrameIndex;
-  unsigned int _lastFrame;
-  unsigned int _firstFrame;
+  unsigned int firstInBuffer;
+  int _latestFrameIndex;
+  int _lastFrame;
+  int _firstFrame;
   std::string _codecName;
   FramesSet _cameraBuffer;
-  void saveFrame(cv::Mat frame);
   void addFrame(cv::Mat frame);
+  void saveBuffer();
+  void videoLabel(FramesManager* subject);
+
+  std::mutex _mutex2;
 
 };
