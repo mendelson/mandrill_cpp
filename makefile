@@ -12,12 +12,21 @@ OBJ = $(patsubst %,$(BIN_PATH)/%,$(_OBJ))
 
 DIRECTIVES = -std=c++0x -Wall -c -I $(HEADER_PATH)
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEP_PATH)/$*.Td
-OPENCV = `pkg-config --libs opencv` -O4
+OPENCV = `pkg-config --libs opencv` -O3
 LIBS = $(OPENCV)
-
-
 FINAL_EXEC = $(BIN_PATH)/MandrillCore
-all: $(FINAL_EXEC)
+
+all: release
+
+debug: DIRECTIVES += -ggdb3 -Og
+debug: $(FINAL_EXEC)
+
+release: DIRECTIVES += -march=native -O3
+release: $(FINAL_EXEC)
+
+fast: DIRECTIVES += -march=native -Ofast
+fast: $(FINAL_EXEC)
+
 $(FINAL_EXEC): $(OBJ)
 	$(CC) -o $@ $^ $(LIBS)
 
@@ -25,9 +34,6 @@ $(BIN_PATH)/%.o: $(SRC_PATH)/%.cpp
 	@mkdir -p $(BIN_PATH) $(DEP_PATH)
 	$(CC) $(DEPFLAGS) -c -o $@ $< $(DIRECTIVES)
 	@mv -f $(DEP_PATH)/$*.Td $(DEP_PATH)/$*.d
-
-debug: DIRECTIVES += -ggdb
-debug: all
 
 .PHONY: clean
 clean:
