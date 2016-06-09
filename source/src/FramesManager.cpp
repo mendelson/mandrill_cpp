@@ -129,8 +129,8 @@ void FramesManager::Attach(Observer* newObserver)
 {
 	std::unique_lock<std::mutex> _lock(_mutex);
 
-	newObserver->setSubject(this);
 	_observers.push_back(newObserver);
+	newObserver->setSubject(this, getNewId());
 }
 
 void FramesManager::Detach(Observer* observer)
@@ -166,6 +166,11 @@ void FramesManager::Notify()
 		// std::thread(FramesManager::updateHelper, it).detach();
 		_threadPool->enqueue(*it);
 	}
+}
+
+unsigned int FramesManager::getNewId()
+{
+	return _observers.size() - 1;
 }
 
 // void FramesManager::updateHelper(std::list<Observer*>::iterator it)

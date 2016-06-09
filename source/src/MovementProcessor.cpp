@@ -101,7 +101,7 @@ void MovementProcessor::Update()
 
 }
 
-void MovementProcessor::setSubject(FramesManager* subject)
+void MovementProcessor::setSubject(FramesManager* subject, unsigned int id)
 {
 	// gets current time
 	time_t now = time(0);
@@ -110,6 +110,7 @@ void MovementProcessor::setSubject(FramesManager* subject)
 
 	// gets  codecs and camera information
 	this->_subject = subject;
+	_id = id;
 	std::string extension = CodecsConfig::getCodecExtension(_codecName);
 	int fourccCode = CodecsConfig::getCodecFourcc(_codecName);
 

@@ -8,7 +8,7 @@ public:
 	Saver(std::string codecName);
   	~Saver();
   	void Update();
-  	void setSubject(FramesManager* subject);
+  	void setSubject(FramesManager* subject, unsigned int id);
 
 private:
   	cv::VideoWriter* _outputStream;

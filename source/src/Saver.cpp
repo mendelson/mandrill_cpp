@@ -26,9 +26,10 @@ void Saver::Update()
 	saveFrame();
 }
 
-void Saver::setSubject(FramesManager* subject)
+void Saver::setSubject(FramesManager* subject, unsigned int id)
 {
 	this->_subject = subject;
+	_id = id;
 	std::string extension = CodecsConfig::getCodecExtension(_codecName);
 	int fourccCode = CodecsConfig::getCodecFourcc(_codecName);
 

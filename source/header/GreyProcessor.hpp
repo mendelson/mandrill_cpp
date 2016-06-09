@@ -8,7 +8,7 @@ public:
 	GreyProcessor(std::string codecName);
   	~GreyProcessor();
   	void Update();
-  	void setSubject(FramesManager* subject);
+  	void setSubject(FramesManager* subject, unsigned int id);
 
 private:
   	cv::Mat _greyFrame;

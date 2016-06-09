@@ -12,10 +12,11 @@ public:
 	Observer();
 	virtual ~Observer(){}
 	virtual void Update() = 0;
-	virtual void setSubject(FramesManager* subject) {this->_subject = subject;}
+	virtual void setSubject(FramesManager* subject, unsigned int id);
 
 protected:
 	FramesManager* _subject;
 	unsigned int _currentFrameIndex;
 	std::mutex _mutex;
+	unsigned int _id;
 };

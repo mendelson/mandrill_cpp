@@ -31,9 +31,10 @@ void GreyProcessor::Update()
 	saveFrame(_greyFrame);
 }
 
-void GreyProcessor::setSubject(FramesManager* subject)
+void GreyProcessor::setSubject(FramesManager* subject, unsigned int id)
 {
 	this->_subject = subject;
+	_id = id;
 	std::string extension = CodecsConfig::getCodecExtension(_codecName);
 	int fourccCode = CodecsConfig::getCodecFourcc(_codecName);
 

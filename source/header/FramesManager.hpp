@@ -42,6 +42,7 @@ public:
 private:
 	void addFrame(cv::Mat frame);
 	void Notify();
+	unsigned int getNewId();
 
 	FramesSet _framesSet;
 	std::string _url;
