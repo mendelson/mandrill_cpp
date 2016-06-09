@@ -14,7 +14,8 @@
 # bin/MandrillCore rtsp://root:akts@10.190.60.117/axis-media/media.amp axis_p3364
 
 
-
+# bin/MandrillCore "data/b.avi" VIVOTEK_FD8136
+# gdb --args bin/MandrillCore rtsp://root:akts@10.190.60.102/live.sdp VIVOTEK_FD8136
 bin/MandrillCore rtsp://root:akts@10.190.60.102/live.sdp VIVOTEK_FD8136
 # bin/MandrillCore rtsp://root:akts@10.190.60.123/axis-media/media.amp AXIS_PTZ
 

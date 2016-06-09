@@ -10,6 +10,7 @@
 #include "Observer.hpp"
 #include "Camera.hpp"
 #include "ThreadPool.hpp"
+#include "Printer.hpp"
 
 const unsigned int MAXFRAMES = 10;
 
@@ -19,7 +20,7 @@ typedef std::unordered_map<unsigned int, std::shared_ptr<cv::Mat>> FramesSet;
 class FramesManager
 {
 public:
-	cv::Mat getFrame(unsigned int index);
+	std::shared_ptr<cv::Mat> getFrame(unsigned int index);
 	cv::Mat getLatestFrame();
 	unsigned int getLatestFrameIndex();
 	void run();

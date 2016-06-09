@@ -220,12 +220,13 @@ void MovementProcessor::addFrame(cv::Mat frame)
 		if(_firstFrame != -1){
 			Printer::safe_print("EU Q ADICIONEI\n");
 			saveBuffer();
-			// Printer::safe_print("EU Q ADICIONEI\n");
+			Printer::safe_print("EU Q ADICIONEI\n");
 			_firstFrame = _latestFrameIndex + 1;
 			firstInBuffer = _latestFrameIndex + 1;
 	  	}
 
-		_cameraBuffer.erase(_cameraBuffer.begin(), _cameraBuffer.end());
+		_cameraBuffer.erase(_latestFrameIndex + 1 - MAXFRAMES);
+
 	}
 
 	_cameraBuffer.emplace(_latestFrameIndex + 1, std::make_shared<cv::Mat>(frame));
@@ -263,24 +264,32 @@ void MovementProcessor::saveBuffer()
 
 }
 
-void MovementProcessor::videoLabel(FramesManager* subject)
+void MovementProcessor::videoLabel()
 {
+
+
+	
 	// gets current time
 	time_t now = time(0);
 	tm *ltm = localtime(&now);
 	std::stringstream path;
 
-	this->_subject = subject;
+	// this->_subject = subject;
 	std::string extension = CodecsConfig::getCodecExtension(_codecName);
 	int fourccCode = CodecsConfig::getCodecFourcc(_codecName);
 
 	if(extension.empty() || fourccCode == -4)
 		exit(-4);
 
-	path <<  "data/streaming/moveStream/" << ltm->tm_mday << "." << extension;
+	path <<  "data/streaming/moveStream/" << ltm->tm_mday << 
+	"_" << ltm->tm_min << "." << extension;
 
+	_outputStream->release();
 	_outputStream = new cv::VideoWriter(path.str() ,
  								 fourccCode,
  								 _subject->getCameraFPS(),
  								 cvSize((int)_subject->getFramesWidth(),(int)_subject->getFramesHeight()));
+
+		Printer::safe_print("YOYO CARALHO:" + std::to_string((int)_subject->getFramesWidth()) + "\n");
+	// exit(4);
 }

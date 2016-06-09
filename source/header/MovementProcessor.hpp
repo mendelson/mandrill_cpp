@@ -34,7 +34,7 @@ private:
   FramesSet _cameraBuffer;
   void addFrame(cv::Mat frame);
   void saveBuffer();
-  void videoLabel(FramesManager* subject);
+  void videoLabel();
 
   std::mutex _mutex2;
 

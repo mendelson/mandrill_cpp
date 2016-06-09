@@ -31,16 +31,16 @@ void Core::run()
 
 	// Observer* analyser = new Analyser();
 	// Observer* printer = new Printer();
-	Observer* greyProcessor = new GreyProcessor("H.264");
+	// Observer* greyProcessor = new GreyProcessor("H.264");
 	Observer* saver = new Saver("H.264");
-	Observer* meanProcessor = new MeanProcessor();
+	// Observer* meanProcessor = new MeanProcessor();
 	// Observer* moveProcessor = new MovementProcessor("H.264");
 
 	// _framesManager->Attach(analyser);
 	// _framesManager->Attach(printer);
-	_framesManager->Attach(greyProcessor);
+	// _framesManager->Attach(greyProcessor);
 	_framesManager->Attach(saver);
-	_framesManager->Attach(meanProcessor);
+	// _framesManager->Attach(meanProcessor);
 	// _framesManager->Attach(moveProcessor);
 
 	std::thread framesManagerThread (framesManagerRunHelper, _framesManager);

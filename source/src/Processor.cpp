@@ -3,6 +3,9 @@
 
 void Processor::getCurrentFrame()
 {
-  _frame = std::make_shared<cv::Mat>(_subject->getLatestFrame());
-  _currentFrameIndex = _subject->getLatestFrameIndex();
+	_currentFrameIndex++;
+
+	_frame = _subject->getFrame(_currentFrameIndex);
+	if(_frame == NULL)
+		std::cout << "NULL\n";
 }

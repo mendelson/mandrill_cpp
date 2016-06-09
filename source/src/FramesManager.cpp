@@ -43,16 +43,26 @@ void FramesManager::addFrame(cv::Mat frame)
 	_framesSet.emplace(_latestFrameIndex + 1, std::make_shared<cv::Mat>(frame));
 
 	_latestFrameIndex++;
+	Printer::safe_print("MANAGER:" + std::to_string(_latestFrameIndex) );
+
+	// Printer::safe_print("Saver: " + std::to_string(_latestFrameIndex));
+
 
 	_mutex.unlock();
 
 	Notify();
 }
 
-cv::Mat FramesManager::getFrame(unsigned int index)
+std::shared_ptr<cv::Mat> FramesManager::getFrame(unsigned int index)
 {
 	std::unique_lock<std::mutex> _lock(_mutex);
-	return *_framesSet[index];
+
+  	std::unordered_map<unsigned int, std::shared_ptr<cv::Mat>>::const_iterator element = _framesSet.find(index);
+
+	if(element == _framesSet.end())
+		return NULL;
+	else
+		return std::make_shared<cv::Mat>(*element->second);
 }
 
 cv::Mat FramesManager::getLatestFrame()

@@ -21,7 +21,7 @@ void Saver::Update()
 	std::unique_lock<std::mutex> _lock(_mutex);
   	getCurrentFrame();
 
-	Printer::safe_print("Saver: " + std::to_string(_currentFrameIndex));
+	Printer::safe_print("Saver: " + std::to_string(_currentFrameIndex) + "\n");
 
 	saveFrame();
 }
@@ -44,5 +44,6 @@ void Saver::setSubject(FramesManager* subject)
 
 void Saver::saveFrame()
 {
-	*_outputStream << *_frame;
+	if(_frame != NULL)
+		*_outputStream << *_frame;
 }
