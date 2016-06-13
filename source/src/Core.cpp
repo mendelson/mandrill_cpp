@@ -36,12 +36,12 @@ void Core::run()
 	// Observer* meanProcessor = new MeanProcessor();
 	// Observer* moveProcessor = new MovementProcessor("H.264");
 
-	// _framesManager->Attach(analyser);
-	// _framesManager->Attach(printer);
-	// _framesManager->Attach(greyProcessor);
-	_framesManager->Attach(saver);
-	// _framesManager->Attach(meanProcessor);
-	// _framesManager->Attach(moveProcessor);
+	// _framesManager->attach(analyser);
+	// _framesManager->attach(printer);
+	// _framesManager->attach(greyProcessor);
+	_framesManager->attach(saver);
+	// _framesManager->attach(meanProcessor);
+	// _framesManager->attach(moveProcessor);
 
 	std::thread framesManagerThread (framesManagerRunHelper, _framesManager);
 
@@ -58,6 +58,9 @@ void Core::run()
 	}
 
 	framesManagerThread.join();
+
+	if(_framesManager->lostCamera())
+		exit(-6);
 }
 
 void framesManagerRunHelper(FramesManager* framesManager)

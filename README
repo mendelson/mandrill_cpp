@@ -9,6 +9,8 @@
 
 ..* -5: O arquivo JSON de configurações de codecs não foi carregado em memória ainda.
 
+..* -6: Lost connection with the source camera.
+
 ## Third party softwares currently in use
 ..* g++ version 4.8.4
 ..* OpenCV version 3.1.0

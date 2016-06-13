@@ -17,6 +17,7 @@ public:
     double getWidth();
     double getHeight();
     double getFps();
+    // void reconnect();
 
 private:
     const std::string _url;
@@ -27,4 +28,6 @@ private:
     std::string _ip;
     cv::VideoCapture* _frameCap;
     cv::Mat _frame;
+    
+    void connect();
 };

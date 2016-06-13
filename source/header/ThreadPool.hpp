@@ -15,7 +15,7 @@ public:
     void operator=(ThreadPool const&) =  delete; // Desabling copy operator
 
    void enqueue(Observer* observer);
-    static bool mustStop() { return stop; }
+    static bool mustStop() { return _stop; }
     ~ThreadPool();
 
 private:
@@ -37,6 +37,6 @@ private:
     // synchronization
     std::mutex queue_mutex;
     std::condition_variable condition;
-    static bool stop;
+    static bool _stop;
 };
 

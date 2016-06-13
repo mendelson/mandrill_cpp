@@ -9,12 +9,12 @@
 //             std::unique_lock<std::mutex> lock(pool.queue_mutex);
              
 //             // look for a work item
-//             while(!pool.stop && pool.tasks.empty())
+//             while(!pool._stop && pool.tasks.empty())
 //             { // if there are none wait for notification
 //                 pool.condition.wait(lock);
 //             }
  
-//             if(pool.stop) // exit if the pool is stopped
+//             if(pool._stop) // exit if the pool is stopped
 //                 return;
  
 //             // get the task from the queue
@@ -39,12 +39,12 @@ void Worker::operator()()
             std::unique_lock<std::mutex> lock(pool.queue_mutex);
              
             // look for a work item
-            while(!pool.stop && pool._observers.empty())
+            while(!pool._stop && pool._observers.empty())
             { // if there are none wait for notification
                 pool.condition.wait(lock);
             }
  
-            if(pool.stop) // exit if the pool is stopped
+            if(pool._stop) // exit if the pool is stopped
                 return;
  
             // get the task from the queue

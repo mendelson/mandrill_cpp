@@ -5,7 +5,7 @@
 
 ThreadPool* ThreadPool::_instance = 0;
 std::mutex ThreadPool::_instaceMutex;
-bool ThreadPool::stop = false;
+bool ThreadPool::_stop = false;
 
 ThreadPool* ThreadPool::getThreadPool()
 {
@@ -22,7 +22,7 @@ ThreadPool* ThreadPool::getThreadPool()
 
 // the constructor just launches some amount of workers
 ThreadPool::ThreadPool(size_t numberOfThreads)
-    // :   stop(false)
+    // :   _stop(false)
 {
     for(size_t i = 0; i < numberOfThreads; ++i)
         _workers.push_back(std::thread(Worker(*this)));
@@ -30,7 +30,7 @@ ThreadPool::ThreadPool(size_t numberOfThreads)
 
 // the constructor just launches some amount of workers
 ThreadPool::ThreadPool()
-    // :   stop(false)
+    // :   _stop(false)
 {
 	size_t concurentThreadsSupported = (size_t) std::thread::hardware_concurrency();
 	size_t numberOfThreads = 2;
@@ -46,8 +46,8 @@ ThreadPool::ThreadPool()
 // the destructor joins all threads
 ThreadPool::~ThreadPool()
 {
-    // stop all threads
-    stop = true;
+    // _stop all threads
+    _stop = true;
     condition.notify_all();
      
     // join them

@@ -1,16 +1,16 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
 #include <thread>
+#include <chrono>
 #include "FramesManager.hpp"
 
 FramesManager* FramesManager::_instance = 0;
-std::mutex FramesManager::_instaceMutex;
-
-// void saveFrame(cv::Mat frame);
+FramesManager::BufferManager* FramesManager::_bufferManager = 0;
+std::mutex FramesManager::_instanceMutex;
 
 FramesManager* FramesManager::getManager()
 {
-	std::unique_lock<std::mutex> _lock(_instaceMutex);
+	std::unique_lock<std::mutex> _lock(_instanceMutex);
 
 	if (_instance == 0)
 	{
@@ -20,7 +20,7 @@ FramesManager* FramesManager::getManager()
 	return _instance;
 }
 
-FramesManager::FramesManager()
+FramesManager::FramesManager() : _lostCamera(false)
 {
 	_url = "";
 	_model = "";
@@ -85,14 +85,16 @@ void FramesManager::run()
 		exit(1);
 	}
 
-
-	// double fps = 30;
-	// cv::VideoWriter outputStream("streaming/testStream.avi", CV_FOURCC('M','P','E','G'), fps, cvSize((int)_camera->getWidth(),(int)_camera->getHeight()));
+	_bufferManager = new BufferManager();
+	std::thread bufferManagerThread (bufferManagerRunHelper, _bufferManager);
 
 	while(true)
 	{
 		if(ThreadPool::mustStop())
+		{
+			_bufferManager->stop();
 			break;
+		}
 
 		_camera->updateFrame();
 		// std::cout << "FPS: " << _camera->getFps() << std::endl;
@@ -109,12 +111,19 @@ void FramesManager::run()
 				// saveFrame(frame, outputStream);
 			}
 		}
-
-		// // "ESC" key aborts execution
-		// char pressedKey = cv::waitKey(30);
-		// // std::cout << (int) pressedKey << std::endl;
-		// if (pressedKey == 27) break;
+		// Must reconnect to the streaming source
+		else
+		{
+			// std::cout << "--------------------------------------------------- EMPTY --------------------------------------" << std::endl;
+			
+			// _camera->reconnect();
+			_lostCamera = true;
+			break;
+		}
 	}
+
+	_bufferManager->stopWhenEmpty();
+	bufferManagerThread.join();
 }
 
 void FramesManager::setStreamSource(std::string url, std::string model)
@@ -125,7 +134,7 @@ void FramesManager::setStreamSource(std::string url, std::string model)
 	_camera = new Camera(_url, _model);
 }
 
-void FramesManager::Attach(Observer* newObserver)
+void FramesManager::attach(Observer* newObserver)
 {
 	std::unique_lock<std::mutex> _lock(_mutex);
 
@@ -133,7 +142,7 @@ void FramesManager::Attach(Observer* newObserver)
 	newObserver->setSubject(this, getNewId());
 }
 
-void FramesManager::Detach(Observer* observer)
+void FramesManager::detach(Observer* observer)
 {
 	std::unique_lock<std::mutex> _lock(_mutex);
 
@@ -181,15 +190,48 @@ unsigned int FramesManager::getNewId()
 
 void FramesManager::saveFrame(cv::Mat frame, cv::VideoWriter outputStream)
 {
-	// cv::Mat _greyFrame;
-	// cv::cvtColor(frame, _greyFrame, CV_RGB2GRAY);
-	// cv::cvtColor(_greyFrame, frame, CV_GRAY2RGB);
-
-	// std::cout << _greyFrame.cols << " | " << _greyFrame.rows << std::endl;
-	// std::cout << frame.channels() << " | " << _greyFrame.channels() << std::endl;
-
-	// outputStream << _greyFrame;
 	outputStream << frame;
+}
 
-	// std::cout << "width = " << _camera->getWidth() << "     " << "height = "<< _camera->getHeight() << std::endl;
+void FramesManager::bufferManagerRunHelper(FramesManager::BufferManager* bufferManager)
+{
+	bufferManager->run();
+}
+
+/*****************
+*  BufferManager *
+*****************/
+
+FramesManager::BufferManager::BufferManager()
+{
+	_framesManager = FramesManager::getManager();
+	_mustStop = false;
+	_mustStopWhenEmpty = false;
+}
+
+void FramesManager::BufferManager::run()
+{
+	while(true)
+	{
+		std::this_thread::sleep_for (std::chrono::milliseconds(TIMESPAN));
+
+		if(_mustStop)
+			break;
+
+		//DO STUFF
+		std::cout << "=============== BufferManager ===============" << std::endl;
+
+		if(_mustStopWhenEmpty && _framesManager->_framesSet.size() == 0)
+			break;
+	}
+}
+
+void FramesManager::BufferManager::stop()
+{
+	_mustStop = true;
+}
+
+void FramesManager::BufferManager::stopWhenEmpty()
+{
+	_mustStopWhenEmpty = true;
 }

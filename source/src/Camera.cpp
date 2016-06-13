@@ -30,10 +30,8 @@ Camera::Camera(std::string url, std::string model)
     _ip = ip;
 
     // Opening video capture
-    _frameCap = new cv::VideoCapture(_url);
-    _width = _frameCap->get(CV_CAP_PROP_FRAME_WIDTH);
-    _height = _frameCap->get(CV_CAP_PROP_FRAME_HEIGHT);
-    _fps = _frameCap->get(CV_CAP_PROP_FPS);
+    std::cout << "Trying to establish connection to " << _ip << std::endl;
+    connect();
 
     // ///////////////////////////////////
     // int ex = static_cast<int>(_frameCap->get(CV_CAP_PROP_FOURCC));
@@ -88,6 +86,40 @@ double Camera::getFps()
 {
   _fps = _frameCap->get(CV_CAP_PROP_FPS);
   return _fps;
+}
+
+// void Camera::reconnect()
+// {
+    // free(_frameCap);
+    // connect();
+    // std::cout << "Connection reestablished! " << _frameCap->get(CV_CAP_PROP_FPS) << std::endl;
+// }
+
+void Camera::connect()
+{
+    // bool connected = false;
+
+    // while(!connected)
+    // {
+        // connected = true;
+
+        // try
+        // {
+            // if(_frameCap == NULL)
+                _frameCap = new cv::VideoCapture(_url);
+            // else
+                // _frameCap->open(_url);
+            _width = _frameCap->get(CV_CAP_PROP_FRAME_WIDTH);
+            _height = _frameCap->get(CV_CAP_PROP_FRAME_HEIGHT);
+            _fps = _frameCap->get(CV_CAP_PROP_FPS);
+        // }
+        // catch(cv::Exception& e)
+        // {
+        //     std::cout << "\nCould not establish connection to " << _ip << "\nRetrying..." << std::endl;
+        //     connected = false;
+        // }
+    // }
+    // std::cout << _frameCap->isOpened() << std::endl;
 }
 
 // .mp4 ou .mkv
