@@ -18,16 +18,9 @@ Saver::~Saver()
 
 void Saver::Update()
 {
-	int a=2;
 	std::unique_lock<std::mutex> _lock(_mutex);
 
   	getCurrentFrame();
-  	// this->_subject->setFrameAsBusy(_currentFrameIndex, _id);
-
-  	a = this->_subject->getFrameAvailability(_currentFrameIndex);
-
-  	std::cout << "olha o aaaaaa: " << a << std::endl;
-
 
 	Printer::safe_print("Saver: " + std::to_string(_currentFrameIndex) + "\n");
 
@@ -53,10 +46,16 @@ void Saver::setSubject(FramesManager* subject, unsigned int id)
 
 void Saver::saveFrame()
 {
+	int a=2;
+
 	if(_frame != NULL)
 		*_outputStream << *_frame;
 
 	// libera frame para poder ser deletado
 	this->_subject->setFrameAsFree(_currentFrameIndex, _id);
+
+	// a = this->_subject->getFrameAvailability(_currentFrameIndex);
+
+  	// std::cout << "olha o aaaaaa: " << a << std::endl;
 
 }

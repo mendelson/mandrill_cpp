@@ -14,7 +14,7 @@
 #include "Printer.hpp"
 
 const unsigned int MAXFRAMES = 10;
-const unsigned int TIMESPAN = 1000; // miliseconds
+const unsigned int TIMESPAN = 100; // miliseconds
 
 typedef std::list<Observer*> observersList;
 typedef std::unordered_map<unsigned int, std::shared_ptr<cv::Mat>> FramesSet;
@@ -54,7 +54,7 @@ private:
 		BufferManager();
 		void run();
 		void stop();
-		void stopWhenEmpty();
+		// void stopWhenEmpty();
 
 	private:
 		FramesManager* _framesManager;
@@ -62,7 +62,7 @@ private:
 		void operator=(BufferManager const&) =  delete; // Desabling copy operator
 
 		bool _mustStop;
-		bool _mustStopWhenEmpty;
+		// bool _mustStopWhenEmpty;
 		std::mutex _stopMutex;
 		bool _lostCamera;
 	};

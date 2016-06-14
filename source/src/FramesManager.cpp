@@ -39,10 +39,10 @@ void FramesManager::addFrame(cv::Mat frame)
 	
 	
 
-	if(_framesSet.size() >= MAXFRAMES)
-	{
-		_framesSet.erase(_latestFrameIndex + 1 - MAXFRAMES);
-	}
+	// if(_framesSet.size() >= MAXFRAMES)
+	// {
+	// 	_framesSet.erase(_latestFrameIndex + 1 - MAXFRAMES);
+	// }
 
 	_framesSet.emplace(_latestFrameIndex + 1, std::make_shared<cv::Mat>(frame));
 	_busyFrames.emplace(_latestFrameIndex + 1, std::make_shared<std::bitset<16>>(busyVector));
@@ -78,7 +78,7 @@ cv::Mat FramesManager::getLatestFrame()
 }
 
 unsigned int FramesManager::getFrameAvailability(unsigned int frameIndex){
-	std::unique_lock<std::mutex> _lock(_mutex);
+	// std::unique_lock<std::mutex> _lock(_mutex);
 	std::bitset<16> busyVector;
 
 	busyVector = *_busyFrames[frameIndex];
@@ -139,7 +139,7 @@ void FramesManager::run()
 		}
 	}
 
-	_bufferManager->stopWhenEmpty();
+	_bufferManager->stop();
 	bufferManagerThread.join();
 }
 
@@ -223,7 +223,7 @@ FramesManager::BufferManager::BufferManager()
 {
 	_framesManager = FramesManager::getManager();
 	_mustStop = false;
-	_mustStopWhenEmpty = false;
+	// _mustStopWhenEmpty = false;
 }
 
 void FramesManager::BufferManager::run()
@@ -233,13 +233,41 @@ void FramesManager::BufferManager::run()
 		std::this_thread::sleep_for (std::chrono::milliseconds(TIMESPAN));
 
 		if(_mustStop)
+		{
+			_framesManager->_framesSet.clear();
+			_framesManager->_busyFrames.clear();
 			break;
+		}
 
-		//DO STUFF
+		auto it = _framesManager->_busyFrames.begin();
+		auto previous_it = it;
+		unsigned int currentKey;
+
+		_framesManager->_mutex.lock();
+		// std::cout << "lockei!!!" << std::endl;
+		while(it != _framesManager->_busyFrames.end())
+		{
+			previous_it = it;
+			it++;
+			
+			if(_framesManager->getFrameAvailability(previous_it->first) == 0)
+			{
+				
+				std::cout << "BIURLLLL " << previous_it->first  << std::endl;
+
+				currentKey = previous_it->first;
+
+				_framesManager->_framesSet.erase(currentKey);
+				_framesManager->_busyFrames.erase(currentKey);
+
+			}
+		}
+		_framesManager->_mutex.unlock();
+
 		std::cout << "=============== BufferManager ===============" << std::endl;
 
-		if(_mustStopWhenEmpty && _framesManager->_framesSet.size() == 0)
-			break;
+		// if(_mustStopWhenEmpty && _framesManager->_framesSet.size() == 0)
+			// break;
 	}
 }
 
@@ -248,14 +276,15 @@ void FramesManager::BufferManager::stop()
 	_mustStop = true;
 }
 
-void FramesManager::BufferManager::stopWhenEmpty()
+// void FramesManager::BufferManager::stopWhenEmpty()
+// {
+// 	_mustStopWhenEmpty = true;
+// }
+
+
+void FramesManager::setFrameAsBusy(unsigned int frameIndex)
 {
-	_mustStopWhenEmpty = true;
-}
-
-
-void FramesManager::setFrameAsBusy(unsigned int frameIndex){
-	std::unique_lock<std::mutex> _lock(_mutex);
+	// std::unique_lock<std::mutex> _lock(_mutex);
 
 	auto it = _busyFrames.find(frameIndex);
 
@@ -271,7 +300,8 @@ void FramesManager::setFrameAsBusy(unsigned int frameIndex){
 
 }
 
-void FramesManager::setFrameAsFree(unsigned int frameIndex, unsigned int moduleIndex){
+void FramesManager::setFrameAsFree(unsigned int frameIndex, unsigned int moduleIndex)
+{
 	std::unique_lock<std::mutex> _lock(_mutex);
 	
 	auto it = _busyFrames.find(frameIndex);
