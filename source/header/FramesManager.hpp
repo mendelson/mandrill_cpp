@@ -27,7 +27,7 @@ public:
 	cv::Mat getLatestFrame();
 	unsigned int getLatestFrameIndex();
 	unsigned int getFrameAvailability(unsigned int frame);
-	void setFrameAsBusy(unsigned int frameIndex, unsigned int moduleIndex);
+	void setFrameAsBusy(unsigned int frameIndex);
 	void setFrameAsFree(unsigned int frameIndex, unsigned int moduleIndex);
 	void run();
 	void setStreamSource(std::string url, std::string model);

@@ -22,9 +22,11 @@ void Saver::Update()
 	std::unique_lock<std::mutex> _lock(_mutex);
 
   	getCurrentFrame();
-  	this->_subject->setFrameAsBusy(_currentFrameIndex, _id);
+  	// this->_subject->setFrameAsBusy(_currentFrameIndex, _id);
 
-  	// a = this->_subject->getFrameAvailability(_currentFrameIndex);
+  	a = this->_subject->getFrameAvailability(_currentFrameIndex);
+
+  	std::cout << "olha o aaaaaa: " << a << std::endl;
 
 
 	Printer::safe_print("Saver: " + std::to_string(_currentFrameIndex) + "\n");
