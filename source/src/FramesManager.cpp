@@ -33,6 +33,7 @@ void FramesManager::addFrame(cv::Mat frame)
 {
 	_mutex.lock();
 
+	std::bitset<16> busyVector;
 	// std::cout << _latestFrameIndex << std::endl;
 
 	if(_framesSet.size() >= MAXFRAMES)
@@ -41,6 +42,7 @@ void FramesManager::addFrame(cv::Mat frame)
 	}
 
 	_framesSet.emplace(_latestFrameIndex + 1, std::make_shared<cv::Mat>(frame));
+	_busyFrames.emplace(_latestFrameIndex + 1, std::make_shared<std::bitset<16>>(busyVector));
 
 	_latestFrameIndex++;
 	Printer::safe_print("MANAGER:" + std::to_string(_latestFrameIndex) );
@@ -69,6 +71,17 @@ cv::Mat FramesManager::getLatestFrame()
 {
 	std::unique_lock<std::mutex> _lock(_mutex);
 	return *_framesSet[_latestFrameIndex];
+}
+
+unsigned int FramesManager::getFrameAvailability(unsigned int frameIndex){
+	std::unique_lock<std::mutex> _lock(_mutex);
+	std::bitset<16> busyVector;
+
+	busyVector = *_busyFrames[frameIndex];
+	if(busyVector.none())
+		return 0;
+	else
+		return 1;
 }
 
 unsigned int FramesManager::getLatestFrameIndex()
@@ -234,4 +247,23 @@ void FramesManager::BufferManager::stop()
 void FramesManager::BufferManager::stopWhenEmpty()
 {
 	_mustStopWhenEmpty = true;
+}
+
+
+void FramesManager::setFrameAsBusy(unsigned int frameIndex, unsigned int moduleIndex){
+	std::unique_lock<std::mutex> _lock(_mutex);
+
+	auto it = _busyFrames.find(frameIndex);
+
+	if(it != _busyFrames.end()) 
+	    it->second->set(moduleIndex, 1);
+}
+
+void FramesManager::setFrameAsFree(unsigned int frameIndex, unsigned int moduleIndex){
+	std::unique_lock<std::mutex> _lock(_mutex);
+	
+	auto it = _busyFrames.find(frameIndex);
+
+	if(it != _busyFrames.end()) 
+	    it->second->set(moduleIndex, 0);
 }

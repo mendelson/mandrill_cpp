@@ -7,6 +7,7 @@
 #include <vector>
 #include <thread>
 #include <mutex>
+#include <bitset>     
 #include "Observer.hpp"
 #include "Camera.hpp"
 #include "ThreadPool.hpp"
@@ -17,6 +18,7 @@ const unsigned int TIMESPAN = 1000; // miliseconds
 
 typedef std::list<Observer*> observersList;
 typedef std::unordered_map<unsigned int, std::shared_ptr<cv::Mat>> FramesSet;
+typedef std::unordered_map<unsigned int, std::shared_ptr<std::bitset<16>>> FramesMetadata;
 
 class FramesManager
 {
@@ -24,6 +26,9 @@ public:
 	std::shared_ptr<cv::Mat> getFrame(unsigned int index);
 	cv::Mat getLatestFrame();
 	unsigned int getLatestFrameIndex();
+	unsigned int getFrameAvailability(unsigned int frame);
+	void setFrameAsBusy(unsigned int frameIndex, unsigned int moduleIndex);
+	void setFrameAsFree(unsigned int frameIndex, unsigned int moduleIndex);
 	void run();
 	void setStreamSource(std::string url, std::string model);
 
@@ -67,6 +72,7 @@ private:
 	unsigned int getNewId();
 
 	FramesSet _framesSet;
+	FramesMetadata _busyFrames;
 	std::string _url;
 	std::string _model;
 	Camera* _camera;
