@@ -95,6 +95,9 @@ unsigned int FramesManager::getLatestFrameIndex()
 
 void FramesManager::run()
 {
+	auto t0 = Time::now();
+    auto t1 = Time::now();
+
 	if(_url.compare("") == 0 || _model.compare("") == 0)
 	{
 		std::cout << "You have not set the address and model of your streaming camera!" << std::endl;
@@ -105,8 +108,13 @@ void FramesManager::run()
 	_bufferManager = new BufferManager();
 	std::thread bufferManagerThread (bufferManagerRunHelper, _bufferManager);
 
+
+	t0 = Time::now();
+
 	while(true)
 	{
+		t1 = Time::now();
+
 		if(ThreadPool::mustStop())
 		{
 			_bufferManager->stop();
@@ -124,7 +132,17 @@ void FramesManager::run()
 
 			if(!ThreadPool::mustStop())
 			{
-				addFrame(frame);
+				timeDiff = t1 - t0;
+				miliDiff = std::chrono::duration_cast<ms>(timeDiff);
+
+				if(miliDiff.count() >= 100)
+				{
+						addFrame(frame);
+						std::cout << "Salvei\n";
+						t0 = Time::now();
+
+				}
+				
 				// saveFrame(frame, outputStream);
 			}
 		}
@@ -137,6 +155,10 @@ void FramesManager::run()
 			_lostCamera = true;
 			break;
 		}
+
+		// Sleeps to get a lower frame rate
+		//std::this_thread::sleep_for (std::chrono::milliseconds(1000));
+
 	}
 
 	_bufferManager->stop();
@@ -179,6 +201,11 @@ double FramesManager::getFramesHeight()
 double FramesManager::getCameraFPS()
 {
 	return _camera->getFps();
+}
+
+const std::string FramesManager::getModel()
+{
+	return _model;
 }
 
 void FramesManager::Notify()
@@ -309,3 +336,4 @@ void FramesManager::setFrameAsFree(unsigned int frameIndex, unsigned int moduleI
 	if(it != _busyFrames.end()) 
 	    it->second->set(moduleIndex, 0);
 }
+

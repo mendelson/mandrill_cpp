@@ -250,7 +250,8 @@ void MovementProcessor::saveBuffer()
 	// if movement was detected
 	if(_firstFrame != -1){
 
-		if(firstInBuffer <= (_firstFrame - MAXSAVING))
+		// if(firstInBuffer <= (_firstFrame - MAXSAVING))
+		if(firstInBuffer <= 0)
 			inicio = firstInBuffer;
 		else
 			inicio = _firstFrame;

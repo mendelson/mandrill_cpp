@@ -37,16 +37,16 @@ void Saver::setSubject(FramesManager* subject, unsigned int id)
 	if(extension.empty() || fourccCode == -4)
 		exit(-4);
 
-	std::string outputFile = "data/streaming/originalStream." + extension;
+	std::string outputFile = "data/streaming/" + this->_subject->getModel() + "_originalStream." + extension;
 	_outputStream = new cv::VideoWriter(outputFile,
  								 fourccCode,
- 								 _subject->getCameraFPS(),
+ 								 10,
  								 cvSize((int)_subject->getFramesWidth(),(int)_subject->getFramesHeight()));
 }
 
 void Saver::saveFrame()
 {
-	int a=2;
+	// int a=2;
 
 	if(_frame != NULL)
 		*_outputStream << *_frame;
@@ -56,6 +56,6 @@ void Saver::saveFrame()
 
 	// a = this->_subject->getFrameAvailability(_currentFrameIndex);
 
-  	// std::cout << "olha o aaaaaa: " << a << std::endl;
+  	std::cout << "olha o aaaaaa: " << _currentFrameIndex << std::endl;
 
 }

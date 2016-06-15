@@ -7,7 +7,8 @@
 #include <vector>
 #include <thread>
 #include <mutex>
-#include <bitset>     
+#include <bitset>    
+#include <chrono> 
 #include "Observer.hpp"
 #include "Camera.hpp"
 #include "ThreadPool.hpp"
@@ -19,6 +20,9 @@ const unsigned int TIMESPAN = 100; // miliseconds
 typedef std::list<Observer*> observersList;
 typedef std::unordered_map<unsigned int, std::shared_ptr<cv::Mat>> FramesSet;
 typedef std::unordered_map<unsigned int, std::shared_ptr<std::bitset<16>>> FramesMetadata;
+typedef std::chrono::high_resolution_clock Time;
+typedef std::chrono::milliseconds ms;
+typedef std::chrono::duration<float> fsec;
 
 class FramesManager
 {
@@ -44,6 +48,7 @@ public:
 	double getFramesWidth();
 	double getFramesHeight();
 	double getCameraFPS();
+	const std::string getModel();
 
 	bool lostCamera() { return _lostCamera; }
 
@@ -82,6 +87,9 @@ private:
 	ThreadPool* _threadPool;
 	static BufferManager* _bufferManager;
 	bool _lostCamera;
+	fsec timeDiff;
+	ms miliDiff;
+
 
 	// Singleton pattern
 	static FramesManager* _instance;
