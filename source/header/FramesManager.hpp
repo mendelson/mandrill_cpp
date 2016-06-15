@@ -27,6 +27,8 @@ typedef std::chrono::duration<float> fsec;
 class FramesManager
 {
 public:
+	static const unsigned int FPS;
+
 	std::shared_ptr<cv::Mat> getFrame(unsigned int index);
 	cv::Mat getLatestFrame();
 	unsigned int getLatestFrameIndex();

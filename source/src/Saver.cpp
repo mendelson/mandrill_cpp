@@ -40,7 +40,7 @@ void Saver::setSubject(FramesManager* subject, unsigned int id)
 	std::string outputFile = "data/streaming/" + this->_subject->getModel() + "_originalStream." + extension;
 	_outputStream = new cv::VideoWriter(outputFile,
  								 fourccCode,
- 								 10,
+ 								 _subject->FPS,
  								 cvSize((int)_subject->getFramesWidth(),(int)_subject->getFramesHeight()));
 }
 

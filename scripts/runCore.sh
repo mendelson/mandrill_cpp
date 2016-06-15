@@ -16,7 +16,14 @@
 
 # bin/MandrillCore "data/b.avi" VIVOTEK_FD8136
 # gdb --args bin/MandrillCore rtsp://root:akts@10.190.60.102/live.sdp VIVOTEK_FD8136
-bin/MandrillCore "rtsp://root:akts@10.190.60.102/live.sdp" "VIVOTEK_FD8136"
+bin/MandrillCore "rtsp://root:akts@10.190.60.102/live.sdp" "VIVOTEK_FD8134"
+# ./bin/MandrillCore "rtsp://root:akts@10.190.60.123/axis-media/media.amp" "axis_m1014" &
+# ./bin/MandrillCore "rtsp://root:akts@10.190.60.107/axis-media/media.amp" "axis_m1012" &
+# ./bin/MandrillCore "rtsp://root:akts@10.190.60.130/axis-media/media.amp" "axis_m1012" &
+# ./bin/MandrillCore "rtsp://admin:admin@10.190.60.132:554/cam/realmonitor?channel=1&subtype=0" "INTELBRAS" &
+
+
+
 # bin/MandrillCore rtsp://root:akts@10.190.60.123/axis-media/media.amp AXIS_PTZ
 
 

@@ -7,6 +7,7 @@
 FramesManager* FramesManager::_instance = 0;
 FramesManager::BufferManager* FramesManager::_bufferManager = 0;
 std::mutex FramesManager::_instanceMutex;
+const unsigned int FramesManager::FPS = 10;
 
 FramesManager* FramesManager::getManager()
 {
@@ -135,10 +136,11 @@ void FramesManager::run()
 				timeDiff = t1 - t0;
 				miliDiff = std::chrono::duration_cast<ms>(timeDiff);
 
-				if(miliDiff.count() >= 100)
+				if(miliDiff.count() >= (int)(1000/FPS))
 				{
+
 						addFrame(frame);
-						std::cout << "Salvei\n";
+						std::cout << "Salvei: " << std::to_string(miliDiff.count()) << "\n";
 						t0 = Time::now();
 
 				}

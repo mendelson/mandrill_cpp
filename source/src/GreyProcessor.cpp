@@ -44,11 +44,13 @@ void GreyProcessor::setSubject(FramesManager* subject, unsigned int id)
 	std::string outputFile = "data/streaming/greyStream." + extension;
 	_outputStream = new cv::VideoWriter(outputFile,
  								 fourccCode,
- 								 _subject->getCameraFPS(),
+ 								 _subject->FPS,
  								 cvSize((int)_subject->getFramesWidth(),(int)_subject->getFramesHeight()));
 }
 
 void GreyProcessor::saveFrame(cv::Mat frame)
 {
 	*_outputStream << frame;
+	this->_subject->setFrameAsFree(_currentFrameIndex, _id);
+
 }
