@@ -19,37 +19,42 @@
 ## OpenCV
 # Environment setup
 ```
-$ sudo apt-get -y install libopencv-dev build-essential cmake git libgtk2.0-dev pkg-config python-dev python-numpy libdc1394-22 libdc1394-22-dev libjpeg-dev libpng12-dev libtiff4-dev libjasper-dev libavcodec-dev libavformat-dev libswscale-dev libxine-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libv4l-dev libtbb-dev libqt4-dev libfaac-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev x264 v4l-utils unzip
+sudo apt-get -y install libopencv-dev build-essential cmake git libgtk2.0-dev pkg-config python-dev python-numpy libdc1394-22 libdc1394-22-dev libjpeg-dev libpng12-dev libtiff4-dev libjasper-dev libavcodec-dev libavformat-dev libswscale-dev libxine-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libv4l-dev libtbb-dev libqt4-dev libfaac-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev x264 v4l-utils unzip
 ```
 # OpenCV setup
 ```
-$ mkdir <third_party_repos>/opencv
-$ cd <third_party_repos>/opencv
-$ git clone http://github.com/Itseez/opencv.git <version>
-$ cd <version>
-$ mkdir build
-$ cd build
-$ cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D WITH_V4L=ON -D WITH_QT=ON -D WITH_OPENGL=ON ..
-$ make -j $(nproc)
-$ sudo make install
-$ sudo /bin/bash -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/opencv.conf'
-$ sudo ldconfig
+mkdir <third_party_repos>/opencv
+cd <third_party_repos>/opencv
+git clone http://github.com/Itseez/opencv.git <version>
+cd <version>
+mkdir build
+cd build
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D WITH_V4L=ON -D WITH_QT=ON -D WITH_OPENGL=ON ..
+make -j $(nproc)
+sudo make install
+sudo /bin/bash -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/opencv.conf'
+sudo ldconfig
+```
+
+* To make sure you have the proper version installed, run:
+```
+pkg-config --modversion opencv
 ```
 
 ## JsonCpp
 ```
-$ git clone --branch 1.7.2 https://github.com/open-source-parsers/jsoncpp.git
-$ cd jsoncpp
-$ python amalgamate.py
+git clone --branch 1.7.2 https://github.com/open-source-parsers/jsoncpp.git
+cd jsoncpp
+python amalgamate.py
 ```
 
 ## Compiling Mandrill-Low
-..* To compile this module, simply run the following from the project's root directory:
+* To compile this module, simply run the following from the project's root directory:
 ```
-$ make
+make
 ```
 
-..* If you want to speed up the compilation process, you may make use of mullti-core compilation:
+* If you want to speed up the compilation process, you may use mullti-core compilation:
 ```
-$ make -j $(nproc)
+make -j $(nproc)
 ```
