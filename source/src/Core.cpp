@@ -31,14 +31,14 @@ void Core::run()
 
 	// Observer* analyser = new Analyser();
 	// Observer* printer = new Printer();
-	Observer* greyProcessor = new GreyProcessor("H.264");
+	// Observer* greyProcessor = new GreyProcessor("H.264");
 	Observer* saver = new Saver("H.264");
 	// Observer* meanProcessor = new MeanProcessor();
 	// Observer* moveProcessor = new MovementProcessor("H.264");
 
 	// _framesManager->attach(analyser);
 	// _framesManager->attach(printer);
-	_framesManager->attach(greyProcessor);
+	// _framesManager->attach(greyProcessor);
 	_framesManager->attach(saver);
 	// _framesManager->attach(meanProcessor);
 	// _framesManager->attach(moveProcessor);

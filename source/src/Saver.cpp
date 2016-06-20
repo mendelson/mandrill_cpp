@@ -56,6 +56,6 @@ void Saver::saveFrame()
 
 	// a = this->_subject->getFrameAvailability(_currentFrameIndex);
 
-  	std::cout << "olha o aaaaaa: " << _currentFrameIndex << std::endl;
+  	// std::cout << "olha o aaaaaa: " << _currentFrameIndex << std::endl;
 
 }

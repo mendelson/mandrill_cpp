@@ -96,8 +96,6 @@ unsigned int FramesManager::getLatestFrameIndex()
 
 void FramesManager::run()
 {
-	auto t0 = Time::now();
-    auto t1 = Time::now();
 
 	if(_url.compare("") == 0 || _model.compare("") == 0)
 	{
@@ -108,13 +106,12 @@ void FramesManager::run()
 
 	_bufferManager = new BufferManager();
 	std::thread bufferManagerThread (bufferManagerRunHelper, _bufferManager);
-
-
-	t0 = Time::now();
+    
+    unsigned int frameCounter = 0;
+	unsigned int frameGap = _camera->getFps()/FPS;
 
 	while(true)
 	{
-		t1 = Time::now();
 
 		if(ThreadPool::mustStop())
 		{
@@ -130,21 +127,33 @@ void FramesManager::run()
 		if(!frame.empty())
 		{
 			// cv::imshow("Live streaming from " + _camera->getIp(), frame);
+		 std::cout << std::endl << "Frame GAP: " << frameGap << std::endl;
+		 std::cout << "Frame counter: " << frameCounter << std::endl;
+		 std::cout << "Intervalo: " << frameCounter % frameGap << std::endl << std::endl;
 
 			if(!ThreadPool::mustStop())
 			{
-				timeDiff = t1 - t0;
-				miliDiff = std::chrono::duration_cast<ms>(timeDiff);
 
-				if(miliDiff.count() >= (int)(1000/FPS))
+
+				if(frameCounter % frameGap == 0)
 				{
-
 						addFrame(frame);
-						std::cout << "Salvei: " << std::to_string(miliDiff.count()) << "\n";
-						t0 = Time::now();
-
+						frameCounter = 0;
+				}
+				else
+				{
+					frame.release();
+					std::cout << "Dropando: " << frameCounter << std::endl;
 				}
 				
+				frameCounter++;
+				// for(i = 0; i < FPS; i++)
+				// {
+				// 	addFrame(frame);
+				// }
+
+				// std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
 				// saveFrame(frame, outputStream);
 			}
 		}
