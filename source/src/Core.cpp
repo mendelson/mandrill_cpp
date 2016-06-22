@@ -1,16 +1,16 @@
+#include "Core.hpp"
+#include <signal.h>
 #include <opencv2/opencv.hpp>
 #include <thread>
-#include <signal.h>
-#include "Core.hpp"
 #include "Analyser.hpp"
-#include "Printer.hpp"
-#include "GreyProcessor.hpp"
-#include "Saver.hpp"
-#include "MeanProcessor.hpp"
 #include "CodecsConfig.hpp"
+#include "GreyProcessor.hpp"
+#include "MeanProcessor.hpp"
 #include "MovementProcessor.hpp"
+#include "Printer.hpp"
+#include "Saver.hpp"
 
-static void framesManagerRunHelper(FramesManager* framesManager);
+static void framesManagerRunHelper(FramesManager *framesManager);
 volatile sig_atomic_t flag = 0;
 
 void handleInterruptionSignal(int sig)
@@ -32,7 +32,7 @@ void Core::run()
 	// Observer* analyser = new Analyser();
 	// Observer* printer = new Printer();
 	// Observer* greyProcessor = new GreyProcessor("H.264");
-	Observer* saver = new Saver("H.264");
+	Observer *saver = new Saver("H.264");
 	// Observer* meanProcessor = new MeanProcessor();
 	// Observer* moveProcessor = new MovementProcessor("H.264");
 
@@ -43,15 +43,15 @@ void Core::run()
 	// _framesManager->attach(meanProcessor);
 	// _framesManager->attach(moveProcessor);
 
-	std::thread framesManagerThread (framesManagerRunHelper, _framesManager);
+	std::thread framesManagerThread(framesManagerRunHelper, _framesManager);
 
-	while(true)
+	while (true)
 	{
-		if(flag)
+		if (flag)
 		{
 			std::cout << "\n\nSIGINT caught!" << std::endl;
 			std::cout << "\n\nExiting Core smoothly..." << std::endl;
-			delete(ThreadPool::getThreadPool());
+			delete (ThreadPool::getThreadPool());
 			flag = 0;
 			break;
 		}
@@ -59,11 +59,11 @@ void Core::run()
 
 	framesManagerThread.join();
 
-	if(_framesManager->lostCamera())
+	if (_framesManager->lostCamera())
 		exit(-6);
 }
 
-void framesManagerRunHelper(FramesManager* framesManager)
+void framesManagerRunHelper(FramesManager *framesManager)
 {
 	framesManager->run();
 }
@@ -78,3 +78,4 @@ std::string Core::getAction()
 
 	return action;
 }
+

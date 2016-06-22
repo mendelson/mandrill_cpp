@@ -1,9 +1,10 @@
-#include <iostream>
 #include "CameraStandards.h"
+#include <iostream>
 
-std::string CameraStandards::getSnapShotPath(const CameraStandards::MODEL& model)
+std::string
+CameraStandards::getSnapShotPath(const CameraStandards::MODEL &model)
 {
-	switch(model)
+	switch (model)
 	{
 		case VIVOTEK_FD8136:
 			return "cgi-bin/viewer/video.jpg";
@@ -17,9 +18,10 @@ std::string CameraStandards::getSnapShotPath(const CameraStandards::MODEL& model
 	}
 }
 
-std::string CameraStandards::getVideoStreamPath(const CameraStandards::MODEL& model)
+std::string
+CameraStandards::getVideoStreamPath(const CameraStandards::MODEL &model)
 {
-	switch(model)
+	switch (model)
 	{
 		case VIVOTEK_FD8136:
 			return "live.sdp";
@@ -32,3 +34,4 @@ std::string CameraStandards::getVideoStreamPath(const CameraStandards::MODEL& mo
 			break;
 	}
 }
+

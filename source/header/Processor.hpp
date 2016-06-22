@@ -12,7 +12,8 @@ public:
 protected:
 	void getCurrentFrame();
 
-  	std::shared_ptr<cv::Mat> _frame;
-  	const std::string _codecName;
-  	unsigned int _currentFrameIndex;
+	std::shared_ptr<cv::Mat> _frame;
+	const std::string _codecName;
+	unsigned int _currentFrameIndex;
 };
+

@@ -12,5 +12,6 @@ public:
 
 private:
 	std::string getAction();
-	FramesManager* _framesManager;
+	FramesManager *_framesManager;
 };
+

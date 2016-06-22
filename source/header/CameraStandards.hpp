@@ -11,8 +11,8 @@ public:
 		AXIS_M1014
 	};
 
-	CameraStandards(){}
-	static std::string getSnapShotPath(const CameraStandards::MODEL&);
-	static std::string getVideoStreamPath(const CameraStandards::MODEL&);
+	CameraStandards() {}
+	static std::string getSnapShotPath(const CameraStandards::MODEL &);
+	static std::string getVideoStreamPath(const CameraStandards::MODEL &);
 };
 

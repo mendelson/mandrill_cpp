@@ -1,12 +1,12 @@
 #include <iostream>
-#include <vector>
-#include <opencv2/opencv.hpp>
 #include <memory>
+#include <opencv2/opencv.hpp>
+#include <vector>
 // #include "FramesManager.hpp"
 // #include <list>
 #include <pthread.h>
-#include <vector>
 #include <thread>
+#include <vector>
 
 static void do_something();
 
@@ -14,13 +14,12 @@ int main(int argc, char *argv[])
 {
 	std::vector<std::thread> myVector;
 
-	for(int i = 0; i < 1; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		myVector.push_back(std::thread(do_something));
 	}
 
-
-	for(int i = 0; i < 1; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		myVector[i].join();
 	}
@@ -62,3 +61,4 @@ int main(int argc, char *argv[])
 void do_something()
 {
 }
+

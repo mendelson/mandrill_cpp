@@ -1,7 +1,7 @@
-#include <iostream>
-#include "Observer.hpp"
-#include "FramesManager.hpp"
 #include "Analyser.hpp"
+#include <iostream>
+#include "FramesManager.hpp"
+#include "Observer.hpp"
 
 void Analyser::Update()
 {
@@ -22,3 +22,4 @@ void Analyser::showLastFrameIndex()
 	std::cout << "Analyser: " << _currentFrameIndex << "|" << std::endl;
 	// std::cout << "Analyser" << std::endl;
 }
+
