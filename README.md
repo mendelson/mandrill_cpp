@@ -75,3 +75,14 @@ make -j $(nproc)
 ```
 ./scripts/runCore.sh
 ```
+
+# Versioning
+* To indicate a new version, commit, add a new tag to the desired commit, make the branch "latest" point to that tag, as follows:
+```
+git commit
+git tag v<interface>.<version>.<revision>
+git push origin v<interface>.<version>.<revision>
+git checkout latest
+git reset --hard v<interface>.<version>.<revision>
+git push -f origin latest
+```
