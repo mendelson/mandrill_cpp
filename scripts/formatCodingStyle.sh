@@ -21,7 +21,7 @@ find source -iregex ".*\.\(cpp\|hpp\)\$" -print0 |
   while IFS= read -r -d $'\0' f; do 
 
   # Only examine known text files
-  clang-format-3.6 -i "$f"
+  clang-format-3.8 -i "$f"
   # echo $f
   # Add a linebreak to the file if it doesn't have one
   if [ "$(tail -c1 $f)" != '\n' ]

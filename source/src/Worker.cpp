@@ -6,19 +6,25 @@
 //     while(true)
 //     {
 //         {   // acquire lock
-//             std::unique_lock<std::mutex> lock(pool.queue_mutex);
+//             std::unique_lock<std::mutex>
+//             lock(pool.queue_mutex);
 
 //             // look for a work item
-//             while(!pool._stop && pool.tasks.empty())
-//             { // if there are none wait for notification
+//             while(!pool._stop &&
+//             pool.tasks.empty())
+//             { // if there are none
+//             wait for notification
 //                 pool.condition.wait(lock);
 //             }
 
-//             if(pool._stop) // exit if the pool is stopped
+//             if(pool._stop) // exit if
+//             the pool is stopped
 //                 return;
 
-//             // get the task from the queue
-//             task = pool.tasks.front();
+//             // get the task from the
+//             queue
+//             task =
+//             pool.tasks.front();
 //             pool.tasks.pop_front();
 
 //         }   // release lock
@@ -31,7 +37,7 @@
 void Worker::operator()()
 {
 	Observer *task;
-	while (true)
+	while(true)
 	{
 		task = nullptr;
 
@@ -39,15 +45,20 @@ void Worker::operator()()
 			std::unique_lock<std::mutex> lock(pool.queue_mutex);
 
 			// look for a work item
-			while (!pool._stop && pool._observers.empty())
-			{  // if there are none wait for notification
+			while(!pool._stop && pool._observers.empty())
+			{  // if there are none wait
+				// for notification
 				pool.condition.wait(lock);
 			}
 
-			if (pool._stop)  // exit if the pool is stopped
+			if(pool._stop)  // exit if
+				// the pool
+				// is
+				// stopped
 				return;
 
-			// get the task from the queue
+			// get the task from the
+			// queue
 			task = pool._observers.front();
 			pool._observers.pop_front();
 

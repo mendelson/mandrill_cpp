@@ -1,8 +1,8 @@
 #pragma once
 
+#include "FramesManager.hpp"
 #include <iostream>
 #include <vector>
-#include "FramesManager.hpp"
 
 class Core
 {

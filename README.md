@@ -21,12 +21,17 @@
 * g++ version 4.8.4
 * OpenCV version 3.1.0
 * JsonCpp version 1.7.2
-* ClangFormat version 3.6
+* ClangFormat version 3.8
 
-# ClangFormat installation
+# Clang
+## Installation
 ```
-sudo apt-get install clang-format-3.6
+sudo add-apt-repository "deb http://llvm-apt.ecranbleu.org/apt/trusty/ llvm-toolchain-trusty-3.8 main"
+wget -O - http://llvm-apt.ecranbleu.org/apt/llvm-snapshot.gpg.key|sudo apt-key add -
+sudo apt-get install clang-3.8 lldb-3.8
+sudo apt-get install clang-format-3.8
 ```
+* If you intend to edit the clang-format file, make sure to check the documentation[here](http://llvm.org/releases/3.8.0/tools/clang/docs/ClangFormatStyleOptions.html).
 
 # OpenCV
 ## Environment setup

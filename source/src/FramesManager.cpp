@@ -1,19 +1,15 @@
 #include "FramesManager.hpp"
-#include <chrono>
-#include <iostream>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <thread>
+#include "CodecsConfig.hpp"
 
-FramesManager *FramesManager::_instance = 0;
+FramesManager *FramesManager::_instance						= 0;
 FramesManager::BufferManager *FramesManager::_bufferManager = 0;
 std::mutex FramesManager::_instanceMutex;
-const unsigned int FramesManager::FPS = 10;
 
 FramesManager *FramesManager::getManager()
 {
 	std::unique_lock<std::mutex> _lock(_instanceMutex);
 
-	if (_instance == 0)
+	if(_instance == 0)
 	{
 		_instance = new FramesManager();
 	}
@@ -21,13 +17,13 @@ FramesManager *FramesManager::getManager()
 	return _instance;
 }
 
-FramesManager::FramesManager() : _lostCamera(false)
+FramesManager::FramesManager() : FPS(CodecsConfig::getFps()), _lostCamera(false)
 {
-	_url = "";
-	_model = "";
+	_url			  = "";
+	_model			  = "";
 	_latestFrameIndex = -1;
-	_camera = NULL;
-	_threadPool = ThreadPool::getThreadPool();
+	_camera			  = NULL;
+	_threadPool		  = ThreadPool::getThreadPool();
 }
 
 void FramesManager::addFrame(cv::Mat frame)
@@ -35,11 +31,14 @@ void FramesManager::addFrame(cv::Mat frame)
 	_mutex.lock();
 
 	std::bitset<16> busyVector;
-	// std::cout << _latestFrameIndex << std::endl;
+	// std::cout << _latestFrameIndex <<
+	// std::endl;
 
-	// if(_framesSet.size() >= MAXFRAMES)
+	// if(_framesSet.size() >=
+	// MAXFRAMES)
 	// {
-	// 	_framesSet.erase(_latestFrameIndex + 1 - MAXFRAMES);
+	// 	_framesSet.erase(_latestFrameIndex
+	// + 1 - MAXFRAMES);
 	// }
 
 	_framesSet.emplace(_latestFrameIndex + 1, std::make_shared<cv::Mat>(frame));
@@ -50,7 +49,8 @@ void FramesManager::addFrame(cv::Mat frame)
 	setFrameAsBusy(_latestFrameIndex);
 	Printer::safe_print("MANAGER:" + std::to_string(_latestFrameIndex));
 
-	// Printer::safe_print("Saver: " + std::to_string(_latestFrameIndex));
+	// Printer::safe_print("Saver: " +
+	// std::to_string(_latestFrameIndex));
 
 	_mutex.unlock();
 
@@ -64,7 +64,7 @@ std::shared_ptr<cv::Mat> FramesManager::getFrame(unsigned int index)
 	std::unordered_map<unsigned int, std::shared_ptr<cv::Mat>>::const_iterator
 		element = _framesSet.find(index);
 
-	if (element == _framesSet.end())
+	if(element == _framesSet.end())
 		return NULL;
 	else
 		return std::make_shared<cv::Mat>(*element->second);
@@ -78,11 +78,12 @@ cv::Mat FramesManager::getLatestFrame()
 
 unsigned int FramesManager::getFrameAvailability(unsigned int frameIndex)
 {
-	// std::unique_lock<std::mutex> _lock(_mutex);
+	// std::unique_lock<std::mutex>
+	// _lock(_mutex);
 	std::bitset<16> busyVector;
 
 	busyVector = *_busyFrames[frameIndex];
-	if (busyVector.none())
+	if(busyVector.none())
 		return 0;
 	else
 		return 1;
@@ -95,10 +96,13 @@ unsigned int FramesManager::getLatestFrameIndex()
 
 void FramesManager::run()
 {
-	if (_url.compare("") == 0 || _model.compare("") == 0)
+	if(_url.compare("") == 0 || _model.compare("") == 0)
 	{
-		std::cout << "You have not set the address and model of your streaming "
-					 "camera!" << std::endl;
+		std::cout << "You have not set the "
+					 "address and model of "
+					 "your streaming "
+					 "camera!"
+				  << std::endl;
 
 		exit(1);
 	}
@@ -107,33 +111,36 @@ void FramesManager::run()
 	std::thread bufferManagerThread(bufferManagerRunHelper, _bufferManager);
 
 	unsigned int frameCounter = 0;
-	unsigned int frameGap = _camera->getFps() / FPS;
+	unsigned int frameGap	 = _camera->getFps() / FPS;
 
-	while (true)
+	while(true)
 	{
-		if (ThreadPool::mustStop())
+		if(ThreadPool::mustStop())
 		{
 			_bufferManager->stop();
 			break;
 		}
 
 		_camera->updateFrame();
-		// std::cout << "FPS: " << _camera->getFps() << std::endl;
+		// std::cout << "FPS: " <<
+		// _camera->getFps() <<
+		// std::endl;
 
 		cv::Mat frame = _camera->getFrame().clone();
 
-		if (!frame.empty())
+		if(!frame.empty())
 		{
-			// cv::imshow("Live streaming from " + _camera->getIp(), frame);
-			std::cout << std::endl
-					  << "Frame GAP: " << frameGap << std::endl;
+			// cv::imshow("Live
+			// streaming from " +
+			// _camera->getIp(), frame);
+			std::cout << std::endl << "Frame GAP: " << frameGap << std::endl;
 			std::cout << "Frame counter: " << frameCounter << std::endl;
 			std::cout << "Intervalo: " << frameCounter % frameGap << std::endl
 					  << std::endl;
 
-			if (!ThreadPool::mustStop())
+			if(!ThreadPool::mustStop())
 			{
-				if (frameCounter % frameGap == 0)
+				if(frameCounter % frameGap == 0)
 				{
 					addFrame(frame);
 					frameCounter = 0;
@@ -145,29 +152,37 @@ void FramesManager::run()
 				}
 
 				frameCounter++;
-				// for(i = 0; i < FPS; i++)
+				// for(i = 0; i < FPS;
+				// i++)
 				// {
 				// 	addFrame(frame);
 				// }
 
 				// std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-				// saveFrame(frame, outputStream);
+				// saveFrame(frame,
+				// outputStream);
 			}
 		}
-		// Must reconnect to the streaming source
+		// Must reconnect to the
+		// streaming source
 		else
 		{
-			// std::cout << "---------------------------------------------------
-			// EMPTY --------------------------------------" << std::endl;
+			// std::cout <<
+			// "---------------------------------------------------
+			// EMPTY
+			// --------------------------------------"
+			// << std::endl;
 
 			// _camera->reconnect();
 			_lostCamera = true;
 			break;
 		}
 
-		// Sleeps to get a lower frame rate
-		// std::this_thread::sleep_for (std::chrono::milliseconds(1000));
+		// Sleeps to get a lower frame
+		// rate
+		// std::this_thread::sleep_for
+		// (std::chrono::milliseconds(1000));
 	}
 
 	_bufferManager->stop();
@@ -176,7 +191,7 @@ void FramesManager::run()
 
 void FramesManager::setStreamSource(std::string url, std::string model)
 {
-	_url = url;
+	_url   = url;
 	_model = model;
 
 	_camera = new Camera(_url, _model);
@@ -223,9 +238,10 @@ void FramesManager::Notify()
 
 	std::list<Observer *>::iterator it;
 
-	for (it = _observers.begin(); it != _observers.end(); it++)
+	for(it = _observers.begin(); it != _observers.end(); it++)
 	{
-		// std::thread(FramesManager::updateHelper, it).detach();
+		// std::thread(FramesManager::updateHelper,
+		// it).detach();
 		_threadPool->enqueue(*it);
 	}
 }
@@ -235,9 +251,12 @@ unsigned int FramesManager::getNewId()
 	return _observers.size() - 1;
 }
 
-// void FramesManager::updateHelper(std::list<Observer*>::iterator it)
+// void
+// FramesManager::updateHelper(std::list<Observer*>::iterator
+// it)
 // {
-// 	// (*it)->Update(FramesManager::getManager());
+// 	//
+// (*it)->Update(FramesManager::getManager());
 // 	(*it)->Update();
 // }
 
@@ -259,35 +278,36 @@ void FramesManager::bufferManagerRunHelper(
 FramesManager::BufferManager::BufferManager()
 {
 	_framesManager = FramesManager::getManager();
-	_mustStop = false;
+	_mustStop	  = false;
 	// _mustStopWhenEmpty = false;
 }
 
 void FramesManager::BufferManager::run()
 {
-	while (true)
+	while(true)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(TIMESPAN));
 
-		if (_mustStop)
+		if(_mustStop)
 		{
 			_framesManager->_framesSet.clear();
 			_framesManager->_busyFrames.clear();
 			break;
 		}
 
-		auto it = _framesManager->_busyFrames.begin();
+		auto it			 = _framesManager->_busyFrames.begin();
 		auto previous_it = it;
 		unsigned int currentKey;
 
 		_framesManager->_mutex.lock();
-		// std::cout << "lockei!!!" << std::endl;
-		while (it != _framesManager->_busyFrames.end())
+		// std::cout << "lockei!!!" <<
+		// std::endl;
+		while(it != _framesManager->_busyFrames.end())
 		{
 			previous_it = it;
 			it++;
 
-			if (_framesManager->getFrameAvailability(previous_it->first) == 0)
+			if(_framesManager->getFrameAvailability(previous_it->first) == 0)
 			{
 				std::cout << "BIURLLLL " << previous_it->first << std::endl;
 
@@ -299,10 +319,14 @@ void FramesManager::BufferManager::run()
 		}
 		_framesManager->_mutex.unlock();
 
-		std::cout << "=============== BufferManager ==============="
+		std::cout << "=============== "
+					 "BufferManager "
+					 "==============="
 				  << std::endl;
 
-		// if(_mustStopWhenEmpty && _framesManager->_framesSet.size() == 0)
+		// if(_mustStopWhenEmpty &&
+		// _framesManager->_framesSet.size()
+		// == 0)
 		// break;
 	}
 }
@@ -312,22 +336,25 @@ void FramesManager::BufferManager::stop()
 	_mustStop = true;
 }
 
-// void FramesManager::BufferManager::stopWhenEmpty()
+// void
+// FramesManager::BufferManager::stopWhenEmpty()
 // {
 // 	_mustStopWhenEmpty = true;
 // }
 
 void FramesManager::setFrameAsBusy(unsigned int frameIndex)
 {
-	// std::unique_lock<std::mutex> _lock(_mutex);
+	// std::unique_lock<std::mutex>
+	// _lock(_mutex);
 
 	auto it = _busyFrames.find(frameIndex);
 
-	if (it != _busyFrames.end())
+	if(it != _busyFrames.end())
 	{
-		// it->second->set(moduleIndex, 1);
+		// it->second->set(moduleIndex,
+		// 1);
 
-		for (unsigned int i = 0; i < _observers.size(); i++)
+		for(unsigned int i = 0; i < _observers.size(); i++)
 		{
 			it->second->set(i, 1);
 		}
@@ -341,7 +368,7 @@ void FramesManager::setFrameAsFree(unsigned int frameIndex,
 
 	auto it = _busyFrames.find(frameIndex);
 
-	if (it != _busyFrames.end())
+	if(it != _busyFrames.end())
 		it->second->set(moduleIndex, 0);
 }
 

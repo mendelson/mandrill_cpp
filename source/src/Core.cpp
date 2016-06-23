@@ -1,7 +1,4 @@
 #include "Core.hpp"
-#include <signal.h>
-#include <opencv2/opencv.hpp>
-#include <thread>
 #include "Analyser.hpp"
 #include "CodecsConfig.hpp"
 #include "GreyProcessor.hpp"
@@ -9,6 +6,9 @@
 #include "MovementProcessor.hpp"
 #include "Printer.hpp"
 #include "Saver.hpp"
+#include <opencv2/opencv.hpp>
+#include <signal.h>
+#include <thread>
 
 static void framesManagerRunHelper(FramesManager *framesManager);
 volatile sig_atomic_t flag = 0;
@@ -20,21 +20,26 @@ void handleInterruptionSignal(int sig)
 
 Core::Core(std::string url, std::string model)
 {
+	CodecsConfig::update();
 	_framesManager = FramesManager::getManager();
 	_framesManager->setStreamSource(url, model);
-	CodecsConfig::update();
 }
 
 void Core::run()
 {
 	signal(SIGINT, handleInterruptionSignal);
 
-	// Observer* analyser = new Analyser();
-	// Observer* printer = new Printer();
-	// Observer* greyProcessor = new GreyProcessor("H.264");
+	// Observer* analyser = new
+	// Analyser();
+	// Observer* printer = new
+	// Printer();
+	// Observer* greyProcessor = new
+	// GreyProcessor("H.264");
 	Observer *saver = new Saver("H.264");
-	// Observer* meanProcessor = new MeanProcessor();
-	// Observer* moveProcessor = new MovementProcessor("H.264");
+	// Observer* meanProcessor = new
+	// MeanProcessor();
+	// Observer* moveProcessor = new
+	// MovementProcessor("H.264");
 
 	// _framesManager->attach(analyser);
 	// _framesManager->attach(printer);
@@ -45,13 +50,15 @@ void Core::run()
 
 	std::thread framesManagerThread(framesManagerRunHelper, _framesManager);
 
-	while (true)
+	while(true)
 	{
-		if (flag)
+		if(flag)
 		{
 			std::cout << "\n\nSIGINT caught!" << std::endl;
-			std::cout << "\n\nExiting Core smoothly..." << std::endl;
-			delete (ThreadPool::getThreadPool());
+			std::cout << "\n\nExiting Core "
+						 "smoothly..."
+					  << std::endl;
+			delete(ThreadPool::getThreadPool());
 			flag = 0;
 			break;
 		}
@@ -59,7 +66,7 @@ void Core::run()
 
 	framesManagerThread.join();
 
-	if (_framesManager->lostCamera())
+	if(_framesManager->lostCamera())
 		exit(-6);
 }
 

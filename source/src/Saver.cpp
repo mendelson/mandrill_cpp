@@ -1,13 +1,13 @@
 #include "Saver.hpp"
-#include <iostream>
 #include "CodecsConfig.hpp"
 #include "FramesManager.hpp"
 #include "Printer.hpp"
+#include <iostream>
 
 Saver::Saver(std::string codecName) : _codecName(codecName)
 {
 	_currentFrameIndex = -1;
-	_subject = nullptr;
+	_subject		   = nullptr;
 }
 
 Saver::~Saver()
@@ -29,12 +29,12 @@ void Saver::Update()
 
 void Saver::setSubject(FramesManager *subject, unsigned int id)
 {
-	this->_subject = subject;
-	_id = id;
+	this->_subject		  = subject;
+	_id					  = id;
 	std::string extension = CodecsConfig::getCodecExtension(_codecName);
-	int fourccCode = CodecsConfig::getCodecFourcc(_codecName);
+	int fourccCode		  = CodecsConfig::getCodecFourcc(_codecName);
 
-	if (extension.empty() || fourccCode == -4)
+	if(extension.empty() || fourccCode == -4)
 		exit(-4);
 
 	std::string outputFile = "data/streaming/" + this->_subject->getModel() +
@@ -49,14 +49,17 @@ void Saver::saveFrame()
 {
 	// int a=2;
 
-	if (_frame != NULL)
+	if(_frame != NULL)
 		*_outputStream << *_frame;
 
-	// libera frame para poder ser deletado
+	// libera frame para poder ser
+	// deletado
 	this->_subject->setFrameAsFree(_currentFrameIndex, _id);
 
-	// a = this->_subject->getFrameAvailability(_currentFrameIndex);
+	// a =
+	// this->_subject->getFrameAvailability(_currentFrameIndex);
 
-	// std::cout << "olha o aaaaaa: " << _currentFrameIndex << std::endl;
+	// std::cout << "olha o aaaaaa: " <<
+	// _currentFrameIndex << std::endl;
 }
 

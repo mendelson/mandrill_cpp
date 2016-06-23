@@ -1,5 +1,9 @@
 #pragma once
 
+#include "Camera.hpp"
+#include "Observer.hpp"
+#include "Printer.hpp"
+#include "ThreadPool.hpp"
 #include <bitset>
 #include <chrono>
 #include <list>
@@ -9,13 +13,9 @@
 #include <thread>
 #include <unordered_map>
 #include <vector>
-#include "Camera.hpp"
-#include "Observer.hpp"
-#include "Printer.hpp"
-#include "ThreadPool.hpp"
 
 const unsigned int MAXFRAMES = 10;
-const unsigned int TIMESPAN = 100;  // miliseconds
+const unsigned int TIMESPAN  = 100;  // miliseconds
 
 typedef std::list<Observer *> observersList;
 typedef std::unordered_map<unsigned int, std::shared_ptr<cv::Mat>> FramesSet;
@@ -28,7 +28,7 @@ typedef std::chrono::duration<float> fsec;
 class FramesManager
 {
 public:
-	static const unsigned int FPS;
+	const unsigned int FPS;
 
 	std::shared_ptr<cv::Mat> getFrame(unsigned int index);
 	cv::Mat getLatestFrame();
@@ -41,9 +41,10 @@ public:
 
 	// Singleton pattern
 	static FramesManager *getManager();
-	FramesManager(FramesManager const &) = delete;   // Desabling copy
-													 // constructor
-	void operator=(FramesManager const &) = delete;  // Desabling copy operator
+	FramesManager(FramesManager const &) = delete;  // Desabling copy
+	// constructor
+	void operator=(FramesManager const &) = delete;  // Desabling copy
+	// operator
 
 	// Subject-observer pattern
 	void attach(Observer *);
@@ -67,10 +68,10 @@ private:
 
 	private:
 		FramesManager *_framesManager;
-		BufferManager(BufferManager const &) = delete;   // Desabling copy
-														 // constructor
+		BufferManager(BufferManager const &) = delete;  // Desabling copy
+		// constructor
 		void operator=(BufferManager const &) = delete;  // Desabling copy
-														 // operator
+		// operator
 
 		bool _mustStop;
 		// bool _mustStopWhenEmpty;
@@ -102,7 +103,9 @@ private:
 	static std::mutex _instanceMutex;
 
 	// Allowing parallelism
-	// static void updateHelper(std::list<Observer*>::iterator it);
+	// static void
+	// updateHelper(std::list<Observer*>::iterator
+	// it);
 
 	void saveFrame(cv::Mat frame, cv::VideoWriter outputStream);
 
