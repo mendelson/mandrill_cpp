@@ -1,8 +1,8 @@
 #pragma once
 
-#include <unordered_map>
 #include "Processor.hpp"
 #include <ctime>
+#include <unordered_map>
 
 const int MAXSAVING = 10;
 
@@ -17,7 +17,7 @@ public:
 	void searchMovement(cv::Mat, cv::Mat);
 	void setSubject(FramesManager *subject, unsigned int id);
 	const static int SENSITIVITY_VALUE = 20;
-	const static int BLUR_SIZE = 10;
+	const static int BLUR_SIZE		   = 10;
 
 private:
 	cv::Mat _greyFrame;

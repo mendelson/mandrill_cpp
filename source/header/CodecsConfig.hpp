@@ -1,20 +1,28 @@
 #pragma once
 
-#include <map>
-#include <string>
-#include <tuple>
 #include "json/json.h"
+#include <chrono>
+#include <iostream>
+#include <map>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <string>
+#include <thread>
+#include <tuple>
 
 class CodecsConfig
 {
 public:
 	static void update();
 
-	// Returns -4 if the codec has not been found
+	// Returns -4 if the codec has not
+	// been found
 	static int getCodecFourcc(std::string codecName);
 
-	// Returns an empty string if the codec has not been found
+	// Returns an empty string if the
+	// codec has not been found
 	static std::string getCodecExtension(std::string codecName);
+
+	static unsigned int getFps() { return _outputFps; }
 
 private:
 	static void readJsonFile();
@@ -24,10 +32,11 @@ private:
 	static void fillCodecsMap();
 	static void listCodecs();
 
-	static long fileSizeInChars;
-	static char *buffer;
-	static std::string jsonContent;
-	static Json::Value data;
+	static long _fileSizeInChars;
+	static char *_buffer;
+	static std::string _jsonContent;
+	static Json::Value _data;
+	static unsigned int _outputFps;
 
 	/* Key: codecName
 	*  Tuple:

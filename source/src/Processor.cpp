@@ -6,7 +6,7 @@ void Processor::getCurrentFrame()
 	_currentFrameIndex++;
 
 	_frame = _subject->getFrame(_currentFrameIndex);
-	if (_frame == NULL)
+	if(_frame == NULL)
 		std::cout << "NULL\n";
 }
 

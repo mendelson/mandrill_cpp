@@ -1,14 +1,15 @@
 #include "CodecsConfig.hpp"
-#include <stdio.h>
 #include <algorithm>
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <stdio.h>
 
 const std::string CODECSCONFIGFILE = "./config/codecs_config.json";
-long CodecsConfig::fileSizeInChars;
-char *CodecsConfig::buffer;
-std::string CodecsConfig::jsonContent;
-Json::Value CodecsConfig::data;
+long CodecsConfig::_fileSizeInChars;
+char *CodecsConfig::_buffer;
+std::string CodecsConfig::_jsonContent;
+Json::Value CodecsConfig::_data;
+unsigned int CodecsConfig::_outputFps;
 std::map<std::string, std::tuple<std::string, std::string>> CodecsConfig::codecs;
 
 void CodecsConfig::update()
@@ -25,7 +26,7 @@ void CodecsConfig::readJsonFile()
 
 	configFile = fopen(CODECSCONFIGFILE.c_str(), "rb");
 
-	if (configFile == NULL)
+	if(configFile == NULL)
 	{
 		std::cout << "Error while opening '" << CODECSCONFIGFILE << "'"
 				  << std::endl;
@@ -35,24 +36,24 @@ void CodecsConfig::readJsonFile()
 	setFileSizeInChars(configFile);
 	loadFileToBuffer(configFile);
 
-	CodecsConfig::jsonContent = buffer;
+	CodecsConfig::_jsonContent = _buffer;
 
 	fclose(configFile);
-	free(buffer);
+	free(_buffer);
 }
 
 void CodecsConfig::setFileSizeInChars(FILE *file)
 {
 	fseek(file, 0, SEEK_END);
-	fileSizeInChars = ftell(file);
+	_fileSizeInChars = ftell(file);
 	rewind(file);
 }
 
 void CodecsConfig::loadFileToBuffer(FILE *file)
 {
-	buffer = (char *)malloc(sizeof(char) * (fileSizeInChars + 1));
+	_buffer = (char *)malloc(sizeof(char) * (_fileSizeInChars + 1));
 
-	if (buffer == NULL)
+	if(_buffer == NULL)
 	{
 		std::cout << "Could not load file '" << CODECSCONFIGFILE
 				  << "' to memory" << std::endl;
@@ -60,8 +61,11 @@ void CodecsConfig::loadFileToBuffer(FILE *file)
 	}
 
 	// Loading file to buffer
-	fread(buffer, sizeof(char), fileSizeInChars, file);
-	buffer[fileSizeInChars] = '\0';
+	size_t r = fread(_buffer, sizeof(char), _fileSizeInChars, file);
+
+	if(r != _fileSizeInChars)
+		exit(-2);
+	_buffer[_fileSizeInChars] = '\0';
 }
 
 void CodecsConfig::parseJsonContent()
@@ -69,9 +73,9 @@ void CodecsConfig::parseJsonContent()
 	Json::Reader reader;
 	bool wellFormed;
 
-	wellFormed = reader.parse(jsonContent, data, false);
+	wellFormed = reader.parse(_jsonContent, _data, false);
 
-	if (!wellFormed)
+	if(!wellFormed)
 	{
 		std::cout << "Failed to parse JSON" << std::endl
 				  << reader.getFormattedErrorMessages() << std::endl;
@@ -81,47 +85,55 @@ void CodecsConfig::parseJsonContent()
 
 void CodecsConfig::fillCodecsMap()
 {
-	for (unsigned int i = 0; i < data.size(); i++)
+	for(unsigned int i = 0; i < _data.size() - 1; i++)
 	{
 		std::tuple<std::string, std::string> tempTuple(
-			data[i]["codecFourcc"].asString(),
-			data[i]["fileExtension"].asString());
+			_data[i]["codecFourcc"].asString(),
+			_data[i]["fileExtension"].asString());
 
-		codecs[data[i]["codecName"].asString()] = tempTuple;
+		codecs[_data[i]["codecName"].asString()] = tempTuple;
 	}
 
-	buffer = NULL;
+	_outputFps = _data[_data.size() - 1]["outputFPS"].asUInt();
+
+	_buffer = NULL;
 }
 
 void CodecsConfig::listCodecs()
 {
 	std::map<std::string, std::tuple<std::string, std::string>>::iterator it;
 
-	std::cout << "----------------------------------------------------"
+	std::cout << "---------------------"
+				 "---------------------"
+				 "----------"
 			  << std::endl;
 
-	for (it = codecs.begin(); it != codecs.end(); it++)
+	for(it = codecs.begin(); it != codecs.end(); it++)
 	{
 		std::cout << "Codec Name: " << it->first << std::endl;
 		std::cout << "FourCC code: " << std::get<0>(it->second) << std::endl;
 		std::cout << "File extension: " << std::get<1>(it->second) << std::endl;
-		std::cout << "----------------------------------------------------"
+		std::cout << "-----------------"
+					 "-----------------"
+					 "-----------------"
+					 "-"
 				  << std::endl;
 	}
 }
 
 int CodecsConfig::getCodecFourcc(std::string codecName)
 {
-	if (codecs.size() == 0)
+	if(codecs.size() == 0)
 	{
-		std::cout << "'" << CODECSCONFIGFILE << "' has not been read yet."
+		std::cout << "'" << CODECSCONFIGFILE << "' has not been read "
+												"yet."
 				  << std::endl;
 		exit(-5);
 	}
 
 	auto codec = codecs.find(codecName);
 
-	if (codec == codecs.end())
+	if(codec == codecs.end())
 		return -4;
 
 	const char *fourccChar = std::get<0>(codec->second).c_str();
@@ -132,9 +144,10 @@ int CodecsConfig::getCodecFourcc(std::string codecName)
 
 std::string CodecsConfig::getCodecExtension(std::string codecName)
 {
-	if (codecs.size() == 0)
+	if(codecs.size() == 0)
 	{
-		std::cout << "'" << CODECSCONFIGFILE << "' has not been read yet."
+		std::cout << "'" << CODECSCONFIGFILE << "' has not been read "
+												"yet."
 				  << std::endl;
 		exit(-5);
 	}

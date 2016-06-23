@@ -9,7 +9,7 @@ Camera::Camera(std::string url, std::string model) : _url(url), _model(model)
 	char ip[30];
 	std::size_t length;
 	std::size_t begin = _url.find("@");
-	if (begin != std::string::npos)
+	if(begin != std::string::npos)
 	{
 		std::size_t end = _url.find("/", begin);
 
@@ -25,27 +25,37 @@ Camera::Camera(std::string url, std::string model) : _url(url), _model(model)
 	}
 
 	ip[length] = '\0';
-	_ip = ip;
+	_ip		   = ip;
 
 	// Opening video capture
-	std::cout << "Trying to establish connection to " << _ip << std::endl;
+	std::cout << "Trying to establish "
+				 "connection to "
+			  << _ip << std::endl;
 	connect();
 
 	// ///////////////////////////////////
-	// int ex = static_cast<int>(_frameCap->get(CV_CAP_PROP_FOURCC));
+	// int ex =
+	// static_cast<int>(_frameCap->get(CV_CAP_PROP_FOURCC));
 	//
-	// // Transform from int to char via Bitwise operators
-	// char EXT[] = {(char)(ex & 0XFF),(char)((ex & 0XFF00) >> 8),(char)((ex &
-	// 0XFF0000) >> 16),(char)((ex & 0XFF000000) >> 24),0};
-	// std::cout << "Olha: |" << EXT << "|" << std::endl;
-	// // std::cout << "Olha: " << _frameCap->get(CV_CAP_PROP_FOURCC) <<
+	// // Transform from int to char via
+	// Bitwise operators
+	// char EXT[] = {(char)(ex &
+	// 0XFF),(char)((ex & 0XFF00) >>
+	// 8),(char)((ex &
+	// 0XFF0000) >> 16),(char)((ex &
+	// 0XFF000000) >> 24),0};
+	// std::cout << "Olha: |" << EXT <<
+	// "|" << std::endl;
+	// // std::cout << "Olha: " <<
+	// _frameCap->get(CV_CAP_PROP_FOURCC)
+	// <<
 	// std::endl;
 	// ///////////////////////////////////
 }
 
 void Camera::updateFrame()
 {
-	if (_frameCap->isOpened())
+	if(_frameCap->isOpened())
 	{
 		*_frameCap >> _frame;
 	}
@@ -91,7 +101,9 @@ double Camera::getFps()
 // {
 // free(_frameCap);
 // connect();
-// std::cout << "Connection reestablished! " << _frameCap->get(CV_CAP_PROP_FPS)
+// std::cout << "Connection
+// reestablished! " <<
+// _frameCap->get(CV_CAP_PROP_FPS)
 // << std::endl;
 // }
 
@@ -109,18 +121,22 @@ void Camera::connect()
 	_frameCap = new cv::VideoCapture(_url);
 	// else
 	// _frameCap->open(_url);
-	_width = _frameCap->get(CV_CAP_PROP_FRAME_WIDTH);
+	_width  = _frameCap->get(CV_CAP_PROP_FRAME_WIDTH);
 	_height = _frameCap->get(CV_CAP_PROP_FRAME_HEIGHT);
-	_fps = _frameCap->get(CV_CAP_PROP_FPS);
+	_fps	= _frameCap->get(CV_CAP_PROP_FPS);
 	// }
 	// catch(cv::Exception& e)
 	// {
-	//     std::cout << "\nCould not establish connection to " << _ip <<
+	//     std::cout << "\nCould not
+	//     establish connection to " <<
+	//     _ip <<
 	//     "\nRetrying..." << std::endl;
 	//     connected = false;
 	// }
 	// }
-	// std::cout << _frameCap->isOpened() << std::endl;
+	// std::cout <<
+	// _frameCap->isOpened() <<
+	// std::endl;
 }
 
 // .mp4 ou .mkv

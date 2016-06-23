@@ -1,10 +1,10 @@
 #pragma once
 
+#include "Observer.hpp"
+#include "ThreadPool.hpp"
 #include <condition_variable>
 #include <mutex>
 #include <thread>
-#include "Observer.hpp"
-#include "ThreadPool.hpp"
 
 class ThreadPool;
 

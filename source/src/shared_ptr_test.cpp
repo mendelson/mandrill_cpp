@@ -14,12 +14,12 @@ int main(int argc, char *argv[])
 {
 	std::vector<std::thread> myVector;
 
-	for (int i = 0; i < 1; i++)
+	for(int i = 0; i < 1; i++)
 	{
 		myVector.push_back(std::thread(do_something));
 	}
 
-	for (int i = 0; i < 1; i++)
+	for(int i = 0; i < 1; i++)
 	{
 		myVector[i].join();
 	}
@@ -38,21 +38,24 @@ int main(int argc, char *argv[])
 
 	// std::list<int*>::iterator it;
 
-	// for(it = observer.begin(); it != observer.end(); it++)
+	// for(it = observer.begin(); it !=
+	// observer.end(); it++)
 	// {
 	// 	std::cout << **it << std::endl;
 	// }
 
 	// *i = 40;
 
-	// for(it = observer.begin(); it != observer.end(); it++)
+	// for(it = observer.begin(); it !=
+	// observer.end(); it++)
 	// {
 	// 	std::cout << **it << std::endl;
 	// }
 
 	// observer.remove(i);
 
-	// for(it = observer.begin(); it != observer.end(); it++)
+	// for(it = observer.begin(); it !=
+	// observer.end(); it++)
 	// {
 	// 	std::cout << **it << std::endl;
 	// }

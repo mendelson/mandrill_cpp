@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Observer.hpp"
 #include <memory>
 #include <opencv2/opencv.hpp>
-#include "Observer.hpp"
 
 class Processor : public Observer
 {
