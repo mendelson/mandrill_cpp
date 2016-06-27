@@ -100,7 +100,11 @@ void MovementProcessor::Update()
 	// 	}
 
 	if(movDetected)
-		saveFrame(thresholdImage);
+	{
+		saveFrame(frame1);
+	}
+	else
+		this->_subject->setFrameAsFree(_currentFrameIndex, _id);
 }
 
 void MovementProcessor::setSubject(FramesManager *subject, unsigned int id)
@@ -127,7 +131,7 @@ void MovementProcessor::setSubject(FramesManager *subject, unsigned int id)
 	path << "data/streaming/moveStream/" << ltm->tm_mday << "." << extension;
 
 	_outputStream =
-		new cv::VideoWriter(path.str(), fourccCode, _subject->getCameraFPS(),
+		new cv::VideoWriter(path.str(), fourccCode, _subject->FPS,
 							cvSize((int)_subject->getFramesWidth(),
 								   (int)_subject->getFramesHeight()));
 }
@@ -206,6 +210,7 @@ void MovementProcessor::searchMovement(cv::Mat frame1, cv::Mat frame2)
 				Printer::safe_print("Movement "
 									"found\n");
 				_firstFrame = _latestFrameIndex;
+				// dar release e alocar o output de novo
 				// videoLabel();
 				_lastFrame = -1;
 
@@ -250,7 +255,7 @@ void MovementProcessor::videoLabel()
 
 	_outputStream->release();
 	_outputStream =
-		new cv::VideoWriter(path.str(), fourccCode, _subject->getCameraFPS(),
+		new cv::VideoWriter(path.str(), fourccCode, _subject->FPS,
 							cvSize((int)_subject->getFramesWidth(),
 								   (int)_subject->getFramesHeight()));
 
