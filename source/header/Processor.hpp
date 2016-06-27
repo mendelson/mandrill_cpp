@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Observer.hpp"
 #include <memory>
 #include <opencv2/opencv.hpp>
-#include "Observer.hpp"
 
 class Processor : public Observer
 {
@@ -12,7 +12,8 @@ public:
 protected:
 	void getCurrentFrame();
 
-  	std::shared_ptr<cv::Mat> _frame;
-  	const std::string _codecName;
-  	unsigned int _currentFrameIndex;
+	std::shared_ptr<cv::Mat> _frame;
+	const std::string _codecName;
+	unsigned int _currentFrameIndex;
 };
+

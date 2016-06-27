@@ -11,15 +11,32 @@
 
 * -6: Lost connection with the source camera.
 
+# Pre-commit practices
+* Before commiting your code, make sure to run the following script
+```
+./scripts/formatCodingStyle.sh
+```
+
 # Third party softwares currently in use
 * g++ version 4.8.4
 * OpenCV version 3.1.0
 * JsonCpp version 1.7.2
+* ClangFormat version 3.8
+
+# Clang
+## Installation
+```
+sudo add-apt-repository "deb http://llvm-apt.ecranbleu.org/apt/trusty/ llvm-toolchain-trusty-3.8 main"
+wget -O - http://llvm-apt.ecranbleu.org/apt/llvm-snapshot.gpg.key|sudo apt-key add -
+sudo apt-get install clang-3.8 lldb-3.8
+sudo apt-get install clang-format-3.8
+```
+* If you intend to edit the clang-format file, make sure to check the documentation[here](http://llvm.org/releases/3.8.0/tools/clang/docs/ClangFormatStyleOptions.html).
 
 # OpenCV
 ## Environment setup
 ```
-sudo apt-get -y install libopencv-dev build-essential cmake git libgtk2.0-dev pkg-config python-dev python-numpy libdc1394-22 libdc1394-22-dev libjpeg-dev libpng12-dev libtiff4-dev libjasper-dev libavcodec-dev libavformat-dev libswscale-dev libxine-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libv4l-dev libtbb-dev libqt4-dev libfaac-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev x264 v4l-utils unzip
+sudo apt-get install libopencv-dev build-essential cmake git libgtk2.0-dev pkg-config python-dev python-numpy libdc1394-22 libdc1394-22-dev libjpeg-dev libpng12-dev libtiff4-dev libjasper-dev libavcodec-dev libavformat-dev libswscale-dev libxine-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libv4l-dev libtbb-dev libqt4-dev libfaac-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev x264 v4l-utils unzip
 ```
 ## OpenCV setup
 ```
@@ -62,4 +79,15 @@ make -j $(nproc)
 # Running Mandrill-Low
 ```
 ./scripts/runCore.sh
+```
+
+# Versioning
+* To indicate a new version, commit, add a new tag to the desired commit, make the branch "latest" point to that tag, as follows:
+```
+git commit
+git tag v<interface>.<version>.<revision>
+git push origin v<interface>.<version>.<revision>
+git checkout latest
+git reset --hard v<interface>.<version>.<revision>
+git push -f origin latest
 ```

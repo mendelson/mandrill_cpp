@@ -1,8 +1,8 @@
 #pragma once
 
+#include "FramesManager.hpp"
 #include <iostream>
 #include <vector>
-#include "FramesManager.hpp"
 
 class Core
 {
@@ -12,5 +12,6 @@ public:
 
 private:
 	std::string getAction();
-	FramesManager* _framesManager;
+	FramesManager *_framesManager;
 };
+

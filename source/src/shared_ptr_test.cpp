@@ -1,12 +1,12 @@
 #include <iostream>
-#include <vector>
-#include <opencv2/opencv.hpp>
 #include <memory>
+#include <opencv2/opencv.hpp>
+#include <vector>
 // #include "FramesManager.hpp"
 // #include <list>
 #include <pthread.h>
-#include <vector>
 #include <thread>
+#include <vector>
 
 static void do_something();
 
@@ -18,7 +18,6 @@ int main(int argc, char *argv[])
 	{
 		myVector.push_back(std::thread(do_something));
 	}
-
 
 	for(int i = 0; i < 1; i++)
 	{
@@ -39,21 +38,24 @@ int main(int argc, char *argv[])
 
 	// std::list<int*>::iterator it;
 
-	// for(it = observer.begin(); it != observer.end(); it++)
+	// for(it = observer.begin(); it !=
+	// observer.end(); it++)
 	// {
 	// 	std::cout << **it << std::endl;
 	// }
 
 	// *i = 40;
 
-	// for(it = observer.begin(); it != observer.end(); it++)
+	// for(it = observer.begin(); it !=
+	// observer.end(); it++)
 	// {
 	// 	std::cout << **it << std::endl;
 	// }
 
 	// observer.remove(i);
 
-	// for(it = observer.begin(); it != observer.end(); it++)
+	// for(it = observer.begin(); it !=
+	// observer.end(); it++)
 	// {
 	// 	std::cout << **it << std::endl;
 	// }
@@ -62,3 +64,4 @@ int main(int argc, char *argv[])
 void do_something()
 {
 }
+

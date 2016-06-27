@@ -5,9 +5,11 @@
 class MeanProcessor : public Processor
 {
 public:
-  ~MeanProcessor();
-  void Update();
+	~MeanProcessor();
+	void Update();
+
 private:
-  double _frame_mean;
-  cv::VideoWriter* _outputStream;
+	double _frame_mean;
+	cv::VideoWriter *_outputStream;
 };
+

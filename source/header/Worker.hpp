@@ -1,18 +1,20 @@
 #pragma once
 
-#include <thread>
-#include <mutex>
-#include <condition_variable>
-#include "ThreadPool.hpp"
 #include "Observer.hpp"
+#include "ThreadPool.hpp"
+#include <condition_variable>
+#include <mutex>
+#include <thread>
 
 class ThreadPool;
 
-class Worker {
+class Worker
+{
 public:
-    Worker(ThreadPool &s) : pool(s) { }
-    void operator()();
+	Worker(ThreadPool &s) : pool(s) {}
+	void operator()();
+
 private:
-    ThreadPool &pool;
+	ThreadPool &pool;
 };
 

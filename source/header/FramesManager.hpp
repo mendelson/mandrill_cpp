@@ -1,25 +1,26 @@
 #pragma once
 
-#include <memory>
-#include <unordered_map>
-#include <opencv2/opencv.hpp>
-#include <list>
-#include <vector>
-#include <thread>
-#include <mutex>
-#include <bitset>    
-#include <chrono> 
-#include "Observer.hpp"
 #include "Camera.hpp"
-#include "ThreadPool.hpp"
+#include "Observer.hpp"
 #include "Printer.hpp"
+#include "ThreadPool.hpp"
+#include <bitset>
+#include <chrono>
+#include <list>
+#include <memory>
+#include <mutex>
+#include <opencv2/opencv.hpp>
+#include <thread>
+#include <unordered_map>
+#include <vector>
 
 const unsigned int MAXFRAMES = 10;
-const unsigned int TIMESPAN = 100; // miliseconds
+const unsigned int TIMESPAN  = 100;  // miliseconds
 
-typedef std::list<Observer*> observersList;
+typedef std::list<Observer *> observersList;
 typedef std::unordered_map<unsigned int, std::shared_ptr<cv::Mat>> FramesSet;
-typedef std::unordered_map<unsigned int, std::shared_ptr<std::bitset<16>>> FramesMetadata;
+typedef std::unordered_map<unsigned int, std::shared_ptr<std::bitset<16>>>
+	FramesMetadata;
 typedef std::chrono::high_resolution_clock Time;
 typedef std::chrono::milliseconds ms;
 typedef std::chrono::duration<float> fsec;
@@ -27,7 +28,7 @@ typedef std::chrono::duration<float> fsec;
 class FramesManager
 {
 public:
-	static const unsigned int FPS;
+	const unsigned int FPS;
 
 	std::shared_ptr<cv::Mat> getFrame(unsigned int index);
 	cv::Mat getLatestFrame();
@@ -39,13 +40,15 @@ public:
 	void setStreamSource(std::string url, std::string model);
 
 	// Singleton pattern
-	static FramesManager* getManager();
-	FramesManager(FramesManager const&)  =  delete; // Desabling copy constructor
-	void operator=(FramesManager const&) =  delete; // Desabling copy operator
+	static FramesManager *getManager();
+	FramesManager(FramesManager const &) = delete;  // Desabling copy
+	// constructor
+	void operator=(FramesManager const &) = delete;  // Desabling copy
+	// operator
 
 	// Subject-observer pattern
-	void attach(Observer*);
-	void detach(Observer*);
+	void attach(Observer *);
+	void detach(Observer *);
 
 	double getFramesWidth();
 	double getFramesHeight();
@@ -64,9 +67,11 @@ private:
 		// void stopWhenEmpty();
 
 	private:
-		FramesManager* _framesManager;
-		BufferManager(BufferManager const&)  =  delete; // Desabling copy constructor
-		void operator=(BufferManager const&) =  delete; // Desabling copy operator
+		FramesManager *_framesManager;
+		BufferManager(BufferManager const &) = delete;  // Desabling copy
+		// constructor
+		void operator=(BufferManager const &) = delete;  // Desabling copy
+		// operator
 
 		bool _mustStop;
 		// bool _mustStopWhenEmpty;
@@ -82,26 +87,29 @@ private:
 	FramesMetadata _busyFrames;
 	std::string _url;
 	std::string _model;
-	Camera* _camera;
+	Camera *_camera;
 	unsigned int _latestFrameIndex;
 	observersList _observers;
 	std::mutex _mutex;
-	ThreadPool* _threadPool;
-	static BufferManager* _bufferManager;
+	ThreadPool *_threadPool;
+	static BufferManager *_bufferManager;
 	bool _lostCamera;
 	fsec timeDiff;
 	ms miliDiff;
 
-
 	// Singleton pattern
-	static FramesManager* _instance;
+	static FramesManager *_instance;
 	FramesManager();
 	static std::mutex _instanceMutex;
 
 	// Allowing parallelism
-	// static void updateHelper(std::list<Observer*>::iterator it);
+	// static void
+	// updateHelper(std::list<Observer*>::iterator
+	// it);
 
 	void saveFrame(cv::Mat frame, cv::VideoWriter outputStream);
 
-	static void bufferManagerRunHelper(FramesManager::BufferManager* bufferManager);
+	static void
+	bufferManagerRunHelper(FramesManager::BufferManager *bufferManager);
 };
+
