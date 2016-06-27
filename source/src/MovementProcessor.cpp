@@ -33,7 +33,7 @@ void MovementProcessor::Update()
 	cv::Mat differenceImage;
 	std::unique_lock<std::mutex> _lock(_mutex);
 
-	// verifies if we have frame to make
+ 	// verifies if we have frame to make
 	// diff comparison
 	if(_storedFrame.empty()){
   		getCurrentFrame();
@@ -42,12 +42,12 @@ void MovementProcessor::Update()
 	}
 
   	frame1 = _storedFrame;
+  	std::cout << "[MOVE] index stored: " << _storedFrameIndex << std::endl;
 
-	while(_currentFrameIndex == _storedFrameIndex)
-		getCurrentFrame();
-
+	getCurrentFrame();
 
   	frame2 = *_frame;
+  	std::cout << "[MOVE] current: " << _currentFrameIndex << std::endl;
 
   	//--------------------------------------
   	// these next few lines are for creating
@@ -69,35 +69,37 @@ void MovementProcessor::Update()
 	// applies threshold on image
 	cv::threshold(differenceImage,thresholdImage,SENSITIVITY_VALUE,255,cv::THRESH_BINARY);
 	// applies blur in order to to reduce noise
-	cv::blur(thresholdImage,thresholdImage,cv::Size(BLUR_SIZE,BLUR_SIZE));
+	cv::blur(thresholdImage, thresholdImage,cv::Size(BLUR_SIZE,BLUR_SIZE));
 	// binarize the frame again
 	cv::threshold(thresholdImage,thresholdImage,SENSITIVITY_VALUE,255,cv::THRESH_BINARY);
+
 
 	// saves second frame as sotredFrame, in order ro be use
 	// on the next call of the function, to detect if there are
 	// movemente according to the next frame
-	_storedFrame = *_frame;
+	_storedFrame = frame2;
   	_storedFrameIndex = _currentFrameIndex;
 
-  	// adds"~movement processed" image to buffer
-  	addFrame(thresholdImage);
 
   	// calls function that will identifie
   	// if movement occurred
   	searchMovement(frame1, frame2);
 
+ //  	// if the buffer passes by MAXSAVING from the
+ //  	// time the movement stopped, we save the frames 
+ //  	// to a file, and clear movement flags
+ //  // 	if(_lastFrame != -1 && _latestFrameIndex >= _lastFrame + MAXSAVING){
+	// 	// saveBuffer();
+	// 	// _lastFrame = -1;
+	// 	// _firstFrame = -1;
+	// 	// movDetected = false;
+
+  // 	}
+
+  	if(movDetected)
+  		saveFrame(thresholdImage);
 
 
-  	// if the buffer passes by MAXSAVING from the
-  	// time the movement stopped, we save the frames 
-  	// to a file, and clear movement flags
-  	if(_lastFrame != -1 && _latestFrameIndex >= _lastFrame + MAXSAVING){
-		saveBuffer();
-		_lastFrame = -1;
-		_firstFrame = -1;
-		movDetected = false;
-
-  	}
 
 }
 
@@ -204,73 +206,9 @@ void MovementProcessor::searchMovement(cv::Mat frame1, cv::Mat frame2)
 }
 
 
-void MovementProcessor::addFrame(cv::Mat frame)
-{
-
-	_mutex2.lock();
-	// Printer::safe_print("ADICIONADO:" + std::to_string(_latestFrameIndex) + "\n");
-	// Printer::safe_print("SIZE:" + std::to_string(_cameraBuffer.size()) + "\n");
-	// Printer::safe_print("SIZEmax:" + std::to_string(MAXFRAMES) + "\n");
-
-	if(_cameraBuffer.size() >= MAXFRAMES)
-	{
-		// if we have to erase buffer
-		// but frames are in movement range
-		// we have to save them in file, before
-		// clearing the buffer
-		if(_firstFrame != -1){
-			Printer::safe_print("EU Q ADICIONEI\n");
-			saveBuffer();
-			Printer::safe_print("EU Q ADICIONEI\n");
-			_firstFrame = _latestFrameIndex + 1;
-			firstInBuffer = _latestFrameIndex + 1;
-	  	}
-
-		_cameraBuffer.erase(_latestFrameIndex + 1 - MAXFRAMES);
-
-	}
-
-	_cameraBuffer.emplace(_latestFrameIndex + 1, std::make_shared<cv::Mat>(frame));
-
-	_latestFrameIndex++;
-
-	_mutex2.unlock();
-
-}
-
-
-void MovementProcessor::saveBuffer()
-{
-	// int inicio = (_firstFrame - 10 >= 0) ? (_firstFrame - 10) :0;
-	int inicio = 0;
-	int i;
-
-	// Printer::safe_print("YOYO AQUI:" + std::to_string(_firstFrame) + "\n");
-
-	// if movement was detected
-	if(_firstFrame != -1){
-
-		// if(firstInBuffer <= (_firstFrame - MAXSAVING))
-		if(firstInBuffer <= 0)
-			inicio = firstInBuffer;
-		else
-			inicio = _firstFrame;
-
-		Printer::safe_print("YOYO INICIO:" + std::to_string(inicio) + "\n");
-		Printer::safe_print("YOYO FIM:" + std::to_string(_latestFrameIndex) + "\n");
-
-		for(i = inicio; i <= _latestFrameIndex; i++){
-			*_outputStream << *_cameraBuffer[i];
-		}
-	}
-
-}
 
 void MovementProcessor::videoLabel()
 {
-
-
-	
 	// gets current time
 	time_t now = time(0);
 	tm *ltm = localtime(&now);
@@ -294,4 +232,27 @@ void MovementProcessor::videoLabel()
 
 		Printer::safe_print("YOYO CARALHO:" + std::to_string((int)_subject->getFramesWidth()) + "\n");
 	// exit(4);
+}
+
+
+
+void MovementProcessor::saveFrame(cv::Mat frame)
+{
+	// int a=2;
+	*_outputStream << frame;
+
+	// libera frame para poder ser deletado
+	this->_subject->setFrameAsFree(_currentFrameIndex, _id);
+
+
+}
+
+
+void MovementProcessor::getCurrentFrame()
+{
+	_currentFrameIndex++;
+
+	do{
+			_frame = _subject->getFrame(_currentFrameIndex);
+	}while(_frame ==  NULL);
 }

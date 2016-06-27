@@ -17,6 +17,8 @@ public:
   void Update();
   void searchMovement(cv::Mat, cv::Mat);
   void setSubject(FramesManager* subject, unsigned int id);
+  void saveFrame(cv::Mat);
+  void getCurrentFrame();
   const static int SENSITIVITY_VALUE = 20;
   const static int BLUR_SIZE = 10;
 
