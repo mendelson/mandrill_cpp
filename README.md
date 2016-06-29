@@ -31,7 +31,7 @@ wget -O - http://llvm-apt.ecranbleu.org/apt/llvm-snapshot.gpg.key|sudo apt-key a
 sudo apt-get install clang-3.8 lldb-3.8
 sudo apt-get install clang-format-3.8
 ```
-* If you intend to edit the clang-format file, make sure to check the documentation[here](http://llvm.org/releases/3.8.0/tools/clang/docs/ClangFormatStyleOptions.html).
+* If you intend to edit the clang-format file, make sure to check the documentation [here](http://llvm.org/releases/3.8.0/tools/clang/docs/ClangFormatStyleOptions.html).
 
 # OpenCV
 ## Environment setup

@@ -44,7 +44,11 @@ void MovementProcessor::Update()
 	frame1 = _storedFrame;
 	std::cout << "[MOVE] index stored: " << _storedFrameIndex << std::endl;
 
+
 	getCurrentFrame();
+
+	if(ThreadPool::mustStop())
+		return;
 
 	frame2 = *_frame;
 	std::cout << "[MOVE] current: " << _currentFrameIndex << std::endl;
@@ -131,7 +135,9 @@ void MovementProcessor::setSubject(FramesManager *subject, unsigned int id)
 	// ltm->tm_mon
 	// ltm->tm_sec
 
-	path << "data/streaming/moveStream/" << ltm->tm_year << "-" << ltm->tm_mon << "-" << ltm->tm_mday << "_" << ltm->tm_hour << ":" << ltm->tm_min << ":" << ltm->tm_sec << "." << extension;
+	path << "data/streaming/moveStream/" << ltm->tm_year + 1900 << "-"
+		 << ltm->tm_mon + 1 << "-" << ltm->tm_mday << "_" << ltm->tm_hour << ":"
+		 << ltm->tm_min << ":" << ltm->tm_sec << "." << extension;
 
 	_outputStream =
 		new cv::VideoWriter(path.str(), fourccCode, _subject->FPS,
@@ -285,6 +291,7 @@ void MovementProcessor::getCurrentFrame()
 	do
 	{
 		_frame = _subject->getFrame(_currentFrameIndex);
-	} while(_frame == NULL);
+		// std::cout << "====================== AQUI" << std::endl;
+	} while(_frame == NULL && !ThreadPool::mustStop());
 }
 
