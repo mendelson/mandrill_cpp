@@ -63,8 +63,9 @@ void CodecsConfig::loadFileToBuffer(FILE *file)
 	// Loading file to buffer
 	size_t r = fread(_buffer, sizeof(char), _fileSizeInChars, file);
 
-	if(r != _fileSizeInChars)
+	if((int)r != (int)_fileSizeInChars)
 		exit(-2);
+
 	_buffer[_fileSizeInChars] = '\0';
 }
 

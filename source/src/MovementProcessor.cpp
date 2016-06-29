@@ -126,9 +126,12 @@ void MovementProcessor::setSubject(FramesManager *subject, unsigned int id)
 
 	// parametize saving path
 	// ltm->tm_min
-	//  ltm->tm_hour
+	// ltm->tm_hour
+	// ltm->tm_year
+	// ltm->tm_mon
+	// ltm->tm_sec
 
-	path << "data/streaming/moveStream/" << ltm->tm_mday << "." << extension;
+	path << "data/streaming/moveStream/" << ltm->tm_year << "-" << ltm->tm_mon << "-" << ltm->tm_mday << "_" << ltm->tm_hour << ":" << ltm->tm_min << ":" << ltm->tm_sec << "." << extension;
 
 	_outputStream =
 		new cv::VideoWriter(path.str(), fourccCode, _subject->FPS,
