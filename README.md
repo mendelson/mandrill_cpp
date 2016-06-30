@@ -58,6 +58,11 @@ sudo ldconfig
 pkg-config --modversion opencv
 ```
 
+## Gstreamer
+```
+sudo apt-get install gstreamer1.0-alsa gstreamer1.0-fluendo-mp3 gstreamer1.0-plugins-bad gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-tool h264enc graphviz libgstreamer-plugins-*
+```
+
 ## JsonCpp
 ```
 git clone --branch 1.7.2 https://github.com/open-source-parsers/jsoncpp.git
