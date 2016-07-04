@@ -22,16 +22,7 @@
 * OpenCV version 3.1.0
 * JsonCpp version 1.7.2
 * ClangFormat version 3.8
-
-# Clang
-## Installation
-```
-sudo add-apt-repository "deb http://llvm-apt.ecranbleu.org/apt/trusty/ llvm-toolchain-trusty-3.8 main"
-wget -O - http://llvm-apt.ecranbleu.org/apt/llvm-snapshot.gpg.key|sudo apt-key add -
-sudo apt-get install clang-3.8 lldb-3.8
-sudo apt-get install clang-format-3.8
-```
-* If you intend to edit the clang-format file, make sure to check the documentation [here](http://llvm.org/releases/3.8.0/tools/clang/docs/ClangFormatStyleOptions.html).
+* Doxygen Release_1_8_11
 
 # OpenCV
 ## Environment setup
@@ -58,11 +49,41 @@ sudo ldconfig
 pkg-config --modversion opencv
 ```
 
-## JsonCpp
+# JsonCpp
 ```
 git clone --branch 1.7.2 https://github.com/open-source-parsers/jsoncpp.git
 cd jsoncpp
 python amalgamate.py
+```
+
+# Clang
+## Installation
+```
+sudo add-apt-repository "deb http://llvm-apt.ecranbleu.org/apt/trusty/ llvm-toolchain-trusty-3.8 main"
+wget -O - http://llvm-apt.ecranbleu.org/apt/llvm-snapshot.gpg.key|sudo apt-key add -
+sudo apt-get install clang-3.8 lldb-3.8
+sudo apt-get install clang-format-3.8
+```
+* If you intend to edit the clang-format file, make sure to check the documentation [here](http://llvm.org/releases/3.8.0/tools/clang/docs/ClangFormatStyleOptions.html).
+
+# Doxygen
+## Install
+```
+sudo apt-get install flex bison libiconv* make texlive-full
+cd <third_party_repos>
+git clone https://github.com/doxygen/doxygen.git
+cd doxygen
+git checkout tags/Release_1_8_11
+mkdir build
+cd build
+cmake -G "Unix Makefiles" ..
+make
+sudo make install
+cd ..
+cmake -Dbuild_wizard=YES
+cmake -Dbuild_doc=YES
+make docs
+sudo apt-get install doxygen-gui
 ```
 
 # Compiling Mandrill-Low

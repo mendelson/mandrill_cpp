@@ -25,11 +25,11 @@ MovementProcessor::~MovementProcessor()
 
 void MovementProcessor::Update()
 {
-	// bool objectDetected = false;
-	cv::Mat thresholdImage;
-	cv::Mat frame1, frame2;
-	cv::Mat grayImage1, grayImage2;
-	cv::Mat differenceImage;
+	// // bool objectDetected = false;
+	// // cv::Mat thresholdImage;
+	// // cv::Mat frame1, frame2;
+	// // cv::Mat grayImage1, grayImage2;
+	// // cv::Mat differenceImage;
 	std::unique_lock<std::mutex> _lock(_mutex);
 
 	// verifies if we have frame to make
@@ -41,72 +41,75 @@ void MovementProcessor::Update()
 		_storedFrameIndex = _currentFrameIndex;
 	}
 
-	frame1 = _storedFrame;
-	std::cout << "[MOVE] index stored: " << _storedFrameIndex << std::endl;
-
+	_frame1 = _storedFrame;
+	// std::cout << "[MOVE] index stored: " << _storedFrameIndex << std::endl;
 
 	getCurrentFrame();
 
 	if(ThreadPool::mustStop())
 		return;
 
-	frame2 = *_frame;
-	std::cout << "[MOVE] current: " << _currentFrameIndex << std::endl;
+	_frame2 = *_frame;
+	// std::cout << "[MOVE] current: " << _currentFrameIndex << std::endl;
 
-	//--------------------------------------
-	// these next few lines are for creating
-	// the frames with motion detection,
-	// the real motion deection is done in
-	// searchMovement, because the balck and white
-	// frame transformation to save can not be used
-	// as base to identify movement
-	//--------------------------------------
-	// converts received frames to gray scale
-	cv::cvtColor(frame1, grayImage1, CV_RGB2GRAY);
-	cv::cvtColor(grayImage1, _greyFrame, CV_GRAY2RGB);
-	cv::cvtColor(frame2, grayImage2, CV_RGB2GRAY);
-	cv::cvtColor(grayImage2, _greyFrame2, CV_GRAY2RGB);
+	// // //--------------------------------------
+	// // // these next few lines are for creating
+	// // // the frames with motion detection,
+	// // // the real motion deection is done in
+	// // // searchMovement, because the balck and white
+	// // // frame transformation to save can not be used
+	// // // as base to identify movement
+	// // //--------------------------------------
+	// // // converts received frames to gray scale
+	// // cv::cvtColor(frame1, grayImage1, CV_RGB2GRAY);
+	// // cv::cvtColor(grayImage1, _greyFrame, CV_GRAY2RGB);
+	// // cv::cvtColor(frame2, grayImage2, CV_RGB2GRAY);
+	// // cv::cvtColor(grayImage2, _greyFrame2, CV_GRAY2RGB);
 
-	// verifies diff between frames in
-	// order to identify
-	// movement
-	cv::absdiff(_greyFrame, _greyFrame2, differenceImage);
-	// applies threshold on image
-	cv::threshold(differenceImage, thresholdImage, SENSITIVITY_VALUE, 255,
-				  cv::THRESH_BINARY);
-	// applies blur in order to to reduce noise
-	cv::blur(thresholdImage, thresholdImage, cv::Size(BLUR_SIZE, BLUR_SIZE));
-	// binarize the frame again
-	cv::threshold(thresholdImage, thresholdImage, SENSITIVITY_VALUE, 255,
-				  cv::THRESH_BINARY);
+	// // // verifies diff between frames in
+	// // // order to identify
+	// // // movement
+	// // cv::absdiff(_greyFrame, _greyFrame2, differenceImage);
+	// // // applies threshold on image
+	// // cv::threshold(differenceImage, thresholdImage, SENSITIVITY_VALUE, 255,
+	// // 			  cv::THRESH_BINARY);
+	// // // applies blur in order to to reduce noise
+	// // cv::blur(thresholdImage, thresholdImage, cv::Size(BLUR_SIZE,
+	// BLUR_SIZE));
+	// // // binarize the frame again
+	// // cv::threshold(thresholdImage, thresholdImage, SENSITIVITY_VALUE, 255,
+	// // 			  cv::THRESH_BINARY);
 
 
 	// saves second frame as sotredFrame, in order ro be use
 	// on the next call of the function, to detect if there are
 	// movemente according to the next frame
-	_storedFrame	  = frame2;
+	_storedFrame	  = _frame2;
 	_storedFrameIndex = _currentFrameIndex;
 
 
 	// calls function that will identifie
 	// if movement occurred
-	searchMovement(frame1, frame2);
+	searchMovement(_frame1, _frame2);
 
-	//  	// if the buffer passes by MAXSAVING from the
-	//  	// time the movement stopped, we save the frames
-	//  	// to a file, and clear movement flags
-	//  // 	if(_lastFrame != -1 && _latestFrameIndex >= _lastFrame + MAXSAVING){
-	// 	// saveBuffer();
-	// 	// _lastFrame = -1;
-	// 	// _firstFrame = -1;
-	// 	// movDetected = false;
+	// //  	// if the buffer passes by MAXSAVING from the
+	// //  	// time the movement stopped, we save the frames
+	// //  	// to a file, and clear movement flags
+	// //  // 	if(_lastFrame != -1 && _latestFrameIndex >= _lastFrame +
+	// MAXSAVING){
+	// // 	// saveBuffer();
+	// // 	// _lastFrame = -1;
+	// // 	// _firstFrame = -1;
+	// // 	// movDetected = false;
 
-	// 	}
+	// // 	}
 
+
+	// std::cout << "[MOVE] LAST: " <<  _lastFrame << std::endl;
+	// || (_lastFrame != -1 && (int) _currentFrameIndex - 10 <= _lastFrame
+	// && (int) _currentFrameIndex - 10 >= _firstFrame)
 	if(movDetected)
-	{
-		saveFrame(frame1);
-	}
+		saveFrame(_frame2);
 	else
 		this->_subject->setFrameAsFree(_currentFrameIndex, _id);
 }
@@ -129,12 +132,6 @@ void MovementProcessor::setSubject(FramesManager *subject, unsigned int id)
 		exit(-4);
 
 	// parametize saving path
-	// ltm->tm_min
-	// ltm->tm_hour
-	// ltm->tm_year
-	// ltm->tm_mon
-	// ltm->tm_sec
-
 	path << "data/streaming/moveStream/" << ltm->tm_year + 1900 << "-"
 		 << ltm->tm_mon + 1 << "-" << ltm->tm_mday << "_" << ltm->tm_hour << ":"
 		 << ltm->tm_min << ":" << ltm->tm_sec << "." << extension;
@@ -203,7 +200,7 @@ void MovementProcessor::searchMovement(cv::Mat frame1, cv::Mat frame2)
 				movDetected = false;
 				Printer::safe_print("Movement not "
 									"found\n");
-				_lastFrame = _latestFrameIndex;
+				_lastFrame = _currentFrameIndex;
 			}
 			break;
 
@@ -218,7 +215,7 @@ void MovementProcessor::searchMovement(cv::Mat frame1, cv::Mat frame2)
 				movDetected = true;
 				Printer::safe_print("Movement "
 									"found\n");
-				_firstFrame = _latestFrameIndex;
+				_firstFrame = _currentFrameIndex;
 				// dar release e alocar o output de novo
 				// videoLabel();
 				_lastFrame = -1;
@@ -242,6 +239,13 @@ void MovementProcessor::searchMovement(cv::Mat frame1, cv::Mat frame2)
 			}
 			break;
 	}
+
+	thresholdImage.release();
+	temp.release();
+	differenceImage.release();
+
+	contours.clear();
+	hierarchy.clear();
 }
 
 
@@ -259,8 +263,9 @@ void MovementProcessor::videoLabel()
 	if(extension.empty() || fourccCode == -4)
 		exit(-4);
 
-	path << "data/streaming/moveStream/" << ltm->tm_mday << "_" << ltm->tm_min
-		 << "." << extension;
+	path << "data/streaming/moveStream/" << ltm->tm_year + 1900 << "-"
+		 << ltm->tm_mon + 1 << "-" << ltm->tm_mday << "_" << ltm->tm_hour << ":"
+		 << ltm->tm_min << ":" << ltm->tm_sec << "." << extension;
 
 	_outputStream->release();
 	_outputStream =
@@ -268,8 +273,6 @@ void MovementProcessor::videoLabel()
 							cvSize((int)_subject->getFramesWidth(),
 								   (int)_subject->getFramesHeight()));
 
-	Printer::safe_print("YOYO CARALHO:" +
-						std::to_string((int)_subject->getFramesWidth()) + "\n");
 	// exit(4);
 }
 
@@ -277,6 +280,7 @@ void MovementProcessor::videoLabel()
 void MovementProcessor::saveFrame(cv::Mat frame)
 {
 	// int a=2;
+	// if(!frame.empty())
 	*_outputStream << frame;
 
 	// libera frame para poder ser deletado
@@ -291,7 +295,6 @@ void MovementProcessor::getCurrentFrame()
 	do
 	{
 		_frame = _subject->getFrame(_currentFrameIndex);
-		// std::cout << "====================== AQUI" << std::endl;
-	} while(_frame == NULL && !ThreadPool::mustStop());
+	} while((_frame == NULL || (*_frame).empty()) && !ThreadPool::mustStop());
 }
 

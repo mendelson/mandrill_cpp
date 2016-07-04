@@ -20,12 +20,14 @@ public:
 	void saveFrame(cv::Mat);
 	void getCurrentFrame();
 	const static int SENSITIVITY_VALUE = 20;
-	const static int BLUR_SIZE		   = 10;
+	const static int BLUR_SIZE		   = 20;
 
 private:
 	cv::Mat _greyFrame;
 	cv::Mat _greyFrame2;
 	cv::Mat _storedFrame;
+	cv::Mat _frame1;
+	cv::Mat _frame2;
 	cv::VideoWriter* _outputStream;
 	unsigned int _storedFrameIndex;
 	unsigned int firstInBuffer;
