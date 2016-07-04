@@ -20,6 +20,7 @@
 # Third party softwares currently in use
 * g++ version 4.8.4
 * OpenCV version 3.1.0
+* GStreamer
 * JsonCpp version 1.7.2
 * ClangFormat version 3.8
 * Doxygen Release_1_8_11
@@ -47,6 +48,10 @@ sudo ldconfig
 * To make sure you have the proper version installed, run:
 ```
 pkg-config --modversion opencv
+```
+# Gstreamer
+```
+sudo apt-get install gstreamer1.0-alsa gstreamer1.0-fluendo-mp3 gstreamer1.0-plugins-bad gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-tool h264enc graphviz libgstreamer-plugins-*
 ```
 
 # JsonCpp
