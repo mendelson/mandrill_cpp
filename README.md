@@ -22,6 +22,7 @@
 * OpenCV version 3.1.0
 * GStreamer
 * JsonCpp version 1.7.2
+* OpenSSL 1_0_2-stable
 * ClangFormat version 3.8
 * Doxygen Release_1_8_11
 
@@ -49,6 +50,7 @@ sudo ldconfig
 ```
 pkg-config --modversion opencv
 ```
+
 # Gstreamer
 ```
 sudo apt-get install gstreamer1.0-alsa gstreamer1.0-fluendo-mp3 gstreamer1.0-plugins-bad gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-tool h264enc graphviz libgstreamer-plugins-*
@@ -59,6 +61,18 @@ sudo apt-get install gstreamer1.0-alsa gstreamer1.0-fluendo-mp3 gstreamer1.0-plu
 git clone --branch 1.7.2 https://github.com/open-source-parsers/jsoncpp.git
 cd jsoncpp
 python amalgamate.py
+```
+
+# OpenSSL
+```
+git clone https://github.com/openssl/openssl.git
+cd openssl
+git checkout OpenSSL_1_0_2-stable
+./config
+make depend
+make
+make test
+sudo make install
 ```
 
 # Clang
