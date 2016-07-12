@@ -24,6 +24,7 @@
 bin
 dep
 data/streaming/*
+doc
 
 # Output videos
 *.avi

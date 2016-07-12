@@ -6,7 +6,7 @@ DEP_PATH = dep
 
 _OBJ  = main.o Core.o FramesManager.o Analyser.o Printer.o Camera.o ThreadPool.o
 _OBJ += Worker.o Processor.o Observer.o GreyProcessor.o Saver.o MeanProcessor.o
-_OBJ += CodecsConfig.o jsoncpp.o MovementProcessor.o
+_OBJ += CodecsConfig.o jsoncpp.o MovementProcessor.o SocketCommunicator.o
 
 OBJ = $(patsubst %,$(BIN_PATH)/%,$(_OBJ))
 
@@ -43,3 +43,7 @@ $(DEP_PATH)/%.d: ;
 .PRECIOUS: $(DEP_PATH)/%.d
 
 -include $(patsubst %,$(DEP_PATH)/%.d,$(basename $(_OBJ)))
+
+.PHONY: doc
+doc:
+	doxygen config/Doxyfile

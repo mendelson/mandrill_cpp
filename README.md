@@ -105,6 +105,11 @@ make docs
 sudo apt-get install doxygen-gui
 ```
 
+## Generate documentation
+```
+make doc
+```
+
 # Compiling Mandrill-Low
 * To compile this module, simply run the following from the project's root directory:
 ```
