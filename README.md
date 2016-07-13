@@ -11,6 +11,14 @@
 
 * -6: Lost connection with the source camera.
 
+* -7: Error writing to socket.
+
+* -8: Error while opening socket.
+
+* -9: Error, no such host.
+
+* -10: Error connectiong.
+
 # Pre-commit practices
 * Before commiting your code, make sure to run the following script
 ```

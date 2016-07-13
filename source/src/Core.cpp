@@ -18,17 +18,23 @@ void handleInterruptionSignal(int sig)
 	flag = 1;
 }
 
-Core::Core(std::string url, std::string model)
+Core::Core(std::string url, std::string model, std::string portNumber)
 {
 	CodecsConfig::update();
 	_framesManager = FramesManager::getManager();
 	_framesManager->setStreamSource(url, model);
+	_socketCommunicator = SocketCommunicator::getSocket();
+	_socketCommunicator->setupSocket(atoi(portNumber.c_str()));
 }
 
 void Core::run()
 {
 	signal(SIGINT, handleInterruptionSignal);
 
+	// _socketCommunicator->run();
+
+	// exit(-1999);
+	return;
 
 	// Observer* analyser = new
 	// Analyser();

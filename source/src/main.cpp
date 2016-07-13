@@ -6,20 +6,17 @@ bool movDetected;
 
 int main(int argc, char *argv[])
 {
-	if(argc != 3)
+	if(argc != 4)
 	{
-		std::cout << "It is mandatory to "
-					 "pass exactly the "
-					 "following "
-					 "parameters: URL and "
-					 "camera_model! "
+		std::cout << "It is mandatory to pass exactly the following "
+					 "parameters: URL, camera_model and port_number! "
 					 "Aborting..."
 				  << std::endl;
 
 		return -1;
 	}
 
-	Core *core = new Core(argv[1], argv[2]);
+	Core *core = new Core(argv[1], argv[2], argv[3]);
 
 	core->run();
 

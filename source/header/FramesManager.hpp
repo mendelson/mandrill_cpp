@@ -67,7 +67,7 @@ public:
 	 * Necessário para o padrão Singleton.
 	 *
 	 */
-	void operator=(FramesManager const &) = delete; 
+	void operator=(FramesManager const &) = delete;
 
 	// Subject-observer pattern
 	void attach(Observer *);
