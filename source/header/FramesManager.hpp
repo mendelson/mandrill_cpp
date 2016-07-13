@@ -25,6 +25,15 @@ typedef std::chrono::high_resolution_clock Time;
 typedef std::chrono::milliseconds ms;
 typedef std::chrono::duration<float> fsec;
 
+/*! \brief Classe responsável pelo gerenciamento dos frames.
+ *
+ * Esta classe realiza a comunicação diretas com as câmeras, realiza o
+ * gerenciamento dos frames recebidos e segue os
+ * padrões Singleton e Observer. No padrão Observer, esta classe realiza o papel
+ * de publisher, ou seja, à cada vez que um frame é recebido, todos os objetos
+ * inscritos (subscribers/observers) são notificados.
+ *
+ */
 class FramesManager
 {
 public:
@@ -39,12 +48,26 @@ public:
 	void run();
 	void setStreamSource(std::string url, std::string model);
 
-	// Singleton pattern
+	/*! \brief Retorna a instância global do FramesManager
+	 *
+	 * Necessário para o padrão Singleton.
+	 *
+	 */
 	static FramesManager *getManager();
-	FramesManager(FramesManager const &) = delete;  // Desabling copy
-	// constructor
-	void operator=(FramesManager const &) = delete;  // Desabling copy
-	// operator
+
+	/*! \brief Desabilita o construtor por cópia.
+	 *
+	 * Necessário para o padrão Singleton
+	 *
+	 */
+	FramesManager(FramesManager const &) = delete;
+
+	/*! \brief Desabilita o operador de cópia.
+	 *
+	 * Necessário para o padrão Singleton.
+	 *
+	 */
+	void operator=(FramesManager const &) = delete; 
 
 	// Subject-observer pattern
 	void attach(Observer *);
@@ -97,9 +120,27 @@ private:
 	fsec timeDiff;
 	ms miliDiff;
 
-	// Singleton pattern
-	static FramesManager *_instance;
+	/*! \brief Construtor privado.
+	 *
+	 * Necessário para o padrão Singleton, pois torna inviável que outros entes
+	 * instanciem diretamente um FramesManager.
+	 *
+	 */
 	FramesManager();
+
+	/*! \brief Referência para a instância global do FramesManager.
+	 *
+	 * Necessário para o padrão Singleton.
+	 *
+	 */
+	static FramesManager *_instance;
+
+	/*! \brief Mutex para controlar acesso a instância global do
+	 * FramesManager.
+	 *
+	 * Necessário para o padrão Singleton.
+	 *
+	 */
 	static std::mutex _instanceMutex;
 
 	// Allowing parallelism
