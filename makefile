@@ -13,7 +13,7 @@ OBJ = $(patsubst %,$(BIN_PATH)/%,$(_OBJ))
 DIRECTIVES = -std=c++0x -Wall -c -I $(HEADER_PATH)
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEP_PATH)/$*.Td
 OPENCV = `pkg-config --libs opencv` -O3
-LIBS = $(OPENCV)
+LIBS = $(OPENCV) -pthread
 FINAL_EXEC = $(BIN_PATH)/MandrillCore
 
 all: release
