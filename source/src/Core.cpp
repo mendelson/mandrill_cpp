@@ -58,6 +58,7 @@ void Core::run()
 
 	while(true)
 	{
+		sleep(10);
 		if(flag)
 		{
 			std::cout << "\n\nSIGINT caught!" << std::endl;
