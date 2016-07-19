@@ -11,4 +11,3 @@ void Observer::setSubject(FramesManager *subject, unsigned int id)
 	this->_subject = subject;
 	_id			   = id;
 }
-

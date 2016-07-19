@@ -9,4 +9,3 @@ void Processor::getCurrentFrame()
 	if(_frame == NULL)
 		std::cout << "NULL\n";
 }
-

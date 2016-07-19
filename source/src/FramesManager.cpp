@@ -20,7 +20,7 @@ FramesManager *FramesManager::getManager()
 FramesManager::FramesManager() : FPS(CodecsConfig::getFps()), _lostCamera(false)
 {
 	_url			  = "";
-	_model			  = "";
+	_uuid			  = "";
 	_latestFrameIndex = -1;
 	_camera			  = NULL;
 	_threadPool		  = ThreadPool::getThreadPool();
@@ -57,12 +57,12 @@ void FramesManager::addFrame(cv::Mat frame)
 	Notify();
 }
 
-std::shared_ptr<cv::Mat> FramesManager::getFrame(unsigned int index)
+std::shared_ptr<cv::Mat> FramesManager::getFrame(unsigned int frameIndex)
 {
 	std::unique_lock<std::mutex> _lock(_mutex);
 
 	std::unordered_map<unsigned int, std::shared_ptr<cv::Mat>>::const_iterator
-		element = _framesSet.find(index);
+		element = _framesSet.find(frameIndex);
 
 	if(element == _framesSet.end())
 		return NULL;
@@ -96,10 +96,10 @@ unsigned int FramesManager::getLatestFrameIndex()
 
 void FramesManager::run()
 {
-	if(_url.compare("") == 0 || _model.compare("") == 0)
+	if(_url.compare("") == 0 || _uuid.compare("") == 0)
 	{
 		std::cout << "You have not set the "
-					 "address and model of "
+					 "address and uuid of "
 					 "your streaming "
 					 "camera!"
 				  << std::endl;
@@ -189,12 +189,12 @@ void FramesManager::run()
 	bufferManagerThread.join();
 }
 
-void FramesManager::setStreamSource(std::string url, std::string model)
+void FramesManager::setStreamSource(std::string url, std::string uuid)
 {
-	_url   = url;
-	_model = model;
+	_url  = url;
+	_uuid = uuid;
 
-	_camera = new Camera(_url, _model);
+	_camera = new Camera(_url, _uuid);
 }
 
 void FramesManager::attach(Observer *newObserver)
@@ -227,9 +227,9 @@ double FramesManager::getCameraFPS()
 	return _camera->getFps();
 }
 
-const std::string FramesManager::getModel()
+const std::string FramesManager::getUUID()
 {
-	return _model;
+	return _uuid;
 }
 
 void FramesManager::Notify()

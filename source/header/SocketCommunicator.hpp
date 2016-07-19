@@ -3,7 +3,11 @@
 #include <mutex>
 #include <string>
 
-const char HOSTNAME[14] = "10.190.60.139";
+/*! \brief Nome do host para o qual as mensagens serão enviadas.
+ *
+ */
+const char HOSTNAME[10] = "localhost";
+// const char HOSTNAME[14] = "10.190.60.139";
 // const int BUFFERSIZE	= 512;
 
 /*! \brief Classe responsável pela comunicação com o Mid.

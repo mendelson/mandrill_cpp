@@ -37,18 +37,78 @@ typedef std::chrono::duration<float> fsec;
 class FramesManager
 {
 public:
+	/*! \brief Restringe o acesso ao método getFrameAvailability somente a
+	 * objetos da
+	 * classe BufferManager.
+	 *
+	 * É desejado que apenas a classe BufferManager tenha acesso ao estado dos
+	 * frames, uma vez que esta é responsável por decidir o momento em que cada
+	 * frame deve ser removido da memória.
+	 *
+	 */
+	friend class BufferManager;
+
+	/*! \brief Armazena a taxa de frames por segundo em que o vídeo de saída
+	 * deve ser escrito em disco.
+	 *
+	 */
 	const unsigned int FPS;
 
-	std::shared_ptr<cv::Mat> getFrame(unsigned int index);
-	cv::Mat getLatestFrame();
-	unsigned int getLatestFrameIndex();
-	unsigned int getFrameAvailability(unsigned int frame);
-	void setFrameAsBusy(unsigned int frameIndex);
-	void setFrameAsFree(unsigned int frameIndex, unsigned int moduleIndex);
-	void run();
-	void setStreamSource(std::string url, std::string model);
+	/*! \brief Retorna a referência para o frame de índice desejado.
+	 *
+	 * \param frameIndex Índice do frame desejado.
+	 * \return Referência para o frame desejado, por meio de um shared pointer.
+	 *
+	 */
+	std::shared_ptr<cv::Mat> getFrame(unsigned int frameIndex);
 
-	/*! \brief Retorna a instância global do FramesManager
+	/*! \brief Retorna o frame mais recente recebido da câmera.
+	 *
+	 * \return O frame mais recente.
+	 *
+	 */
+	cv::Mat getLatestFrame();
+
+	/*! \brief Retorna o índice do frame mais recente recebido da câmera.
+	 *
+	 * \return O índice do frame mais recente.
+	 *
+	 */
+	unsigned int getLatestFrameIndex();
+
+
+	/*! \brief Define que um frame está em uso.
+	 *
+	 * \param frameIndex Índice do frame desejado.
+	 *
+	 */
+	void setFrameAsBusy(unsigned int frameIndex);
+
+	/*! \brief Define que um frame não está mais em uso por um elemento
+	 * específico de _observers.
+	 *
+	 * \param frameIndex Índice do frame desejado.
+	 * \param moduleIndex Posição do elemento em _observers que está liberando o
+	 * frame.
+	 *
+	 */
+	void setFrameAsFree(unsigned int frameIndex, unsigned int moduleIndex);
+
+	/*! \brief Loop principal da classe, responsável por se comunicar
+	 * diretamente com a câmera e armazenar os frames em memória.
+	 *
+	 */
+	void run();
+
+	/*! \brief Instancia a câmera de acordo com uma URL e UUID.
+	 *
+	 * \param url URL da câmera.
+	 * \param uuid UUID da câmera.
+	 *
+	 */
+	void setStreamSource(std::string url, std::string uuid);
+
+	/*! \brief Retorna a instância global do FramesManager.
 	 *
 	 * Necessário para o padrão Singleton.
 	 *
@@ -57,7 +117,7 @@ public:
 
 	/*! \brief Desabilita o construtor por cópia.
 	 *
-	 * Necessário para o padrão Singleton
+	 * Necessário para o padrão Singleton.
 	 *
 	 */
 	FramesManager(FramesManager const &) = delete;
@@ -69,21 +129,90 @@ public:
 	 */
 	void operator=(FramesManager const &) = delete;
 
-	// Subject-observer pattern
-	void attach(Observer *);
-	void detach(Observer *);
+	/*! \brief Adiciona um novo elemento à lista _observers.
+	 *
+	 * \param newObserver Elemento a ser adicionado.
+	 *
+	 */
+	void attach(Observer *newObserver);
 
+	/*! \brief Remove um elemento da lista _observers.
+	 *
+	 * \param observer Elemento a ser removido.
+	 *
+	 */
+	void detach(Observer *observer);
+
+	/*! \brief Retorna a largura dos frames da câmera.
+	 *
+	 * \return O valor, em pixels, da largura dos frames da câmera.
+	 *
+	 */
 	double getFramesWidth();
-	double getFramesHeight();
-	double getCameraFPS();
-	const std::string getModel();
 
+	/*! \brief Retorna a altura dos frames da câmera.
+	 *
+	 * \return O valor, em pixels, da altura dos frames da câmera.
+	 *
+	 */
+	double getFramesHeight();
+
+	/*! \brief Retorna a taxa de frames por segundo com que a câmera envia
+	 * frames.
+	 *
+	 * \return A taxa de frames (FPS) de gravação da câmera.
+	 *
+	 */
+	double getCameraFPS();
+
+	/*! \brief Retorna o UUID da câmera.
+	 *
+	 * \return Retorna o UUID da câmera.
+	 *
+	 */
+	const std::string getUUID();
+
+	/*! \brief Indica se a conexão com a câmera foi perdida.
+	 *
+	 * \retval true Indica que a conexão com a câmera foi perdida.
+	 * \retval false Indica que a conexão com a câmera não foi perdida.
+	 *
+	 */
 	bool lostCamera() { return _lostCamera; }
 
+protected:
+	/*! \brief Checa se um determinado frame está em uso ou não.
+	 *
+	 * \param frameIndex Índice do frame desejado
+	 * \retval 0 Indica que o frame não está mais em uso por nenhum elemento de
+	 * _observers.
+	 * \retval 1 Indica que o frame está em uso por pelo menos um elemento de
+	 * _observers.
+	 *
+	 */
+	unsigned int getFrameAvailability(unsigned int frameIndex);
+
 private:
+	/*! \brief Classe responsável por decidir por quanto tempo um frame deve
+	 * permanecer em memória.
+	 *
+	 * Esta classe realiza a comunicação diretas com as câmeras, realiza o
+	 * gerenciamento dos frames recebidos e segue os
+	 * padrões Singleton e Observer. No padrão Observer, esta classe realiza o
+	 * papel
+	 * de publisher, ou seja, à cada vez que um frame é recebido, todos os
+	 * objetos
+	 * inscritos (subscribers/observers) são notificados.
+	 *
+	 */
 	class BufferManager
 	{
 	public:
+		/*! \brief Construtor da classe
+		 *
+		 * Salva a referência a instância global do FramesManager.
+		 *
+		 */
 		BufferManager();
 		void run();
 		void stop();
@@ -109,7 +238,7 @@ private:
 	FramesSet _framesSet;
 	FramesMetadata _busyFrames;
 	std::string _url;
-	std::string _model;
+	std::string _uuid;
 	Camera *_camera;
 	unsigned int _latestFrameIndex;
 	observersList _observers;
