@@ -9,6 +9,7 @@
 #include <opencv2/opencv.hpp>
 #include <signal.h>
 #include <thread>
+#include <unistd.h>
 
 static void framesManagerRunHelper(FramesManager *framesManager);
 volatile sig_atomic_t flag = 0;

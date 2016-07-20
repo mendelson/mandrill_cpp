@@ -4,27 +4,32 @@ SRC_PATH = source/src
 BIN_PATH = bin
 DEP_PATH = dep
 
-_OBJ  = main.o Core.o FramesManager.o Analyser.o Printer.o Camera.o ThreadPool.o
-_OBJ += Worker.o Processor.o Observer.o GreyProcessor.o Saver.o MeanProcessor.o
-_OBJ += CodecsConfig.o jsoncpp.o MovementProcessor.o SocketCommunicator.o
+_OBJ  = main.o FramesManager.o Analyser.o Printer.o Camera.o \
+		ThreadPool.o Worker.o Processor.o Observer.o GreyProcessor.o Saver.o \
+		MeanProcessor.o CodecsConfig.o jsoncpp.o MovementProcessor.o \
+		SocketCommunicator.o \
+		GstManager.o GstCore.o
 
 OBJ = $(patsubst %,$(BIN_PATH)/%,$(_OBJ))
 
-DIRECTIVES = -std=c++0x -Wall -c -I $(HEADER_PATH)
+CFLAGS = -std=c++0x -Wall -c -I $(HEADER_PATH) $(GST_C) $(OPENCV_C)
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEP_PATH)/$*.Td
-OPENCV = `pkg-config --libs opencv` -O3
-LIBS = $(OPENCV) -pthread
+OPENCV_L = `pkg-config --libs opencv`
+OPENCV_C = `pkg-config --cflags opencv`
+GST_L = `pkg-config --libs gstreamer-1.0 gstreamer-rtsp-1.0 gstreamer-video-1.0 gstreamer-plugins-bad-1.0 gstreamer-plugins-good-1.0 gstreamer-plugins-base-1.0`
+GST_C = `pkg-config --cflags gstreamer-1.0 gstreamer-rtsp-1.0 gstreamer-video-1.0 gstreamer-plugins-bad-1.0 gstreamer-plugins-good-1.0 gstreamer-plugins-base-1.0`
+LIBS = $(GST_L) $(OPENCV_L) -pthread
 FINAL_EXEC = $(BIN_PATH)/MandrillCore
 
 all: release
 
-debug: DIRECTIVES += -ggdb3 -Og
+debug: CFLAGS += -ggdb3 -Og
 debug: $(FINAL_EXEC)
 
-release: DIRECTIVES += -march=native -O3
+release: CFLAGS += -march=native -O3
 release: $(FINAL_EXEC)
 
-fast: DIRECTIVES += -march=native -Ofast
+fast: CFLAGS += -march=native -Ofast
 fast: $(FINAL_EXEC)
 
 $(FINAL_EXEC): $(OBJ)
@@ -32,7 +37,7 @@ $(FINAL_EXEC): $(OBJ)
 
 $(BIN_PATH)/%.o: $(SRC_PATH)/%.cpp
 	@mkdir -p $(BIN_PATH) $(DEP_PATH)
-	$(CC) $(DEPFLAGS) -c -o $@ $< $(DIRECTIVES)
+	$(CC) $(DEPFLAGS) -c -o $@ $< $(CFLAGS)
 	@mv -f $(DEP_PATH)/$*.Td $(DEP_PATH)/$*.d
 
 .PHONY: clean
