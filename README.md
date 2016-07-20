@@ -34,20 +34,37 @@
 * ClangFormat version 3.8
 * Doxygen Release_1_8_11
 
+# Dependencies
+Please, run the following prior to any other installation.
+```
+sudo apt-get install libopencv-dev build-essential cmake git libgtk2.0-dev pkg-config python-dev python-numpy libdc1394-22 libdc1394-22-dev libjpeg-dev libpng12-dev libtiff4-dev libjasper-dev libavcodec-dev libavformat-dev libswscale-dev libxine-dev libv4l-dev libtbb-dev libqt4-dev libfaac-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev x264 v4l-utils unzip gstreamer1.0-alsa gstreamer1.0-fluendo-mp3 gstreamer1.0-plugins-bad gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-tool h264enc graphviz libgstreamer-plugins-* gstreamer-tools libgstreamer1.0-0 libgstreamer1.0-dev
+```
+
+# Gstreamer
+If, for some reason, you haven't run the dependencies installation as previously described, run:
+```
+sudo apt-get install gstreamer1.0-alsa gstreamer1.0-fluendo-mp3 gstreamer1.0-plugins-bad gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-tool h264enc graphviz libgstreamer-plugins-* gstreamer-tools libgstreamer1.0-0 libgstreamer1.0-dev
+```
+
 # OpenCV
 ## Environment setup
+If, for some reason, you haven't run the dependencies installation as previously described, run:
 ```
-sudo apt-get install libopencv-dev build-essential cmake git libgtk2.0-dev pkg-config python-dev python-numpy libdc1394-22 libdc1394-22-dev libjpeg-dev libpng12-dev libtiff4-dev libjasper-dev libavcodec-dev libavformat-dev libswscale-dev libxine-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libv4l-dev libtbb-dev libqt4-dev libfaac-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev x264 v4l-utils unzip
+sudo apt-get install libopencv-dev build-essential cmake git libgtk2.0-dev pkg-config python-dev python-numpy libdc1394-22 libdc1394-22-dev libjpeg-dev libpng12-dev libtiff4-dev libjasper-dev libavcodec-dev libavformat-dev libswscale-dev libxine-dev libv4l-dev libtbb-dev libqt4-dev libfaac-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev x264 v4l-utils unzip
 ```
 ## OpenCV setup
 ```
-mkdir <third_party_repos>/opencv
-cd <third_party_repos>/opencv
-git clone http://github.com/Itseez/opencv.git <version>
-cd <version>
+mkdir <third_party_repos>
+cd <third_party_repos>
+git clone http://github.com/Itseez/opencv.git
+cd opencv
+git checkout <version>
 mkdir build
 cd build
-cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D WITH_V4L=ON -D WITH_QT=ON -D WITH_OPENGL=ON ..
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D WITH_V4L=ON -D WITH_QT=ON -D WITH_OPENGL=ON -DWITH_IPP=ON -DINSTALL_CREATE_DISTRIB=ON ..
+```
+Check if it's linking against gstreamer 1.x
+```
 make -j $(nproc)
 sudo make install
 sudo /bin/bash -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/opencv.conf'
@@ -57,11 +74,6 @@ sudo ldconfig
 * To make sure you have the proper version installed, run:
 ```
 pkg-config --modversion opencv
-```
-
-# Gstreamer
-```
-sudo apt-get install gstreamer1.0-alsa gstreamer1.0-fluendo-mp3 gstreamer1.0-plugins-bad gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-tool h264enc graphviz libgstreamer-plugins-*
 ```
 
 # JsonCpp
