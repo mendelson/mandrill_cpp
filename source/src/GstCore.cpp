@@ -19,7 +19,7 @@ GstCore::GstCore(std::string urlH, std::string urlL, std::string uuid,
 
 void GstCore::run()
 {
-	signal(SIGINT, handleInterruptionSignal);
+//	signal(SIGINT, handleInterruptionSignal);
 
 	gstManager->run();
 	while(true)
