@@ -8,6 +8,8 @@ Saver::Saver(std::string codecName) : _codecName(codecName)
 {
 	_currentFrameIndex = -1;
 	_subject		   = nullptr;
+	_frameCounter = 0;
+	_fileCounter = 0;
 }
 
 Saver::~Saver()
@@ -23,8 +25,18 @@ void Saver::Update()
 	getCurrentFrame();
 
 	Printer::safe_print("Saver: " + std::to_string(_currentFrameIndex) + "\n");
-
+	
+	_frameCounter++;
 	saveFrame();
+
+
+	if(_frameCounter == 20){
+		_fileCounter++;
+		_frameCounter = 0;
+		_outputStream->release();
+		setVideoName();
+	}
+
 }
 
 void Saver::setSubject(FramesManager *subject, unsigned int id)
@@ -37,8 +49,27 @@ void Saver::setSubject(FramesManager *subject, unsigned int id)
 	if(extension.empty() || fourccCode == -4)
 		exit(-4);
 
-	std::string outputFile = "data/streaming/" + this->_subject->getModel() +
-							 "_originalStream." + extension;
+	std::string outputFile = "data/streaming/teste_originalStream." + extension;
+	_outputStream =
+		new cv::VideoWriter(outputFile, fourccCode, _subject->FPS,
+							cvSize((int)_subject->getFramesWidth(),
+								   (int)_subject->getFramesHeight()));
+}
+
+
+void Saver::setVideoName()
+{
+	std::string extension = CodecsConfig::getCodecExtension(_codecName);
+	int fourccCode		  = CodecsConfig::getCodecFourcc(_codecName);
+	std::stringstream ss;
+	std::string s;
+	ss << _fileCounter;
+	ss >> s;
+
+	if(extension.empty() || fourccCode == -4)
+		exit(-4);
+
+	std::string outputFile = "data/streaming/teste_originalStream" + s + "." + extension;
 	_outputStream =
 		new cv::VideoWriter(outputFile, fourccCode, _subject->FPS,
 							cvSize((int)_subject->getFramesWidth(),

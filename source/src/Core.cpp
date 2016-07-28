@@ -23,8 +23,8 @@ Core::Core(std::string url, std::string model, std::string portNumber)
 	CodecsConfig::update();
 	_framesManager = FramesManager::getManager();
 	_framesManager->setStreamSource(url, model);
-	_socketCommunicator = SocketCommunicator::getSocket();
-	_socketCommunicator->setupSocket(atoi(portNumber.c_str()));
+	// _socketCommunicator = SocketCommunicator::getSocket();
+	// _socketCommunicator->setupSocket(atoi(portNumber.c_str()));
 }
 
 void Core::run()
@@ -34,7 +34,7 @@ void Core::run()
 	// _socketCommunicator->run();
 
 	// exit(-1999);
-	return;
+	// return;
 
 	// Observer* analyser = new
 	// Analyser();
@@ -45,14 +45,14 @@ void Core::run()
 	Observer *saver = new Saver("H.264");
 	// Observer* meanProcessor = new
 	// MeanProcessor();
-	Observer *moveProcessor = new MovementProcessor("H.264");
+	// Observer *moveProcessor = new MovementProcessor("H.264");
 
 	// _framesManager->attach(analyser);
 	// _framesManager->attach(printer);
 	// _framesManager->attach(greyProcessor);
 	_framesManager->attach(saver);
 	// _framesManager->attach(meanProcessor);
-	_framesManager->attach(moveProcessor);
+	// _framesManager->attach(moveProcessor);
 
 	std::thread framesManagerThread(framesManagerRunHelper, _framesManager);
 
