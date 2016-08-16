@@ -3,6 +3,10 @@
 ```
 ./scripts/formatCodingStyle.sh
 ```
+* In case you are commiting any changes from a shared machine, you may use the following:
+```
+git -c user.name='someone' -c user.email='some@one.org' commit -m '...'
+```
 
 # Third party softwares currently in use
 * g++ version 4.8.4
@@ -87,6 +91,11 @@ make -j $(nproc)
 # Running Mandrill-Low
 ```
 ./scripts/runCore.sh
+```
+
+If you are not willing to use the script above, the executable receives the following parameters:
+```
+./bin/MandrillCore <url-high-resolution> <url-low-resolution> <camera-uuid> <socket-number>
 ```
 
 # Versioning
