@@ -19,7 +19,7 @@ GstCore::GstCore(std::string urlH, std::string urlL, std::string uuid,
 
 void GstCore::run()
 {
-//	signal(SIGINT, handleInterruptionSignal);
+	//	signal(SIGINT, handleInterruptionSignal);
 
 	gstManager->run();
 	while(true)
@@ -28,12 +28,10 @@ void GstCore::run()
 		if(flag)
 		{
 			std::cout << "\n\nSIGINT caught!" << std::endl;
-			std::cout << "\n\nExiting GstCore smoothly..."
-					  << std::endl;
+			std::cout << "\n\nExiting GstCore smoothly..." << std::endl;
 			flag = 0;
 			break;
 		}
 	}
-
 }
 

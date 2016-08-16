@@ -253,3 +253,4 @@ int GstManager::run()
 	gst_object_unref(pipeline);
 	return 0;
 }
+
