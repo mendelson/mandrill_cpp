@@ -5,6 +5,7 @@
 #include <string>
 #include <string>
 #include <sys/wait.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 const std::string OUTPUTROOT = "files";
@@ -31,9 +32,11 @@ int main(int argc, char *argv[])
 	std::string uuidPath			  = OUTPUTROOT + "/" + uuid;
 	std::string tmpPath				  = uuidPath + "/" + TMPFOLDER;
 	std::string dashPath			  = uuidPath + "/" + DASHFOLDER;
-	std::string srcLocationParameters = "location=" + urlHighDef;
+	std::string srcLocationParameter = "location=" + urlHighDef;
 	std::string tmpLocationParameter  = "location=" + tmpPath + "/video%d.mp4";
 	std::string maxSizeTime = "max-size-time=" + SPLITTIME + "000000000";
+
+	std::cout << "Socket port: " << socket << std::endl;
 	/////////
 
 	int counter = 0;
