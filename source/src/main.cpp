@@ -1,14 +1,11 @@
 #include <iostream>
 #include <sstream>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string>
 #include <string>
 #include <sys/wait.h>
 #include <unistd.h>
-
-#include <stdio.h>
-#include <string>
-#include <sys/stat.h>
-#include <sys/types.h>
 
 const std::string OUTPUTROOT = "files";
 const std::string TMPFOLDER  = "tmp";
@@ -22,21 +19,20 @@ int main(int argc, char *argv[])
 {
 	if(argc != 5)
 	{
-		printf("Wrong number of input arguments!");
+		printf("Wrong number of input arguments!\n");
 		exit(-1);
 	}
 
 	// Vão p uma classe
-	std::string urlHighDef = argv[1];
-	std::string urlLowDef  = argv[2];
-	std::string uuid	   = argv[3];
-	int socket			   = atoi(argv[4]);
-	std::cout << socket << std::endl;
-	std::string uuidPath			 = OUTPUTROOT + "/" + uuid;
-	std::string tmpPath				 = uuidPath + "/" + TMPFOLDER;
-	std::string dashPath			 = uuidPath + "/" + DASHFOLDER;
-	std::string srcLocationParameter = "location=" + urlHighDef;
-	std::string tmpLocationParameter = "location=" + tmpPath + "/video%d.mp4";
+	std::string urlHighDef			  = argv[1];
+	std::string urlLowDef			  = argv[2];
+	std::string uuid				  = argv[3];
+	int socket						  = atoi(argv[4]);
+	std::string uuidPath			  = OUTPUTROOT + "/" + uuid;
+	std::string tmpPath				  = uuidPath + "/" + TMPFOLDER;
+	std::string dashPath			  = uuidPath + "/" + DASHFOLDER;
+	std::string srcLocationParameters = "location=" + urlHighDef;
+	std::string tmpLocationParameter  = "location=" + tmpPath + "/video%d.mp4";
 	std::string maxSizeTime = "max-size-time=" + SPLITTIME + "000000000";
 	/////////
 
@@ -127,7 +123,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-
 	return 0;
 }
 
@@ -158,3 +153,4 @@ void setupEnvironment(std::string uuid)
 		mkdir(dashPath.c_str(), 0700);
 	}
 }
+
