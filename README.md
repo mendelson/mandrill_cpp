@@ -10,10 +10,8 @@ git -c user.name='someone' -c user.email='some@one.org' commit -m '...'
 
 # Third party softwares currently in use
 * g++ version 4.8.4
-* OpenCV version 3.1.0
-* GStreamer
+* GStreamer 1.8.2
 * JsonCpp version 1.7.2
-* OpenSSL 1_0_2-stable
 * ClangFormat version 3.8
 * Doxygen Release_1_8_11
 * Ubuntu 16.04 LTS (no updates)
