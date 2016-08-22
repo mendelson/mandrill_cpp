@@ -1,11 +1,12 @@
 #include <iostream>
+#include <signal.h>
 #include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
 #include <string>
-#include <sys/wait.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 const std::string OUTPUTROOT = "files";
@@ -25,15 +26,15 @@ int main(int argc, char *argv[])
 	}
 
 	// Vão p uma classe
-	std::string urlHighDef			  = argv[1];
-	std::string urlLowDef			  = argv[2];
-	std::string uuid				  = argv[3];
-	int socket						  = atoi(argv[4]);
-	std::string uuidPath			  = OUTPUTROOT + "/" + uuid;
-	std::string tmpPath				  = uuidPath + "/" + TMPFOLDER;
-	std::string dashPath			  = uuidPath + "/" + DASHFOLDER;
+	std::string urlHighDef			 = argv[1];
+	std::string urlLowDef			 = argv[2];
+	std::string uuid				 = argv[3];
+	int socket						 = atoi(argv[4]);
+	std::string uuidPath			 = OUTPUTROOT + "/" + uuid;
+	std::string tmpPath				 = uuidPath + "/" + TMPFOLDER;
+	std::string dashPath			 = uuidPath + "/" + DASHFOLDER;
 	std::string srcLocationParameter = "location=" + urlHighDef;
-	std::string tmpLocationParameter  = "location=" + tmpPath + "/video%d.mp4";
+	std::string tmpLocationParameter = "location=" + tmpPath + "/video%d.mp4";
 	std::string maxSizeTime = "max-size-time=" + SPLITTIME + "000000000";
 
 	std::cout << "Socket port: " << socket << std::endl;
@@ -51,6 +52,10 @@ int main(int argc, char *argv[])
 	// exit(-1);
 
 	pid_t pid_inicial = fork(); /* Create a child process */
+
+	// gst-launch-1.0 -e rtspsrc
+	// location=rtsp://root:akts@10.190.60.102/live.sdp ! rtph264depay !
+	// h264parse ! splitmuxsink location=./video%d.mp4 max-size-time=2000000000
 
 	// calls gstreamer
 	switch(pid_inicial)
@@ -81,9 +86,30 @@ int main(int argc, char *argv[])
 	}
 
 	sleep(10);
+	int status;
 	// calls MP4BOX while gstreamers is still running
 	while(true)
 	{
+		//		if(pid_inicial != 0)
+		//		{
+		//			std::cout << "OLHA A TRETA EXPLODINDO!!!!!" << std::endl;
+		//			_Exit(-1);
+		//			kill(pid_inicial, SIGTERM);
+		//		}
+
+		pid_t gst_status = waitpid(pid_inicial, &status, WNOHANG);
+
+		if(gst_status != 0)
+		{
+			std::cout << "==========\nDEU RUIM NO GSTREAMER!!! OLHA A TRETA "
+						 "EXPLODINDO!!!!!\n=========="
+					  << std::endl;
+			exit(-1);
+		}
+
+		//		std::cout << "==========\nPID AQUI: " << pid_inicial <<
+		//std::endl;
+
 		sleep(4);
 		counter++;
 		pid_t pid = fork(); /* Create a child process */
