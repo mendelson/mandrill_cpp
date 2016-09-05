@@ -128,9 +128,9 @@ int main(int argc, char *argv[])
 
 				execl(MP4BoxPath, MP4BoxPath, "-dash", "2000", "-profile",
 					  "live", "-rap", "-dash-ctx",
-					  (uuidPath + "/ctx.txt").c_str(), "-mpd-refresh", "2",
+					  (uuidPath + "/ctx.txt").c_str(), "-mpd-refresh", "60", "-time-shift", "1800", "-min-buffer", "0",
 					  "-segment-name", "dash/dash_segment_", "-out",
-					  (uuidPath + "/manifest.mpd").c_str(), videoString.c_str(),
+					  (uuidPath + "/manifest.mpd").c_str(), videoString.c_str(), "-dynamic",
 					  NULL);
 
 				break;
