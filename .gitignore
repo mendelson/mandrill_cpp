@@ -25,6 +25,8 @@ bin
 dep
 data/streaming/*
 doc
+files
+gpac
 
 # Output videos
 *.avi
