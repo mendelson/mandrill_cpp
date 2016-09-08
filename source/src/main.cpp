@@ -1,13 +1,18 @@
 #include <iostream>
+#include <limits.h>
 #include <signal.h>
 #include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
 #include <string>
+#include <sys/inotify.h>
+#include <sys/poll.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
+
+#define BUF_LEN (10 * (sizeof(struct inotify_event) + NAME_MAX + 1))
 
 const std::string OUTPUTROOT = "files";
 const std::string TMPFOLDER  = "tmp";
@@ -41,6 +46,7 @@ int main(int argc, char *argv[])
 	/////////
 
 	int counter = 0;
+	char buf[BUF_LEN];
 	std::stringstream ss;
 	std::string str;
 	std::string videoString;
@@ -49,16 +55,14 @@ int main(int argc, char *argv[])
 
 	setupEnvironment(uuid);
 
-	// exit(-1);
-
-	pid_t pid_inicial = fork(); /* Create a child process */
+	pid_t pid_gst = fork(); /* Create a child process */
 
 	// gst-launch-1.0 -e rtspsrc
 	// location=rtsp://root:akts@10.190.60.102/live.sdp ! rtph264depay !
 	// h264parse ! splitmuxsink location=./video%d.mp4 max-size-time=2000000000
 
 	// calls gstreamer
-	switch(pid_inicial)
+	switch(pid_gst)
 	{
 		case -1: /* Error */
 			std::cout << "Uh-Oh! fork() failed.\n";
@@ -80,75 +84,115 @@ int main(int argc, char *argv[])
 			break;
 
 		default: /* Parent process */
-			std::cout << "Process created with pid_inicial " << pid_inicial
+			std::cout << "Process created with pid_gst " << pid_gst
 					  << "\n";
 			break;
 	}
 
-	sleep(10);
+
+	int inotifyFd = inotify_init();
+	if(inotifyFd == -1)
+	{
+		std::cout << "inotify_init failed" << std::endl;
+		exit(1);
+	}
+
+	if(inotify_add_watch(inotifyFd, tmpPath.c_str(), IN_CLOSE_WRITE) == -1)
+	{
+		std::cout << "inotify_add_watch failed" << std::endl;
+		exit(2);
+	}
 	int status;
+	struct pollfd ufds[2];
+
+	ufds[0].fd	 = inotifyFd;
+	ufds[0].events = POLLIN | POLLPRI;
+
+
 	// calls MP4BOX while gstreamers is still running
 	while(true)
 	{
-		//		if(pid_inicial != 0)
-		//		{
-		//			std::cout << "OLHA A TRETA EXPLODINDO!!!!!" << std::endl;
-		//			_Exit(-1);
-		//			kill(pid_inicial, SIGTERM);
-		//		}
 
-		pid_t gst_status = waitpid(pid_inicial, &status, WNOHANG);
+		pid_t gst_status = waitpid(pid_gst, &status, WNOHANG);
 
 		if(gst_status != 0)
 		{
 			std::cout << "==========\nDEU RUIM NO GSTREAMER!!! OLHA A TRETA "
-						 "EXPLODINDO!!!!!\n=========="
-					  << std::endl;
+				"EXPLODINDO!!!!!\n=========="
+				<< std::endl;
 			exit(-1);
 		}
 
-		//		std::cout << "==========\nPID AQUI: " << pid_inicial <<
-		//std::endl;
+		int polln = poll(ufds, 1, 5000);  // poll com timeout de 5s
 
-		sleep(4);
-		counter++;
-		pid_t pid = fork(); /* Create a child process */
-
-		switch(pid)
+		if(polln == -1)
 		{
-			case -1: /* Error */
-				std::cout << "Uh-Oh! fork() failed.\n";
-				break;
+			perror("poll");
+			exit(-1);
+		}
+		else if(polln == 0)
+		{
+			std::cout << "timeout" << std::endl;
+		}
+		//		std::cout << "==========\nPID AQUI: " << pid_gst <<
+		// std::endl;
 
-			case 0: /* Child process */
-				ss << counter;
-				str			= ss.str();
-				videoString = tmpPath + "/video" + str + ".mp4";
-				std::cout << "String: " << videoString << "\n";
+		counter++;
 
-				execl(MP4BoxPath, MP4BoxPath, "-dash", "2000", "-profile",
-					  "live", "-rap", "-dash-ctx",
-					  (uuidPath + "/ctx.txt").c_str(), "-mpd-refresh", "2",
-					  "-segment-name", "dash/dash_segment_", "-out",
-					  (uuidPath + "/manifest.mpd").c_str(), videoString.c_str(),
-					  NULL);
+		int numRead = read(inotifyFd, buf, BUF_LEN);
 
-				break;
+		if (numRead <= 0)
+		{
+			std::cout << "read failed" << std::endl;
+			exit(numRead);
+		}
 
-			default: /* Parent process */
-				std::cout << "Process created with pid " << pid << "\n";
-				int status;
+		for (char *p = buf; p < buf + numRead; )
+		{
+			struct inotify_event *event = (struct inotify_event *)p;
+			std::cout << "dash: " << event->name << std::endl;
+			/* TODO: filtrar entrada, checar padrao: "video%d.mp4" */
+			//callMP4Box(event->name);
+			pid_t pid = fork(); /* Create a child process */
 
-				while(!WIFEXITED(status))
-				{
-					waitpid(pid, &status,
-							0); /* Wait for the process to complete */
-				}
+			switch(pid)
+			{
+				case -1: /* Error */
+					std::cout << "Uh-Oh! fork() failed.\n";
+					break;
 
-				std::cout << "Process exited with " << WEXITSTATUS(status)
-						  << "\n";
+				case 0: /* Child process */
+					ss << counter;
+					str			= ss.str();
+					videoString = tmpPath + "/" + event->name;
+					std::cout << "String: " << videoString << "\n";
 
-				break;
+					execl(MP4BoxPath, MP4BoxPath, "-dash", "2000", "-profile",
+							"live", "-rap", "-dash-ctx",
+							(uuidPath + "/ctx.txt").c_str(), "-mpd-refresh", "2",
+							"-segment-name", "dash/dash_segment_", "-out",
+							(uuidPath + "/manifest.mpd").c_str(), videoString.c_str(),
+							NULL);
+
+					break;
+
+				default: /* Parent process */
+					std::cout << "Process created with pid " << pid << "\n";
+					int status;
+
+					while(!WIFEXITED(status))
+					{
+						/* Wait for the process to complete */
+						waitpid(pid, &status, 0);
+					}
+
+					std::cout << "Process exited with " << WEXITSTATUS(status)
+						<< "\n";
+
+					break;
+			}
+
+			p += sizeof(struct inotify_event) + event->len;
 		}
 	}
 
