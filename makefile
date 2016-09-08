@@ -8,11 +8,11 @@ _OBJ  = main.o
 
 OBJ = $(patsubst %,$(BIN_PATH)/%,$(_OBJ))
 
-CFLAGS = -std=c++0x -Wall -c -I $(HEADER_PATH) $(GST_C)
+CFLAGS = -std=c++0x -Wall -c -I $(HEADER_PATH)
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEP_PATH)/$*.Td
 GST_L = `pkg-config --libs gstreamer-1.0 gstreamer-rtsp-1.0 gstreamer-video-1.0 gstreamer-plugins-bad-1.0 gstreamer-plugins-good-1.0 gstreamer-plugins-base-1.0`
 GST_C = `pkg-config --cflags gstreamer-1.0 gstreamer-rtsp-1.0 gstreamer-video-1.0 gstreamer-plugins-bad-1.0 gstreamer-plugins-good-1.0 gstreamer-plugins-base-1.0`
-LIBS = $(GST_L) -pthread
+LIBS =
 FINAL_EXEC = $(BIN_PATH)/MandrillCore
 
 all: release
