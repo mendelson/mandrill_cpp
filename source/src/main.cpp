@@ -205,7 +205,7 @@ void setupEnvironment(std::string uuid)
 	std::string uuidPath = OUTPUTROOT + "/" + uuid;
 	std::string tmpPath  = uuidPath + "/" + TMPFOLDER;
 	std::string dashPath = uuidPath + "/" + DASHFOLDER;
-	struct stat st		 = {0};
+	struct stat st;
 
 	if(stat(OUTPUTROOT.c_str(), &st) == -1)
 	{
