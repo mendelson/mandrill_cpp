@@ -6,13 +6,19 @@
 #include <stdlib.h>
 #include <string>
 #include <string>
-#include <sys/inotify.h>
 #include <sys/poll.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
-#define BUF_LEN (10 * (sizeof(struct inotify_event) + NAME_MAX + 1))
+#ifdef __linux
+	#include <sys/inotify.h>
+	#define BUF_LEN (10 * (sizeof(struct inotify_event) + NAME_MAX + 1))
+#else
+	#define BUF_LEN (10 * (NAME_MAX + 1))
+#endif
+
+
 
 const std::string OUTPUTROOT = "files";
 const std::string TMPFOLDER  = "tmp";
@@ -20,6 +26,8 @@ const std::string DASHFOLDER = "dash";
 const std::string SPLITTIME  = "2";  // Seconds
 
 void setupEnvironment(std::string uuid);
+int watcher_init (std::string path);
+void watch_path(int fd, std::string path);
 
 
 int main(int argc, char *argv[])
@@ -41,13 +49,13 @@ int main(int argc, char *argv[])
 	std::string srcLocationParameter = "location=" + urlHighDef;
 	std::string tmpLocationParameter = "location=" + tmpPath + "/video%d.mp4";
 	std::string maxSizeTime = "max-size-time=" + SPLITTIME + "000000000";
+	int watcherFd;
 
 	std::cout << "Socket port: " << socket << std::endl;
 	/////////
 
 	int counter = 0;
 	char buf[BUF_LEN];
-	std::stringstream ss;
 	std::string str;
 	std::string videoString;
 	char MP4BoxPath[]	= "/usr/local/bin/MP4Box";
@@ -89,23 +97,32 @@ int main(int argc, char *argv[])
 			break;
 	}
 
-
-	int inotifyFd = inotify_init();
-	if(inotifyFd == -1)
+#ifdef __linux
+	watcherFd = inotify_init();
+	if(watcherFd == -1)
 	{
 		std::cout << "inotify_init failed" << std::endl;
 		exit(1);
 	}
 
-	if(inotify_add_watch(inotifyFd, tmpPath.c_str(), IN_CLOSE_WRITE) == -1)
+	if(inotify_add_watch(watcherFd, tmpPath.c_str(), IN_CLOSE_WRITE) == -1)
 	{
 		std::cout << "inotify_add_watch failed" << std::endl;
 		exit(2);
 	}
+#else
+	watcherFd = watcher_init(tmpPath);
+	if(watcherFd == -1)
+	{
+		std::cout << "watcher_init failed" << std::endl;
+		exit(3);
+	}
+#endif
+
 	int status;
 	struct pollfd ufds[2];
 
-	ufds[0].fd	 = inotifyFd;
+	ufds[0].fd	 = watcherFd;
 	ufds[0].events = POLLIN | POLLPRI;
 
 
@@ -139,7 +156,7 @@ int main(int argc, char *argv[])
 
 		counter++;
 
-		int numRead = read(inotifyFd, buf, BUF_LEN);
+		int numRead = read(watcherFd, buf, BUF_LEN);
 
 		if (numRead <= 0)
 		{
@@ -149,8 +166,19 @@ int main(int argc, char *argv[])
 
 		for (char *p = buf; p < buf + numRead; )
 		{
+#ifdef __linux
 			struct inotify_event *event = (struct inotify_event *)p;
-			std::cout << "dash: " << event->name << std::endl;
+			std::string filename = std::string(event->name);
+			p += sizeof(struct inotify_event) + event->len;
+#else
+			int size = strlen(p)+1;
+			std::string filename = std::string(p, size);
+			p += size;
+#endif
+
+			std::cout << "dash: " << filename << std::endl;
+			videoString = tmpPath + "/" + filename;
+			std::cout << "String: " << videoString << "\n";
 			/* TODO: filtrar entrada, checar padrao: "video%d.mp4" */
 			//callMP4Box(event->name);
 			pid_t pid = fork(); /* Create a child process */
@@ -162,10 +190,6 @@ int main(int argc, char *argv[])
 					break;
 
 				case 0: /* Child process */
-					ss << counter;
-					str			= ss.str();
-					videoString = tmpPath + "/" + event->name;
-					std::cout << "String: " << videoString << "\n";
 
 					execl(MP4BoxPath, MP4BoxPath, "-dash", "2000", "-profile",
 							"live", "-rap", "-dash-ctx",
@@ -193,7 +217,6 @@ int main(int argc, char *argv[])
 					break;
 			}
 
-			p += sizeof(struct inotify_event) + event->len;
 		}
 	}
 
@@ -228,3 +251,68 @@ void setupEnvironment(std::string uuid)
 	}
 }
 
+int watcher_init (std::string path)
+{
+	int pfds[2];
+
+	if(pipe(pfds))
+	{
+		perror("pipe");
+		exit(-5);
+	}
+
+	pid_t pid = fork();
+
+	switch (pid)
+	{
+		case -1: /* Error */
+			std::cout << "Uh-Oh! watcher fork() failed.\n";
+			break;
+
+		case 0: /* Child process */
+
+			close(pfds[0]);
+			watch_path(pfds[1], path);
+
+			break;
+
+		default: /* Parent process */
+			std::cout << "Watcher process created with pid " << pid << "\n";
+
+			close(pfds[1]);
+
+			return pfds[0];
+
+	}
+
+	exit(-3);
+}
+
+void watch_path(int fd, std::string path)
+{
+	int counter = 1;
+	struct stat st;
+	std::string oldFile, newFile, fullPath;
+	std::stringstream ss;
+
+	while(1)
+	{
+		ss << counter;
+		newFile = "video" + ss.str() + ".mp4";
+		fullPath = path + "/" + newFile;
+
+		std::cout << "Looking for file: " << fullPath << std::endl;
+
+		if (stat(fullPath.c_str(), &st) == 0)
+		{
+			if (!oldFile.empty())
+				write(fd, oldFile.c_str(), oldFile.size() + 1);
+
+			counter++;
+			oldFile = newFile;
+		}
+
+		sleep(1);
+	}
+
+}
