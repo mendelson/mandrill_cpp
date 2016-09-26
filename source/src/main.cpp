@@ -6,13 +6,19 @@
 #include <stdlib.h>
 #include <string>
 #include <string>
-#include <sys/inotify.h>
 #include <sys/poll.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
-#define BUF_LEN (10 * (sizeof(struct inotify_event) + NAME_MAX + 1))
+#ifdef __linux
+	#include <sys/inotify.h>
+	#define BUF_LEN (10 * (sizeof(struct inotify_event) + NAME_MAX + 1))
+#else
+	#define BUF_LEN (10 * (NAME_MAX + 1))
+#endif
+
+
 
 const std::string OUTPUTROOT = "files";
 const std::string TMPFOLDER  = "tmp";
@@ -41,13 +47,13 @@ int main(int argc, char *argv[])
 	std::string srcLocationParameter = "location=" + urlHighDef;
 	std::string tmpLocationParameter = "location=" + tmpPath + "/video%d.mp4";
 	std::string maxSizeTime = "max-size-time=" + SPLITTIME + "000000000";
+	int watcherFd;
 
 	std::cout << "Socket port: " << socket << std::endl;
 	/////////
 
 	int counter = 0;
 	char buf[BUF_LEN];
-	std::stringstream ss;
 	std::string str;
 	std::string videoString;
 	char MP4BoxPath[]	= "/usr/local/bin/MP4Box";
@@ -89,23 +95,25 @@ int main(int argc, char *argv[])
 			break;
 	}
 
-
-	int inotifyFd = inotify_init();
-	if(inotifyFd == -1)
+#ifdef __linux
+	watcherFd = inotify_init();
+	if(watcherFd == -1)
 	{
 		std::cout << "inotify_init failed" << std::endl;
 		exit(1);
 	}
 
-	if(inotify_add_watch(inotifyFd, tmpPath.c_str(), IN_CLOSE_WRITE) == -1)
+	if(inotify_add_watch(watcherFd, tmpPath.c_str(), IN_CLOSE_WRITE) == -1)
 	{
 		std::cout << "inotify_add_watch failed" << std::endl;
 		exit(2);
 	}
+#endif
+
 	int status;
 	struct pollfd ufds[2];
 
-	ufds[0].fd	 = inotifyFd;
+	ufds[0].fd	 = watcherFd;
 	ufds[0].events = POLLIN | POLLPRI;
 
 
@@ -139,7 +147,7 @@ int main(int argc, char *argv[])
 
 		counter++;
 
-		int numRead = read(inotifyFd, buf, BUF_LEN);
+		int numRead = read(watcherFd, buf, BUF_LEN);
 
 		if (numRead <= 0)
 		{
@@ -147,10 +155,15 @@ int main(int argc, char *argv[])
 			exit(numRead);
 		}
 
+#ifdef __linux
 		for (char *p = buf; p < buf + numRead; )
 		{
 			struct inotify_event *event = (struct inotify_event *)p;
 			std::cout << "dash: " << event->name << std::endl;
+			videoString = tmpPath + "/" + event->name;
+			std::cout << "String: " << videoString << "\n";
+			p += sizeof(struct inotify_event) + event->len;
+#endif
 			/* TODO: filtrar entrada, checar padrao: "video%d.mp4" */
 			//callMP4Box(event->name);
 			pid_t pid = fork(); /* Create a child process */
@@ -162,10 +175,6 @@ int main(int argc, char *argv[])
 					break;
 
 				case 0: /* Child process */
-					ss << counter;
-					str			= ss.str();
-					videoString = tmpPath + "/" + event->name;
-					std::cout << "String: " << videoString << "\n";
 
 					execl(MP4BoxPath, MP4BoxPath, "-dash", "2000", "-profile",
 							"live", "-rap", "-dash-ctx",
@@ -193,8 +202,9 @@ int main(int argc, char *argv[])
 					break;
 			}
 
-			p += sizeof(struct inotify_event) + event->len;
+#ifdef __linux
 		}
+#endif
 	}
 
 	return 0;
