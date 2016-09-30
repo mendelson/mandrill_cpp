@@ -32,7 +32,7 @@ void watch_path(int fd, std::string path);
 
 int main(int argc, char *argv[])
 {
-	if(argc != 5)
+	if(argc != 7)
 	{
 		printf("Wrong number of input arguments!\n");
 		exit(-1);
@@ -49,6 +49,8 @@ int main(int argc, char *argv[])
 	std::string srcLocationParameter = "location=" + urlHighDef;
 	std::string tmpLocationParameter = "location=" + tmpPath + "/video%d.mp4";
 	std::string maxSizeTime = "max-size-time=" + SPLITTIME + "000000000";
+	std::string IP(argv[5]);
+	std::string password(argv[6]);
 	int watcherFd;
 
 	std::cout << "Socket port: " << socket << std::endl;
@@ -62,7 +64,7 @@ int main(int argc, char *argv[])
 	char MP4BoxPath[]	= "/usr/local/bin/MP4Box";
 	//char gstLaunchPath[] = "/cygdrive/e/gstreamer/1.0/x86_64/bin/gst-launch-1.0";
 	char gstLaunchPath[] = "/usr/bin/gst-launch-1.0";
-	char smbLinuxPath[] = "../../scripts/s"
+	char smbLinuxPath[] = "../../scripts/s";
 
 	setupEnvironment(uuid);
 
@@ -203,8 +205,8 @@ int main(int argc, char *argv[])
 							"-dynamic", NULL);
 
 					#ifdef __linux
-
-						// execl(smbLinuxPath, smbLinuxPath, IP,  filename, uuid, password, NULL);
+						execl(smbLinuxPath, smbLinuxPath, IP.c_str(),  filename.c_str(), 
+							uuid.c_str(), password.c_str(), NULL);
 
 					#endif
 
