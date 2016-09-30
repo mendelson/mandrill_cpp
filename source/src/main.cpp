@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
-#include <string>
+#include <string.h>
 #include <sys/poll.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
@@ -58,7 +58,9 @@ int main(int argc, char *argv[])
 	char buf[BUF_LEN];
 	std::string str;
 	std::string videoString;
+	//char MP4BoxPath[]	= "/cygdrive/e/Program Files/GPAC/mp4box";
 	char MP4BoxPath[]	= "/usr/local/bin/MP4Box";
+	//char gstLaunchPath[] = "/cygdrive/e/gstreamer/1.0/x86_64/bin/gst-launch-1.0";
 	char gstLaunchPath[] = "/usr/bin/gst-launch-1.0";
 
 	setupEnvironment(uuid);
@@ -293,17 +295,17 @@ void watch_path(int fd, std::string path)
 	int counter = 1;
 	struct stat st;
 	std::string oldFile, newFile, fullPath;
-	std::stringstream ss;
 
 	while(1)
 	{
-		ss << counter;
-		newFile = "video" + ss.str() + ".mp4";
+
+		newFile = "video" + std::to_string(counter) + ".mp4";
 		fullPath = path + "/" + newFile;
 
 		std::cout << "Looking for file: " << fullPath << std::endl;
 
-		if (stat(fullPath.c_str(), &st) == 0)
+		if (stat(fullPath.c_str(), &st) == 0 &&
+				abs(st.st_mtime - time(0)) < 22 )
 		{
 			if (!oldFile.empty())
 				write(fd, oldFile.c_str(), oldFile.size() + 1);
