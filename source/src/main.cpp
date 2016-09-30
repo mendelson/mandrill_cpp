@@ -62,6 +62,7 @@ int main(int argc, char *argv[])
 	char MP4BoxPath[]	= "/usr/local/bin/MP4Box";
 	//char gstLaunchPath[] = "/cygdrive/e/gstreamer/1.0/x86_64/bin/gst-launch-1.0";
 	char gstLaunchPath[] = "/usr/bin/gst-launch-1.0";
+	char smbLinuxPath[] = "../../scripts/s"
 
 	setupEnvironment(uuid);
 
@@ -201,6 +202,12 @@ int main(int argc, char *argv[])
 							(uuidPath + "/manifest.mpd").c_str(), videoString.c_str(),
 							"-dynamic", NULL);
 
+					#ifdef __linux
+
+						// execl(smbLinuxPath, smbLinuxPath, IP,  filename, uuid, password, NULL);
+
+					#endif
+
 					break;
 
 				default: /* Parent process */
@@ -218,6 +225,8 @@ int main(int argc, char *argv[])
 
 					break;
 			}
+
+
 
 		}
 	}
