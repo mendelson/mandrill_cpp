@@ -50,6 +50,36 @@ sudo apt-get install clang-format-3.8
 ```
 * If you intend to edit the clang-format file, make sure to check the documentation [here](http://llvm.org/releases/3.8.0/tools/clang/docs/ClangFormatStyleOptions.html).
 
+# Building on Windows
+## Install (64 bits)
+### Cygwin
+```
+Cygwin: (http://download.tsi.telecom-paristech.fr/gpac/release/0.6.1/gpac-0.6.1-rev0-g72d766c-master-x64.exe)
+And then select the packages:
+- gcc (core and g++)
+- git
+- make
+- libstdc++
+```
+
+### Required programs
+```
+Gstreamer: (https://gstreamer.freedesktop.org/data/pkg/windows/1.8.3/gstreamer-1.0-x86_64-1.8.3.msi)
+Gpac: (http://download.tsi.telecom-paristech.fr/gpac/release/0.6.1/gpac-0.6.1-rev0-g72d766c-master-x64.exe)
+```
+After instaling:
+- Add their bin/exe folder to the windows' variable PATH, so the cygwin can call them.
+- Check if it is possible to run:
+```
+mp4box -v
+gst-launch-1.0 --version
+```
+- Add a link to these programs to the cygwin bin folder:
+```
+ln -s "$(which mp4box)" /usr/local/bin/MP4Box
+ln -s "$(which gst-launch-1.0)" /usr/bin/gst-launch-1.0
+```
+
 # Doxygen
 ## Install
 ```
