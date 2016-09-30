@@ -24,7 +24,7 @@ sudo apt-get install libopencv-dev build-essential cmake git libgtk2.0-dev pkg-c
 
 or just run:
 ```
-./script/mandrillSetup.sh
+./scripts/mandrillSetup.sh
 ```
 
 # Gstreamer
