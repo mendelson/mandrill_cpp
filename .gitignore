@@ -27,6 +27,7 @@ data/streaming/*
 doc
 files
 gpac
+sandbox
 
 # Output videos
 *.avi

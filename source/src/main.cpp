@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 	char MP4BoxPath[]	= "/usr/local/bin/MP4Box";
 	//char gstLaunchPath[] = "/cygdrive/e/gstreamer/1.0/x86_64/bin/gst-launch-1.0";
 	char gstLaunchPath[] = "/usr/bin/gst-launch-1.0";
-	char smbLinuxPath[] = "../../scripts/s";
+	char smbLinuxPath[] = "/usr/bin/scripts/s";
 
 	setupEnvironment(uuid);
 
@@ -204,12 +204,6 @@ int main(int argc, char *argv[])
 							(uuidPath + "/manifest.mpd").c_str(), videoString.c_str(),
 							"-dynamic", NULL);
 
-					#ifdef __linux
-						execl(smbLinuxPath, smbLinuxPath, IP.c_str(),  filename.c_str(), 
-							uuid.c_str(), password.c_str(), NULL);
-
-					#endif
-
 					break;
 
 				default: /* Parent process */
@@ -231,6 +225,46 @@ int main(int argc, char *argv[])
 
 
 		}
+
+
+/*			// sends back up
+			#ifdef __linux
+			pid_t pid_back_up = fork(); 
+
+			switch(pid_back_up)
+			{
+				case -1: 
+					std::cout << "Uh-Oh! fork() failed.\n";
+					break;
+
+				case 0:
+					std::cout << "Backup called.\n";
+
+					execl(smbLinuxPath, smbLinuxPath, IP.c_str(),  videoString.c_str(), 
+							uuid.c_str(), password.c_str(), NULL);
+					
+                                        std::cout << "Backup called DEBUG.\n";
+
+					break;
+
+				default: 
+					std::cout << "Process created with pid " << pid_back_up << "\n";
+					int status;
+
+					while(!WIFEXITED(status))
+					{
+						
+						waitpid(pid_back_up, &status, 0);
+					}
+
+					std::cout << "Process exited with " << WEXITSTATUS(status)
+						<< "\n";
+
+					break;
+			}
+
+			#endif
+*/
 	}
 
 	return 0;
