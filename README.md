@@ -54,7 +54,7 @@ sudo apt-get install clang-format-3.8
 ## Install (64 bits)
 ### Cygwin
 ```
-Cygwin: (http://download.tsi.telecom-paristech.fr/gpac/release/0.6.1/gpac-0.6.1-rev0-g72d766c-master-x64.exe)
+Cygwin: (https://cygwin.com/setup-x86_64.exe)
 And then select the packages:
 - gcc (core and g++)
 - git
@@ -64,11 +64,11 @@ And then select the packages:
 
 ### Required programs
 ```
-Gstreamer: (https://gstreamer.freedesktop.org/data/pkg/windows/1.8.3/gstreamer-1.0-x86_64-1.8.3.msi)
+GStreamer: (https://gstreamer.freedesktop.org/data/pkg/windows/1.8.3/gstreamer-1.0-x86_64-1.8.3.msi)
 Gpac: (http://download.tsi.telecom-paristech.fr/gpac/release/0.6.1/gpac-0.6.1-rev0-g72d766c-master-x64.exe)
 ```
 After instaling:
-- Add their bin/exe folder to the windows' variable PATH, so the cygwin can call them.
+- Add their (GStreamer and Gpac) bin/exe folder to the windows' variable PATH, so the cygwin can call them.
 - Check if it is possible to run:
 ```
 mp4box -v
