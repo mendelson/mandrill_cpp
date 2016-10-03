@@ -1,25 +1,27 @@
 #pragma once
 
+#include <gst/gst.h>
 #include <iostream>
 #include <string>
-#include <gst/gst.h>
 
 class MovementDetector
 {
 public:
 	/*! \brief Construtor da classe.
 	 *
-	 * Inicializa o ponteiro de erros como nulo e o contador de movimentos é zerado.
+	 * Inicializa o ponteiro de erros como nulo e o contador de movimentos é
+	 * zerado.
 	 *
 	 */
 	MovementDetector();
 
-	/*! \brief Analisa um arquivo e indica se foi detectado algum movimento nele.
+	/*! \brief Analisa um arquivo e indica se foi detectado algum movimento
+	 * nele.
 	 *
 	 * \param inputFile Nome do arquivo de entrada a ser analisado.
 	 *
 	 * \retval true Indica que foi detectado movimento.
-	 * \retavl false Indica que não foi detectado movimento.
+	 * \retval false Indica que não foi detectado movimento.
 	 *
 	 */
 	bool detectMovement(char *inputFile);
@@ -30,7 +32,8 @@ private:
 	 */
 	static GMainLoop *_loop;
 
-	/*! \brief Contador de mensagens de detecção de movimento enviadas no bus do pipeline.
+	/*! \brief Contador de mensagens de detecção de movimento enviadas no bus do
+	 * pipeline.
 	 *
 	 */
 	static int _movementCounter;
@@ -40,17 +43,20 @@ private:
 	 */
 	GstElement *_pipeline;
 
-	/*! \brief Referência para o elemento do GStreamer que define o arquivo de entrada a ser analisado.
+	/*! \brief Referência para o elemento do GStreamer que define o arquivo de
+	 * entrada a ser analisado.
 	 *
 	 */
 	GstElement *_src;
 
-	/*! \brief Referência para o elemento do GStreamer que detecta movimentos no arquivo de entrada.
+	/*! \brief Referência para o elemento do GStreamer que detecta movimentos no
+	 * arquivo de entrada.
 	 *
 	 */
 	GstElement *_motioncells;
 
-	/*! \brief Referência para o elemento do GStreamer que armazena o tipo de erro ocorrido (se houver).
+	/*! \brief Referência para o elemento do GStreamer que armazena o tipo de
+	 * erro ocorrido (se houver).
 	 *
 	 */
 	GError *_error;
@@ -70,12 +76,37 @@ private:
 	 */
 	char *_inputFile;
 
-	/*! \brief Callback para a detecção de movimento.
-	 *
-	 * Ao alcançar o fim do arquivo de entrada ou ao encontrar algum erro, notifica o GStreamer que a execução do loop deve ser encerrada. Tais tarefas são realizadas através do monitoramento do bus do pipeline e da checagem dos tipos de mensagens recebidas. Seus parâmetros de entrada são definidos por padrão pelo GStreamer. Não altere a assinatura deste método.
+	/*! \brief Descrição completa do pipeline a ser executado
 	 *
 	 */
-	static gboolean countMovementCallback (GstBus *bus, GstMessage *message, gpointer data);
+	std::string _pipelineDescription;
+
+	/*! \brief Sensibilidade da detecção de movimento. Varia de 0 até 1.
+	 *
+	 */
+	double _sensitivity;
+
+	/*! \brief Limiar para a detecção de movimento. Varia de 0 até 1.
+	 *
+	 * O filtro detecta movimento quando pelo menos esta fração da célula
+	 * apresenta movimento.
+	 *
+	 */
+	double _threshold;
+
+
+	/*! \brief Callback para a detecção de movimento.
+	 *
+	 * Ao alcançar o fim do arquivo de entrada ou ao encontrar algum erro,
+	 * notifica o GStreamer que a execução do loop deve ser encerrada. Tais
+	 * tarefas são realizadas através do monitoramento do bus do pipeline e da
+	 * checagem dos tipos de mensagens recebidas. Seus parâmetros de entrada são
+	 * definidos por padrão pelo GStreamer. Não altere a assinatura deste
+	 * método.
+	 *
+	 */
+	static gboolean countMovementCallback(GstBus *bus, GstMessage *message,
+										  gpointer data);
 
 	/*! \brief Inicializa o pipeline.
 	 *
@@ -88,12 +119,14 @@ private:
 	 */
 	void setPipelineInputFile();
 
-	/*! \brief Executa o pipeline até que o fim do arquivo de entrada seja alcançado.
+	/*! \brief Executa o pipeline até que o fim do arquivo de entrada seja
+	 * alcançado.
 	 *
 	 */
 	void startPipeline();
 
-	/*! \brief Finaliza a execução do pipeline e prepara o ambiente para que o próximo arquivo de entrada possa ser processado.
+	/*! \brief Finaliza a execução do pipeline e prepara o ambiente para que o
+	 * próximo arquivo de entrada possa ser processado.
 	 *
 	 */
 	void stopPipeline();

@@ -4,20 +4,19 @@
 #include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string>
 #include <string.h>
+#include <string>
 #include <sys/poll.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
 #ifdef __linux
-	#include <sys/inotify.h>
-	#define BUF_LEN (10 * (sizeof(struct inotify_event) + NAME_MAX + 1))
+#include <sys/inotify.h>
+#define BUF_LEN (10 * (sizeof(struct inotify_event) + NAME_MAX + 1))
 #else
-	#define BUF_LEN (10 * (NAME_MAX + 1))
+#define BUF_LEN (10 * (NAME_MAX + 1))
 #endif
-
 
 
 const std::string OUTPUTROOT = "files";
@@ -26,7 +25,7 @@ const std::string DASHFOLDER = "dash";
 const std::string SPLITTIME  = "2";  // Seconds
 
 void setupEnvironment(std::string uuid);
-int watcher_init (std::string path);
+int watcher_init(std::string path);
 void watch_path(int fd, std::string path);
 
 
@@ -60,11 +59,12 @@ int main(int argc, char *argv[])
 	char buf[BUF_LEN];
 	std::string str;
 	std::string videoString;
-	//char MP4BoxPath[]	= "/cygdrive/e/Program Files/GPAC/mp4box";
-	char MP4BoxPath[]	= "/usr/local/bin/MP4Box";
-	//char gstLaunchPath[] = "/cygdrive/e/gstreamer/1.0/x86_64/bin/gst-launch-1.0";
+	// char MP4BoxPath[]	= "/cygdrive/e/Program Files/GPAC/mp4box";
+	char MP4BoxPath[] = "/usr/local/bin/MP4Box";
+	// char gstLaunchPath[] =
+	// "/cygdrive/e/gstreamer/1.0/x86_64/bin/gst-launch-1.0";
 	char gstLaunchPath[] = "/usr/bin/gst-launch-1.0";
-	char smbLinuxPath[] = "/usr/bin/scripts/s";
+	char smbLinuxPath[]  = "/usr/bin/scripts/s";
 
 	setupEnvironment(uuid);
 
@@ -97,8 +97,7 @@ int main(int argc, char *argv[])
 			break;
 
 		default: /* Parent process */
-			std::cout << "Process created with pid_gst " << pid_gst
-					  << "\n";
+			std::cout << "Process created with pid_gst " << pid_gst << "\n";
 			break;
 	}
 
@@ -140,8 +139,8 @@ int main(int argc, char *argv[])
 		if(gst_status != 0)
 		{
 			std::cout << "==========\nDEU RUIM NO GSTREAMER!!! OLHA A TRETA "
-				"EXPLODINDO!!!!!\n=========="
-				<< std::endl;
+						 "EXPLODINDO!!!!!\n=========="
+					  << std::endl;
 			exit(-1);
 		}
 
@@ -163,20 +162,20 @@ int main(int argc, char *argv[])
 
 		int numRead = read(watcherFd, buf, BUF_LEN);
 
-		if (numRead <= 0)
+		if(numRead <= 0)
 		{
 			std::cout << "read failed" << std::endl;
 			exit(numRead);
 		}
 
-		for (char *p = buf; p < buf + numRead; )
+		for(char *p = buf; p < buf + numRead;)
 		{
 #ifdef __linux
 			struct inotify_event *event = (struct inotify_event *)p;
-			std::string filename = std::string(event->name);
+			std::string filename		= std::string(event->name);
 			p += sizeof(struct inotify_event) + event->len;
 #else
-			int size = strlen(p)+1;
+			int size			 = strlen(p) + 1;
 			std::string filename = std::string(p, size);
 			p += size;
 #endif
@@ -185,7 +184,7 @@ int main(int argc, char *argv[])
 			videoString = tmpPath + "/" + filename;
 			std::cout << "String: " << videoString << "\n";
 			/* TODO: filtrar entrada, checar padrao: "video%d.mp4" */
-			//callMP4Box(event->name);
+			// callMP4Box(event->name);
 			pid_t pid = fork(); /* Create a child process */
 
 			switch(pid)
@@ -197,12 +196,12 @@ int main(int argc, char *argv[])
 				case 0: /* Child process */
 
 					execl(MP4BoxPath, MP4BoxPath, "-dash", "2000", "-profile",
-							"live", "-rap", "-dash-ctx",
-							(uuidPath + "/ctx.txt").c_str(), "-mpd-refresh", "60",
-							"-time-shift", "1800", "-min-buffer", "0",
-							"-segment-name", "dash/dash_segment_", "-out",
-							(uuidPath + "/manifest.mpd").c_str(), videoString.c_str(),
-							"-dynamic", NULL);
+						  "live", "-rap", "-dash-ctx",
+						  (uuidPath + "/ctx.txt").c_str(), "-mpd-refresh", "60",
+						  "-time-shift", "1800", "-min-buffer", "0",
+						  "-segment-name", "dash/dash_segment_", "-out",
+						  (uuidPath + "/manifest.mpd").c_str(),
+						  videoString.c_str(), "-dynamic", NULL);
 
 					break;
 
@@ -217,54 +216,55 @@ int main(int argc, char *argv[])
 					}
 
 					std::cout << "Process exited with " << WEXITSTATUS(status)
-						<< "\n";
+							  << "\n";
 
 					break;
 			}
-
-
-
 		}
 
 
-/*			// sends back up
-			#ifdef __linux
-			pid_t pid_back_up = fork(); 
+		/*			// sends back up
+					#ifdef __linux
+					pid_t pid_back_up = fork();
 
-			switch(pid_back_up)
-			{
-				case -1: 
-					std::cout << "Uh-Oh! fork() failed.\n";
-					break;
-
-				case 0:
-					std::cout << "Backup called.\n";
-
-					execl(smbLinuxPath, smbLinuxPath, IP.c_str(),  videoString.c_str(), 
-							uuid.c_str(), password.c_str(), NULL);
-					
-                                        std::cout << "Backup called DEBUG.\n";
-
-					break;
-
-				default: 
-					std::cout << "Process created with pid " << pid_back_up << "\n";
-					int status;
-
-					while(!WIFEXITED(status))
+					switch(pid_back_up)
 					{
-						
-						waitpid(pid_back_up, &status, 0);
+						case -1:
+							std::cout << "Uh-Oh! fork() failed.\n";
+							break;
+
+						case 0:
+							std::cout << "Backup called.\n";
+
+							execl(smbLinuxPath, smbLinuxPath, IP.c_str(),
+		   videoString.c_str(),
+									uuid.c_str(), password.c_str(), NULL);
+
+												std::cout << "Backup called
+		   DEBUG.\n";
+
+							break;
+
+						default:
+							std::cout << "Process created with pid " <<
+		   pid_back_up << "\n";
+							int status;
+
+							while(!WIFEXITED(status))
+							{
+
+								waitpid(pid_back_up, &status, 0);
+							}
+
+							std::cout << "Process exited with " <<
+		   WEXITSTATUS(status)
+								<< "\n";
+
+							break;
 					}
 
-					std::cout << "Process exited with " << WEXITSTATUS(status)
-						<< "\n";
-
-					break;
-			}
-
-			#endif
-*/
+					#endif
+		*/
 	}
 
 	return 0;
@@ -298,7 +298,7 @@ void setupEnvironment(std::string uuid)
 	}
 }
 
-int watcher_init (std::string path)
+int watcher_init(std::string path)
 {
 	int pfds[2];
 
@@ -310,7 +310,7 @@ int watcher_init (std::string path)
 
 	pid_t pid = fork();
 
-	switch (pid)
+	switch(pid)
 	{
 		case -1: /* Error */
 			std::cout << "Uh-Oh! watcher fork() failed.\n";
@@ -329,7 +329,6 @@ int watcher_init (std::string path)
 			close(pfds[1]);
 
 			return pfds[0];
-
 	}
 
 	exit(-3);
@@ -344,15 +343,14 @@ void watch_path(int fd, std::string path)
 	while(1)
 	{
 
-		newFile = "video" + std::to_string(counter) + ".mp4";
+		newFile  = "video" + std::to_string(counter) + ".mp4";
 		fullPath = path + "/" + newFile;
 
 		std::cout << "Looking for file: " << fullPath << std::endl;
 
-		if (stat(fullPath.c_str(), &st) == 0 &&
-				abs(st.st_mtime - time(0)) < 22 )
+		if(stat(fullPath.c_str(), &st) == 0 && abs(st.st_mtime - time(0)) < 22)
 		{
-			if (!oldFile.empty())
+			if(!oldFile.empty())
 				write(fd, oldFile.c_str(), oldFile.size() + 1);
 
 			counter++;
@@ -361,5 +359,5 @@ void watch_path(int fd, std::string path)
 
 		sleep(1);
 	}
-
 }
+
