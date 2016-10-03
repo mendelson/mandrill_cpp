@@ -1,5 +1,5 @@
 #!/bin/bash
-
+rm -rf files/*
 # mkdir -p ../data
 
 # sudo arp-scan --interface=eth0 --localnet
@@ -16,7 +16,7 @@
 
 # bin/MandrillCore "data/b.avi" VIVOTEK_FD8136
 # gdb --args bin/MandrillCore rtsp://root:akts@10.190.60.102/live.sdp VIVOTEK_FD8136
-bin/MandrillCore "rtsp://root:akts@10.190.60.109/axis-media/media.amp" "rtsp://root:akts@10.190.60.114/live.sdp" "VIVOTEK_FD8134" "1200"
+bin/MandrillCore "rtsp://root:akts@10.190.60.107/axis-media/media.amp" "rtsp://root:akts@10.190.60.114/live.sdp" "VIVOTEK_FD8134" "1200" "10.190.60.69" "root%akts"
 # bin/MandrillCore "rtsp://root:akts@10.190.60.125/live.sdp" "VIVOTEK_FD8134"
 # ./bin/MandrillCore "rtsp://root:akts@10.190.60.123/axis-media/media.amp" "axis_m1014" &
 # ./bin/MandrillCore "rtsp://root:akts@10.190.60.107/axis-media/media.amp" "axis_m1012" &
