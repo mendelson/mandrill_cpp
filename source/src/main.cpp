@@ -1,4 +1,6 @@
+#include <dirent.h>
 #include <iostream>
+#include <limits.h>
 #include <limits.h>
 #include <signal.h>
 #include <sstream>
@@ -19,14 +21,24 @@
 #endif
 
 
-const std::string OUTPUTROOT = "files";
-const std::string TMPFOLDER  = "tmp";
-const std::string DASHFOLDER = "dash";
-const std::string SPLITTIME  = "2";  // Seconds
+const std::string OUTPUTROOT   = "files";
+const std::string MP4FOLDER	= "mp4_";
+const std::string DASHFOLDER   = "dash";
+const std::string SPLITTIME	= "2";  // Seconds
+const std::string MP4BASENAME  = "slice_";
+const std::string MP4EXTENSION = ".mp4";
+
+/*! Desperate times call for desperate measures
+ *
+ * CREATE CLASS AND REMOVE THIS GLOBAL VARIABLE ASAP.
+ *
+ */
+std::string mp4FolderIndex("0");
 
 void setupEnvironment(std::string uuid);
 int watcher_init(std::string path);
 void watch_path(int fd, std::string path);
+void setMp4Folder(std::string path);
 
 
 int main(int argc, char *argv[])
@@ -43,13 +55,13 @@ int main(int argc, char *argv[])
 	std::string uuid				 = argv[3];
 	int socket						 = atoi(argv[4]);
 	std::string uuidPath			 = OUTPUTROOT + "/" + uuid;
-	std::string tmpPath				 = uuidPath + "/" + TMPFOLDER;
 	std::string dashPath			 = uuidPath + "/" + DASHFOLDER;
 	std::string srcLocationParameter = "location=" + urlHighDef;
-	std::string tmpLocationParameter = "location=" + tmpPath + "/video%d.mp4";
 	std::string maxSizeTime = "max-size-time=" + SPLITTIME + "000000000";
 	std::string IP(argv[5]);
 	std::string password(argv[6]);
+	std::string mp4Path;
+	std::string mp4LocationParameter;
 	int watcherFd;
 
 	std::cout << "Socket port: " << socket << std::endl;
@@ -67,6 +79,10 @@ int main(int argc, char *argv[])
 	char smbLinuxPath[]  = "/usr/bin/scripts/s";
 
 	setupEnvironment(uuid);
+
+	mp4Path = uuidPath + "/" + MP4FOLDER + mp4FolderIndex;
+	mp4LocationParameter =
+		"location=" + mp4Path + "/" + MP4BASENAME + "%llu" + MP4EXTENSION;
 
 	pid_t pid_gst = fork(); /* Create a child process */
 
@@ -93,7 +109,7 @@ int main(int argc, char *argv[])
 			execl(gstLaunchPath, gstLaunchPath, "-e", "rtspsrc",
 				  srcLocationParameter.c_str(), "!", "rtph264depay", "!",
 				  "h264parse", "!", "splitmuxsink",
-				  tmpLocationParameter.c_str(), maxSizeTime.c_str(), NULL);
+				  mp4LocationParameter.c_str(), maxSizeTime.c_str(), NULL);
 			break;
 
 		default: /* Parent process */
@@ -109,13 +125,13 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	if(inotify_add_watch(watcherFd, tmpPath.c_str(), IN_CLOSE_WRITE) == -1)
+	if(inotify_add_watch(watcherFd, mp4Path.c_str(), IN_CLOSE_WRITE) == -1)
 	{
 		std::cout << "inotify_add_watch failed" << std::endl;
 		exit(2);
 	}
 #else
-	watcherFd = watcher_init(tmpPath);
+	watcherFd = watcher_init(mp4Path);
 	if(watcherFd == -1)
 	{
 		std::cout << "watcher_init failed" << std::endl;
@@ -181,7 +197,7 @@ int main(int argc, char *argv[])
 #endif
 
 			std::cout << "dash: " << filename << std::endl;
-			videoString = tmpPath + "/" + filename;
+			videoString = mp4Path + "/" + filename;
 			std::cout << "String: " << videoString << "\n";
 			/* TODO: filtrar entrada, checar padrao: "video%d.mp4" */
 			// callMP4Box(event->name);
@@ -273,7 +289,7 @@ int main(int argc, char *argv[])
 void setupEnvironment(std::string uuid)
 {
 	std::string uuidPath = OUTPUTROOT + "/" + uuid;
-	std::string tmpPath  = uuidPath + "/" + TMPFOLDER;
+	std::string mp4Path  = uuidPath + "/" + MP4FOLDER;
 	std::string dashPath = uuidPath + "/" + DASHFOLDER;
 	struct stat st;
 
@@ -287,9 +303,12 @@ void setupEnvironment(std::string uuid)
 		mkdir(uuidPath.c_str(), 0700);
 	}
 
-	if(stat(tmpPath.c_str(), &st) == -1)
+	setMp4Folder(uuidPath);
+	mp4Path += mp4FolderIndex;
+
+	if(stat(mp4Path.c_str(), &st) == -1)
 	{
-		mkdir(tmpPath.c_str(), 0700);
+		mkdir(mp4Path.c_str(), 0700);
 	}
 
 	if(stat(dashPath.c_str(), &st) == -1)
@@ -343,7 +362,7 @@ void watch_path(int fd, std::string path)
 	while(1)
 	{
 
-		newFile  = "video" + std::to_string(counter) + ".mp4";
+		newFile  = MP4BASENAME + std::to_string(counter) + MP4EXTENSION;
 		fullPath = path + "/" + newFile;
 
 		std::cout << "Looking for file: " << fullPath << std::endl;
@@ -359,5 +378,43 @@ void watch_path(int fd, std::string path)
 
 		sleep(1);
 	}
+}
+
+void setMp4Folder(std::string path)
+{
+	std::size_t i;
+	bool noFolders						= true;
+	unsigned long long int folderNumber = 0;
+	unsigned long long int tmpFolderNumber;
+	std::string number;
+	std::stringstream strstream;
+	DIR *dir			 = opendir(path.c_str());
+	struct dirent *entry = readdir(dir);
+
+	while(entry != NULL)
+	{
+		std::string tmp(entry->d_name);
+		i = tmp.find(MP4FOLDER);
+
+		if(entry->d_type == DT_DIR && i != std::string::npos)
+		{
+			tmpFolderNumber = std::stoull(
+				tmp.substr(i + MP4FOLDER.size(), tmp.size() - MP4FOLDER.size()),
+				NULL, 10);
+
+			folderNumber = (tmpFolderNumber > folderNumber ? tmpFolderNumber :
+															 folderNumber);
+			noFolders = false;
+		}
+
+		entry = readdir(dir);
+	}
+
+	closedir(dir);
+
+	strstream << ++folderNumber;
+	strstream >> number;
+
+	mp4FolderIndex = (noFolders ? "0" : number);
 }
 

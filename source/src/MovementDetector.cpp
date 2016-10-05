@@ -171,3 +171,4 @@ void MovementDetector::stopPipeline()
 
 	std::cout << "\n\n_movementCounter: " << _movementCounter << std::endl;
 }
+

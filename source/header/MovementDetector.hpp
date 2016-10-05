@@ -131,3 +131,4 @@ private:
 	 */
 	void stopPipeline();
 };
+
