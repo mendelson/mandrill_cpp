@@ -391,12 +391,21 @@ void setMp4Folder(std::string path)
 	DIR *dir			 = opendir(path.c_str());
 	struct dirent *entry = readdir(dir);
 
+	if(entry == NULL)
+    {
+        std::cout << "Error while acquiring directories list. Aborting..." << std::endl;
+        exit(-2);
+    }
+
 	while(entry != NULL)
 	{
 		std::string tmp(entry->d_name);
 		i = tmp.find(MP4FOLDER);
-
+    #ifdef __linux
 		if(entry->d_type == DT_DIR && i != std::string::npos)
+    #else
+        if(i != std::string::npos)
+    #endif
 		{
 			tmpFolderNumber = std::stoull(
 				tmp.substr(i + MP4FOLDER.size(), tmp.size() - MP4FOLDER.size()),
