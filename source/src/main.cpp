@@ -43,7 +43,7 @@ void setMp4Folder(std::string path);
 
 int main(int argc, char *argv[])
 {
-	if(argc != 7)
+	if(argc > 5 || argc < 7)
 	{
 		printf("Wrong number of input arguments!\n");
 		exit(-1);
@@ -58,8 +58,11 @@ int main(int argc, char *argv[])
 	std::string dashPath			 = uuidPath + "/" + DASHFOLDER;
 	std::string srcLocationParameter = "location=" + urlHighDef;
 	std::string maxSizeTime = "max-size-time=" + SPLITTIME + "000000000";
-	std::string IP(argv[5]);
-	std::string password(argv[6]);
+	if(argc == 7)
+	{
+		std::string IP(argv[5]);
+		std::string password(argv[6]);
+	}
 	std::string mp4Path;
 	std::string mp4LocationParameter;
 	int watcherFd;
